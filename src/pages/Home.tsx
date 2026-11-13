@@ -60,7 +60,7 @@ export function Home() {
       ([entry]) => {
         if (entry.isIntersecting) setCount((value) => Math.min(value + PAGE, filtered.length));
       },
-      { rootMargin: "160px" },
+      { rootMargin: "720px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
