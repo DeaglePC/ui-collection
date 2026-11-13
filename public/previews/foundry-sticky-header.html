@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sticky Header · Foundry44</title>
+<!-- Foundry44 · Sticky Header · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/sticky-header/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+body{padding:0!important;align-items:stretch!important}.hdr{position:sticky;top:0;z-index:5;padding:16px 24px;background:#1c1916;border-bottom:1px solid #2c2924;font:600 14px/1 ui-sans-serif,system-ui}.body{padding:24px;max-width:40em;color:#c9c2b6;line-height:1.8}
+</style>
+</head>
+<body>
+<header data-f44="sticky-header" class="hdr">Foundry44 · Sticky Header</header><main class="body"><p>Scroll down and back up. Line 1.</p><p>Scroll down and back up. Line 2.</p><p>Scroll down and back up. Line 3.</p><p>Scroll down and back up. Line 4.</p><p>Scroll down and back up. Line 5.</p><p>Scroll down and back up. Line 6.</p><p>Scroll down and back up. Line 7.</p><p>Scroll down and back up. Line 8.</p><p>Scroll down and back up. Line 9.</p><p>Scroll down and back up. Line 10.</p><p>Scroll down and back up. Line 11.</p><p>Scroll down and back up. Line 12.</p><p>Scroll down and back up. Line 13.</p><p>Scroll down and back up. Line 14.</p><p>Scroll down and back up. Line 15.</p><p>Scroll down and back up. Line 16.</p><p>Scroll down and back up. Line 17.</p></main>
+<script>
+/*!
+ * Foundry44 · Sticky Header — https://foundry44.dev/components/sticky-header
+ * Header hides on scroll down and slides back on scroll up.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="sticky-header" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-tolerance="8"
+ *   data-f44-offset="0"
+ *   data-f44-duration="300"
+ * Manual: const instance = Foundry44.stickyHeader(element, { tolerance: 8, offset: 0, duration: 300 });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — sticky-header
+   * A header that stays at the top of the page, slides up out of view while the
+   * visitor scrolls down to read, and slides back as soon as they scroll up.
+   * Near the top of the page it always shows. Once the page has scrolled past it,
+   * the element carries `data-f44-scrolled`, a hook for a shadow or a background.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const stickyHeaderDefaults = {
+    tolerance: 8,
+    offset: 0,
+    duration: 300,
+  };
+  const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+  const SHOW_RATIO = 0.75;
+  const REDUCED_FADE = 200;
+  function stickyHeader(el, options = {}) {
+    var _a;
+    let opts = { ...stickyHeaderDefaults, ...options };
+    if (typeof window === "undefined") return { update() {}, destroy() {} };
+    // Reduced motion: no sliding, the header fades out and back in place.
+    const reduced =
+      ((_a = window.matchMedia) === null || _a === void 0
+        ? void 0
+        : _a.call(window, "(prefers-reduced-motion: reduce)").matches) === true;
+    const original = {
+      position: el.style.position,
+      top: el.style.top,
+      transform: el.style.transform,
+      opacity: el.style.opacity,
+      transition: el.style.transition,
+    };
+    const computed = getComputedStyle(el);
+    if (computed.position === "static") {
+      el.style.position = "sticky";
+      el.style.top = "0px";
+    }
+    let hidden = false;
+    let lastY = window.scrollY;
+    let travelledDown = 0;
+    let travelledUp = 0;
+    const transition = () => {
+      const hide = opts.duration;
+      const show = Math.round(opts.duration * SHOW_RATIO);
+      if (reduced) {
+        // Move it out of the way only once it has faded, and back before it fades in.
+        el.style.transition = hidden
+          ? `opacity ${REDUCED_FADE}ms ease, transform 0s linear ${REDUCED_FADE}ms`
+          : `opacity ${REDUCED_FADE}ms ease`;
+        return;
+      }
+      el.style.transition = `transform ${hidden ? hide : show}ms ${EASE_OUT}`;
+    };
+    const setHidden = (next) => {
+      if (next === hidden) return;
+      hidden = next;
+      transition();
+      // 100% plus a few px so a box-shadow below the header leaves with it.
+      el.style.transform = hidden ? "translateY(calc(-100% - 8px))" : original.transform;
+      if (reduced) el.style.opacity = hidden ? "0" : original.opacity;
+    };
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - lastY;
+      lastY = y;
+      const alwaysVisible = el.offsetHeight + opts.offset;
+      el.toggleAttribute("data-f44-scrolled", y > el.offsetHeight);
+      if (y <= alwaysVisible) {
+        travelledDown = travelledUp = 0;
+        setHidden(false);
+        return;
+      }
+      if (delta > 0) {
+        travelledDown += delta;
+        travelledUp = 0;
+      } else if (delta < 0) {
+        travelledUp -= delta;
+        travelledDown = 0;
+      }
+      if (travelledDown > opts.tolerance) setHidden(true);
+      else if (travelledUp > opts.tolerance) setHidden(false);
+    };
+    // A keyboard user tabbing into a hidden header must be able to see where focus went.
+    const onFocusIn = () => setHidden(false);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("focusin", onFocusIn);
+    onScroll();
+    return {
+      update(next) {
+        opts = { ...opts, ...next };
+        // tolerance and offset are read on every scroll; duration needs the transition rewritten.
+        transition();
+      },
+      destroy() {
+        window.removeEventListener("scroll", onScroll);
+        el.removeEventListener("focusin", onFocusIn);
+        el.removeAttribute("data-f44-scrolled");
+        el.style.position = original.position;
+        el.style.top = original.top;
+        el.style.transform = original.transform;
+        el.style.opacity = original.opacity;
+        el.style.transition = original.transition;
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="sticky-header"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["tolerance", "data-f44-tolerance"],
+        ["offset", "data-f44-offset"],
+        ["duration", "data-f44-duration"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = stickyHeader(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.stickyHeader = stickyHeader;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+</body>
+</html>

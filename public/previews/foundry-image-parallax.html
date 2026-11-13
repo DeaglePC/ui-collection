@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Parallax · Foundry44</title>
+<!-- Foundry44 · Image Parallax · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/image-parallax/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+.hint{color:#9a9388;font-size:13px}
+</style>
+</head>
+<body>
+<div style="height:160px"></div><div data-f44="image-parallax" style="width:min(520px,90vw);height:280px;border-radius:18px;overflow:hidden"><div style="width:100%;height:140%;background:linear-gradient(160deg,#1b2838,#4a6d8c 50%,#c2a46a);"></div></div><div style="height:200px"></div><p class="hint">在框里滚动，看图片是否比外框更慢。</p>
+<script>
+/*!
+ * Foundry44 · Image Parallax — https://foundry44.dev/components/image-parallax
+ * Image moves slower than its frame while scrolling.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="image-parallax" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-speed="0.1"
+ *   data-f44-smoothing="0.2"
+ *   data-f44-axis="y"
+ * Manual: const instance = Foundry44.imageParallax(element, { speed: 0.1, smoothing: 0.2, axis: "y" });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — image-parallax
+   * The image inside a frame drifts more slowly than the page while you scroll,
+   * so the frame seems to be a window onto something further away. The image is
+   * enlarged just enough that its edges never show inside the frame.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const imageParallaxDefaults = {
+    speed: 0.1,
+    smoothing: 0.2,
+    axis: "y",
+  };
+  const REST = 0.05;
+  function imageParallax(el, options = {}) {
+    var _a;
+    let opts = { ...imageParallaxDefaults, ...options };
+    const noop = { update() {}, destroy() {} };
+    if (typeof window === "undefined") return noop;
+    // The effect is pure movement: with reduced motion the image just stays still.
+    if (
+      (_a = window.matchMedia) === null || _a === void 0
+        ? void 0
+        : _a.call(window, "(prefers-reduced-motion: reduce)").matches
+    )
+      return noop;
+    const image = el.firstElementChild instanceof HTMLElement ? el.firstElementChild : null;
+    if (!image) return noop;
+    const original = {
+      overflow: el.style.overflow,
+      transform: image.style.transform,
+      willChange: image.style.willChange,
+    };
+    el.style.overflow = "hidden";
+    image.style.willChange = "transform";
+    let current = 0;
+    let target = 0;
+    let frame = 0;
+    let observer = null;
+    // -1 when the frame's top meets the bottom of the viewport, 1 when its bottom meets the top.
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      const viewport = window.innerHeight || 1;
+      const travel = (viewport + rect.height) / 2 || 1;
+      const progress = (viewport / 2 - (rect.top + rect.height / 2)) / travel;
+      const size = opts.axis === "x" ? rect.width : rect.height;
+      target = Math.min(Math.max(progress, -1), 1) * opts.speed * size;
+    };
+    const render = () => {
+      // Scaled from the center by twice the drift, so neither edge ever comes into the frame.
+      const scale = 1 + 2 * Math.abs(opts.speed);
+      const offset = opts.axis === "x" ? `${current}px, 0` : `0, ${current}px`;
+      image.style.transform = `translate3d(${offset}, 0) scale(${scale})`;
+    };
+    const tick = () => {
+      const amount = Math.min(Math.max(opts.smoothing, 0.01), 1);
+      current += (target - current) * amount;
+      if (Math.abs(target - current) < REST) {
+        current = target;
+        render();
+        frame = 0;
+        return;
+      }
+      render();
+      frame = requestAnimationFrame(tick);
+    };
+    const onScroll = () => {
+      measure();
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+    const listen = () => {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+      onScroll();
+    };
+    const unlisten = () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+    // Start at the right offset, so the first scroll doesn't make the image jump.
+    measure();
+    current = target;
+    render();
+    if (typeof IntersectionObserver === "undefined") {
+      listen();
+    } else {
+      // Scroll work only while the frame is on screen.
+      observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) listen();
+          else unlisten();
+        }
+      });
+      observer.observe(el);
+    }
+    return {
+      update(next) {
+        opts = { ...opts, ...next };
+        measure();
+        current = target;
+        render();
+      },
+      destroy() {
+        observer === null || observer === void 0 ? void 0 : observer.disconnect();
+        unlisten();
+        el.style.overflow = original.overflow;
+        image.style.transform = original.transform;
+        image.style.willChange = original.willChange;
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="image-parallax"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["speed", "data-f44-speed"],
+        ["smoothing", "data-f44-smoothing"],
+        ["axis", "data-f44-axis"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = imageParallax(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.imageParallax = imageParallax;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+</body>
+</html>

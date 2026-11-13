@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spotlight Card · Foundry44</title>
+<!-- Foundry44 · Spotlight Card · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/spotlight-card/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:min(720px,100%)}.card{padding:28px 22px;border:1px solid #2c2924;border-radius:16px;background:#161412;min-height:160px}.card h3{margin:0 0 8px;font:600 16px/1.3 ui-sans-serif,system-ui}.card p{margin:0;color:#9a9388;font-size:13px;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="grid"><article data-f44="spotlight-card" class="card"><h3>Card 1</h3><p>A soft radial glow follows the cursor.</p></article><article data-f44="spotlight-card" class="card"><h3>Card 2</h3><p>A soft radial glow follows the cursor.</p></article><article data-f44="spotlight-card" class="card"><h3>Card 3</h3><p>A soft radial glow follows the cursor.</p></article></div>
+<script>
+/*!
+ * Foundry44 · Spotlight Card — https://foundry44.dev/components/spotlight-card
+ * A soft radial glow follows the cursor across a card or grid of cards.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="spotlight-card" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-size="260"
+ *   data-f44-intensity="0.22"
+ *   data-f44-follow="0.2"
+ *   data-f44-items=""
+ * Manual: const instance = Foundry44.spotlightCard(element, { size: 260, intensity: 0.22, follow: 0.2, items: "" });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — spotlight-card
+   * A soft radial glow trails the cursor across a card. Given a selector for
+   * the cards of a grid, the pointer is tracked over the whole grid and every
+   * card shows its share of the same light, so neighbours glow at their edges.
+   * The glow fades in on enter and out on leave. Disabled on touch; with
+   * reduced motion it sits under the cursor without trailing or fading.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const spotlightCardDefaults = {
+    size: 260,
+    intensity: 0.22,
+    follow: 0.2,
+    items: "",
+  };
+  const REST = 0.1;
+  // Share of the remaining fade covered each frame: about 200ms at 60fps.
+  const FADE = 0.2;
+  function spotlightCard(el, options = {}) {
+    var _a, _b, _c;
+    let opts = { ...spotlightCardDefaults, ...options };
+    const noop = { update() {}, destroy() {} };
+    if (typeof window === "undefined") return noop;
+    // A light that follows a hovering pointer has nothing to follow on touch.
+    if ((_a = window.matchMedia) === null || _a === void 0 ? void 0 : _a.call(window, "(pointer: coarse)").matches)
+      return noop;
+    const reduced =
+      (_c =
+        (_b = window.matchMedia) === null || _b === void 0
+          ? void 0
+          : _b.call(window, "(prefers-reduced-motion: reduce)").matches) !== null && _c !== void 0
+        ? _c
+        : false;
+    let cards = [];
+    const mount = () => {
+      const targets = opts.items ? Array.from(el.querySelectorAll(opts.items)) : [el];
+      cards = targets.map((card) => {
+        const original = { position: card.style.position, overflow: card.style.overflow };
+        if (getComputedStyle(card).position === "static") card.style.position = "relative";
+        card.style.overflow = "hidden";
+        const glow = document.createElement("span");
+        glow.setAttribute("aria-hidden", "true");
+        Object.assign(glow.style, {
+          position: "absolute",
+          left: "0",
+          top: "0",
+          borderRadius: "50%",
+          pointerEvents: "none",
+          background: "radial-gradient(circle closest-side, var(--f44-spotlight-card-color, #fff), transparent)",
+          opacity: "0",
+          willChange: "transform, opacity",
+        });
+        card.append(glow);
+        return { el: card, glow, rect: null, original };
+      });
+    };
+    const unmount = () => {
+      for (const card of cards) {
+        card.glow.remove();
+        card.el.style.position = card.original.position;
+        card.el.style.overflow = card.original.overflow;
+      }
+      cards = [];
+    };
+    // Cursor in viewport coordinates; each card converts it to its own space.
+    const pos = { x: 0, y: 0, hover: 0 };
+    const target = { x: 0, y: 0, hover: 0 };
+    let frame = 0;
+    // Sized only on mount and update: width and height must never change per frame.
+    const resize = () => {
+      for (const card of cards) {
+        card.glow.style.width = `${opts.size * 2}px`;
+        card.glow.style.height = `${opts.size * 2}px`;
+      }
+    };
+    const render = () => {
+      var _a;
+      for (const card of cards) {
+        (_a = card.rect) !== null && _a !== void 0 ? _a : (card.rect = card.el.getBoundingClientRect());
+        const x = pos.x - card.rect.left - opts.size;
+        const y = pos.y - card.rect.top - opts.size;
+        card.glow.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        card.glow.style.opacity = String(opts.intensity * pos.hover);
+      }
+    };
+    const tick = () => {
+      const ease = reduced ? 1 : opts.follow;
+      pos.x += (target.x - pos.x) * ease;
+      pos.y += (target.y - pos.y) * ease;
+      pos.hover += (target.hover - pos.hover) * (reduced ? 1 : FADE);
+      const settled =
+        Math.abs(target.x - pos.x) < REST &&
+        Math.abs(target.y - pos.y) < REST &&
+        Math.abs(target.hover - pos.hover) < REST / 100;
+      if (settled) Object.assign(pos, target);
+      render();
+      frame = settled ? 0 : requestAnimationFrame(tick);
+    };
+    const start = () => {
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+    const onMove = (e) => {
+      target.x = e.clientX;
+      target.y = e.clientY;
+      // Entering from rest: start at the cursor so the glow fades in place instead of sliding in.
+      if (pos.hover === 0) {
+        pos.x = e.clientX;
+        pos.y = e.clientY;
+      }
+      target.hover = 1;
+      start();
+    };
+    const onLeave = () => {
+      target.hover = 0;
+      start();
+    };
+    const forgetRects = () => {
+      for (const card of cards) card.rect = null;
+    };
+    mount();
+    resize();
+    el.addEventListener("pointermove", onMove, { passive: true });
+    el.addEventListener("pointerleave", onLeave);
+    window.addEventListener("scroll", forgetRects, { passive: true });
+    window.addEventListener("resize", forgetRects);
+    return {
+      update(next) {
+        const itemsChanged = next.items !== undefined && next.items !== opts.items;
+        opts = { ...opts, ...next };
+        if (itemsChanged) {
+          unmount();
+          mount();
+        }
+        resize();
+        render();
+      },
+      destroy() {
+        el.removeEventListener("pointermove", onMove);
+        el.removeEventListener("pointerleave", onLeave);
+        window.removeEventListener("scroll", forgetRects);
+        window.removeEventListener("resize", forgetRects);
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        unmount();
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="spotlight-card"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["size", "data-f44-size"],
+        ["intensity", "data-f44-intensity"],
+        ["follow", "data-f44-follow"],
+        ["items", "data-f44-items"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = spotlightCard(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.spotlightCard = spotlightCard;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text Scramble · Foundry44</title>
+<!-- Foundry44 · Text Scramble · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/text-scramble/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+h1{font:700 64px/1.05 ui-serif,Georgia,serif;letter-spacing:-.03em;margin:0} .hint{margin-top:18px;color:#9a9388;font-size:13px}
+</style>
+</head>
+<body>
+<h1 data-f44="text-scramble" data-f44-trigger="hover" data-f44-once="false" data-f44-duration="1200">FOUNDATION</h1><p class="hint">把指针放在标题上试试。</p>
+<script>
+/*!
+ * Foundry44 · Text Scramble — https://foundry44.dev/components/text-scramble
+ * Text resolves character by character from random glyphs.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="text-scramble" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-duration="900"
+ *   data-f44-trigger="view"
+ *   data-f44-once="true"
+ *   data-f44-characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/"
+ * Manual: const instance = Foundry44.textScramble(element, { duration: 900, trigger: "view", once: true, characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/" });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — text-scramble
+   * Text resolves character by character from random glyphs, roughly left to
+   * right, when it enters the viewport or when it is hovered.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const textScrambleDefaults = {
+    duration: 900,
+    trigger: "view",
+    once: true,
+    characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/",
+  };
+  // Swapping glyphs every frame reads as flicker; ~20 swaps per second reads as scrambling.
+  const GLYPH_INTERVAL = 50;
+  // Share of the duration over which the reveal sweeps left to right; the rest is random
+  // jitter so characters don't settle in a rigid line.
+  const REVEAL_SWEEP = 0.7;
+  function textScramble(el, options = {}) {
+    var _a;
+    let opts = { ...textScrambleDefaults, ...options };
+    const noop = { update() {}, destroy() {} };
+    if (typeof window === "undefined") return noop;
+    // The resting text is the final text, so reduced motion simply never scrambles.
+    const reduced =
+      (_a = window.matchMedia) === null || _a === void 0
+        ? void 0
+        : _a.call(window, "(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return noop;
+    // Each text node with its original characters (Array.from keeps emoji whole).
+    let segments = [];
+    let revealAt = [];
+    let frame = 0;
+    let startTime = -1;
+    let lastGlyphTime = Number.NEGATIVE_INFINITY;
+    let played = false;
+    let observer = null;
+    // Read the text at play time: at rest the DOM is the truth, even if a framework changed it.
+    // Text nodes are scrambled one by one so inline markup (links, <em>) survives.
+    const collectText = () => {
+      segments = [];
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        segments.push({ node: node, chars: Array.from(node.data) });
+      }
+    };
+    const restore = () => {
+      for (const { node, chars } of segments) node.data = chars.join("");
+    };
+    const randomGlyph = (original) => {
+      var _a;
+      const pool = Array.from(opts.characters || textScrambleDefaults.characters);
+      const glyph = (_a = pool[Math.floor(Math.random() * pool.length)]) !== null && _a !== void 0 ? _a : original;
+      const isLower = original !== original.toUpperCase();
+      return isLower ? glyph.toLowerCase() : glyph;
+    };
+    const render = (progress) => {
+      var _a;
+      let index = 0;
+      for (const { node, chars } of segments) {
+        let text = "";
+        for (const char of chars) {
+          text +=
+            progress >= ((_a = revealAt[index]) !== null && _a !== void 0 ? _a : 0) || /\s/.test(char)
+              ? char
+              : randomGlyph(char);
+          index++;
+        }
+        node.data = text;
+      }
+    };
+    const tick = (now) => {
+      if (startTime < 0) startTime = now;
+      const progress = opts.duration > 0 ? (now - startTime) / opts.duration : 1;
+      if (progress >= 1) {
+        restore();
+        frame = 0;
+        return;
+      }
+      if (now - lastGlyphTime >= GLYPH_INTERVAL) {
+        lastGlyphTime = now;
+        render(progress);
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    const play = () => {
+      if (frame) return;
+      played = true;
+      collectText();
+      const count = segments.reduce((sum, segment) => sum + segment.chars.length, 0);
+      revealAt = Array.from(
+        { length: count },
+        (_, i) => (count > 1 ? i / (count - 1) : 0) * REVEAL_SWEEP + Math.random() * (1 - REVEAL_SWEEP),
+      );
+      startTime = -1;
+      lastGlyphTime = Number.NEGATIVE_INFINITY;
+      frame = requestAnimationFrame(tick);
+    };
+    const bind = () => {
+      if (opts.trigger === "hover") {
+        el.addEventListener("pointerenter", play);
+        el.addEventListener("focusin", play);
+        return;
+      }
+      if (opts.once && played) return;
+      if (typeof IntersectionObserver === "undefined") {
+        play();
+        return;
+      }
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          play();
+          if (opts.once) unbind();
+        },
+        // Wait until the text is a little inside the viewport so the start is actually seen.
+        { rootMargin: "0px 0px -10% 0px" },
+      );
+      observer.observe(el);
+    };
+    const unbind = () => {
+      el.removeEventListener("pointerenter", play);
+      el.removeEventListener("focusin", play);
+      observer === null || observer === void 0 ? void 0 : observer.disconnect();
+      observer = null;
+    };
+    bind();
+    return {
+      update(next) {
+        const previous = opts;
+        opts = { ...opts, ...next };
+        if (opts.trigger !== previous.trigger || opts.once !== previous.once) {
+          unbind();
+          bind();
+        }
+      },
+      destroy() {
+        unbind();
+        if (frame) {
+          cancelAnimationFrame(frame);
+          frame = 0;
+          restore();
+        }
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="text-scramble"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["duration", "data-f44-duration"],
+        ["trigger", "data-f44-trigger"],
+        ["once", "data-f44-once"],
+        ["characters", "data-f44-characters"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = textScramble(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.textScramble = textScramble;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+</body>
+</html>

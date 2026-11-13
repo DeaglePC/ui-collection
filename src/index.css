@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Noto Sans SC", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Noto Serif SC", "Instrument Serif", ui-serif, Georgia, serif;
+  --font-display: "Instrument Serif", "Noto Serif SC", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-ink: #f2eee6;
+  --color-mute: #8f877c;
+  --color-line: #2a2620;
+  --color-paper: #0c0b09;
+  --color-panel: #161410;
+  --color-panel-2: #1c1a15;
+  --color-accent: #e07a3d;
+  --color-accent-2: #f0c37a;
+}
+
+html, body, #root {
+  min-height: 100%;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "palt" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-accent) 40%, transparent);
+  color: #fff;
+}
+
+a {
+  color: inherit;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.hairline {
+  border-color: var(--color-line);
+}
+
+/* scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3a342c transparent;
+}
+
+/* iframe preview clip */
+.preview-clip {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 20% 0%, #1e1b16 0%, transparent 50%),
+    #12110e;
+}
+
+.preview-clip iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #0e0d0b;
+}
+
+.badge-link {
+  color: #c9a06a;
+  border: 1px dashed #5a4a32;
+  background: #1a150e;
+}

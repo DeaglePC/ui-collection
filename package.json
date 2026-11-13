@@ -1,0 +1,37 @@
+{
+  "name": "ui-yuanji",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "源集：开源、可查看来源的 UI 组件集合站",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173"
+  },
+  "dependencies": {
+    "border-beam": "^1.4.1",
+    "bot-avatars": "^0.2.2",
+    "fuse.js": "^7.1.0",
+    "img-fx": "^0.5.1",
+    "liquid-gooey": "^0.2.2",
+    "metal-fx": "^2.0.11",
+    "motion": "^12.23.24",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router": "^7.9.6",
+    "thinking-orbs": "^0.3.2",
+    "three": "^0.181.0",
+    "voice-glow": "^0.3.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.16",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^5.1.0",
+    "tailwindcss": "^4.1.16",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.2"
+  }
+}
