@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import "@/vendor/mekai/theme.css";
 // types;
 import { SplitText } from "@/vendor/mekai/ui/split-text";
 import { ScrambleText } from "@/vendor/mekai/ui/scramble-text";

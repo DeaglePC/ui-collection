@@ -9,8 +9,8 @@ export function SourceBlock({ item, prominent = false }: { item: Item; prominent
           : "border-[var(--color-line)] bg-[var(--color-panel)]"
       } ${prominent ? "p-5" : "p-4"}`}
     >
-      <div className="text-[11px] uppercase tracking-[0.14em] text-[var(--color-mute)] mb-2">
-        来源
+      <div className="text-[11px] tracking-[0.18em] uppercase text-[var(--color-accent-2)] mb-2">
+        来源与协议
       </div>
       <h3 className="text-base font-medium mb-1">{item.sourceName}</h3>
       <dl className="grid grid-cols-[4.5rem_1fr] gap-x-3 gap-y-1.5 text-sm">

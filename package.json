@@ -5,14 +5,17 @@
   "type": "module",
   "description": "源集：开源、可查看来源的 UI 组件集合站",
   "scripts": {
+    "predev": "node scripts/split-catalog.mjs",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "prebuild": "node scripts/split-catalog.mjs",
+    "build": "tsc -b && vite build --mode pages && vite build --mode file && node scripts/assemble-dist.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173"
   },
   "dependencies": {
     "border-beam": "^1.4.1",
     "bot-avatars": "^0.2.2",
     "fuse.js": "^7.1.0",
+    "highlight.js": "11.11.1",
     "img-fx": "^0.5.1",
     "liquid-gooey": "^0.2.2",
     "metal-fx": "^2.0.11",

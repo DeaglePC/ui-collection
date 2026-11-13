@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { sources, items } from "@/data/catalog";
 
-export function LicensesPage() {
+export default function LicensesPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-12 pb-24">
       <h1 className="display text-4xl mb-3">来源与协议</h1>
@@ -20,7 +20,7 @@ export function LicensesPage() {
           const nCode = items.filter((i) => i.sourceId === s.id && i.kind === "code").length;
           const nLink = items.filter((i) => i.sourceId === s.id && i.kind === "link").length;
           return (
-            <article key={s.id} className="rounded-xl border border-[var(--color-line)] bg-[var(--color-panel)] p-5">
+            <article key={s.id} className="panel p-5">
               <div className="flex flex-wrap items-baseline justify-between gap-2 mb-3">
                 <h2 className="text-xl font-medium">{s.name}</h2>
                 <span className="text-xs text-[var(--color-mute)]">

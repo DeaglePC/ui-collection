@@ -1,7 +1,9 @@
 node_modules
 dist
+dist-file
 dist-ssr
 *.tsbuildinfo
+src/data/generated
 
 .DS_Store
 *.local

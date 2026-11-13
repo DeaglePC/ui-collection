@@ -136,5 +136,6 @@ body{display:grid;place-items:center;padding:28px 16px;}
 (()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;const state=s=>root.dataset.state=s;const pulse=(el,frames,duration=450)=>{if(!reduced)el.animate(frames,{duration,easing:'cubic-bezier(.2,.8,.2,1)'});};let open=false;q('.expand').onclick=()=>{open=!open;q('.receipt').classList.toggle('expanded',open);q('.expand').setAttribute('aria-expanded',open);q('.expand').textContent=open?'내역 접기 ↑':'상세 내역 ↓';q('.fold').inert=!open;state(open?'expanded':'initial')};})();
 </script>
 
+<script src="./_fit.js"></script>
 </body>
 </html>

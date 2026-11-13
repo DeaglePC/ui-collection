@@ -17,7 +17,9 @@ npm run build    # 生成 dist/
 npm run preview  # 预览构建结果，http://127.0.0.1:4173
 ```
 
-构建完成后，也可以直接双击根目录的「打开我.html」，或打开 `dist/index.html`。站点使用相对路径（Vite `base: './'`）和 Hash 路由，因此放在 GitHub Pages 的 `/ui-collection/` 子路径下也能正常打开。
+构建完成后，也可以直接双击根目录的「打开我.html」，或打开 `dist/index.html`。站点使用相对路径（Vite `base: './'`）和 Hash 路由，因此放在 GitHub Pages 的 `/ui-collection/` 子路径下也能打开。
+
+`npm run build` 会打两份脚本：GitHub Pages 用的是拆包后的 `dist/assets/app.js`（目录轻、源码按条目再加载）；用 `file://` 打开同一份 `dist/index.html` 时会改走单文件 `app.file.js`，因为浏览器不允许在本地文件上发模块请求。不需要本地服务器，也不会在 `file://` 下 `fetch`。
 
 ## 部署
 

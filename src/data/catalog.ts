@@ -1,4 +1,4 @@
-import rawItems from "./items.json";
+import rawItems from "./generated/meta.json";
 import rawSources from "./sources.json";
 import type { Item, SourceRecord } from "./types";
 

@@ -3,7 +3,10 @@ import { createRoot } from "react-dom/client";
 import { HashRouter } from "react-router";
 import App from "./App";
 import "./index.css";
-import "./vendor/mekai/theme.css";
+
+document.addEventListener("visibilitychange", () => {
+  document.documentElement.classList.toggle("page-hidden", document.hidden);
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
