@@ -54,13 +54,17 @@ export function Home() {
   }, [q, category, source, license]);
 
   useEffect(() => {
+    if (count >= filtered.length) return;
     const el = sentinel.current;
-    if (!el || count >= filtered.length) return;
+    if (!el) return;
+    const revealMore = () => setCount((value) => Math.min(filtered.length, value + PAGE));
+    const rect = el.getBoundingClientRect();
+    if (rect.top <= window.innerHeight + 480) revealMore();
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setCount((value) => Math.min(value + PAGE, filtered.length));
+        if (entry.isIntersecting) revealMore();
       },
-      { rootMargin: "720px" },
+      { rootMargin: "480px" },
     );
     observer.observe(el);
     return () => observer.disconnect();

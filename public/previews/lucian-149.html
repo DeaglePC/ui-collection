@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Merge Conflict · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "충돌 문장 병합", "category": "문서·데이터 편집", "summary": "내 문장과 팀 문장이 부딪친 곳을 골라 합치는 병합 화면입니다. 줄마다 한쪽을 고르면 그 자리에서 최종 문서가 완성됩니다.", "hint": "줄마다 남길 문장을 하나씩 골라 보세요", "shape": "square", "fluid": true, "hue": "#B48B29", "hue2": "#22C3A6", "tags": ["merge-conflict", "editing", "interactive"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u149 [data-part=\"0\"][data-branch=\"1\"]", 0], ["wait", 900], ["tap", ".u149 [data-part=\"1\"][data-branch=\"0\"]", 0], ["wait", 1700], ["reset"]] -->
+<!-- @en {"title": "Conflict sentence merge", "summary": "A merge view for lines where your version and your team’s collide. Choose one side for each line and the final document comes together in place.", "hint": "Choose which sentence to keep on each line","map":[
+  ["내 문장: 정원은 월요일에 연다", "Mine: The garden opens on Monday"],
+  ["팀 문장: 정원은 화요일에 연다", "Team: The garden opens on Tuesday"],
+  ["내 문장: 방문은 예약제로 운영한다", "Mine: Visits are by reservation"],
+  ["팀 문장: 방문은 자유롭게 할 수 있다", "Team: Visitors may drop in freely"],
+  ["정원은 월요일에 연다.", "The garden opens on Monday."],
+  ["정원은 화요일에 연다.", "The garden opens on Tuesday."],
+  ["방문은 예약제로 운영한다.", "Visits are by reservation."],
+  ["방문은 자유롭게 할 수 있다.", "Visitors may drop in freely."]
+]} -->
+<style>
+.u149{width:min(100%,370px);font-size:14px;line-height:1.6;color:var(--ux-ink)}.u149 button,.u149 input,.u149 textarea,.u149 select{font:inherit;color:inherit;max-width:100%;min-width:0}.u149 button{cursor:pointer;min-height:44px;border:1px solid var(--ux-line-2);border-radius:8px;background:var(--ux-surface);padding:8px 12px}.u149 input,.u149 textarea,.u149 select{border:1px solid var(--ux-line-2);border-radius:6px;background:var(--ux-surface);padding:8px 10px}.u149 .quiet{color:var(--ux-ink-2)}.u149 .primary{background:var(--ux-accent);color:var(--ux-accent-ink);border-color:transparent}.u149 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.u149 [hidden]{display:none!important}.u149 :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}@media(prefers-reduced-motion:reduce){.u149 *{animation:none!important;transition:none!important}}
+.u149{background:var(--ux-surface);padding:23px;border-radius:3px;box-shadow:0 8px 18px var(--ux-shadow)}.u149 .conflict{display:flex;flex-direction:column;gap:6px;padding:0 0 18px;margin:0 0 18px;border-bottom:1px solid var(--ux-line)}.u149 .conflict:last-child{padding:0;margin:0;border:0}.u149 .choice{text-align:left;border-radius:3px;border:0;border-left:2px solid var(--ux-line-2);background:var(--ux-surface-2);font:15px/1.8 Georgia,'Apple SD Gothic Neo',serif;min-height:49px;padding:8px 12px}.u149 .choice[aria-pressed="true"]{background:transparent;border-left-color:var(--ux-accent);padding-left:12px}.u149 .choice[aria-pressed="true"]:after{content:' ✓';color:var(--ux-accent);font:12px sans-serif}
+</style>
+<div class="ux u149"><div class="conflict"><button class="choice" data-part="0" data-branch="0" aria-pressed="false" aria-label="내 문장: 정원은 월요일에 연다">정원은 월요일에 연다.</button><button class="choice" data-part="0" data-branch="1" aria-pressed="false" aria-label="팀 문장: 정원은 화요일에 연다">정원은 화요일에 연다.</button></div><div class="conflict"><button class="choice" data-part="1" data-branch="0" aria-pressed="false" aria-label="내 문장: 방문은 예약제로 운영한다">방문은 예약제로 운영한다.</button><button class="choice" data-part="1" data-branch="1" aria-pressed="false" aria-label="팀 문장: 방문은 자유롭게 할 수 있다">방문은 자유롭게 할 수 있다.</button></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling,$=s=>root.querySelector(s),$$=s=>[...root.querySelectorAll(s)],esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const motion=(node,frames,opts={})=>{if(node?.animate&&!matchMedia('(prefers-reduced-motion:reduce)').matches)node.animate(frames,{duration:220,easing:'cubic-bezier(.2,.8,.2,1)',...opts})};const branches=[['정원은 월요일에 연다.','정원은 화요일에 연다.'],['방문은 예약제로 운영한다.','방문은 자유롭게 할 수 있다.']];let chosen={};function render(){$$('[data-part]').forEach(b=>{const p=b.dataset.part,c=chosen[p],yes=c===+b.dataset.branch;b.hidden=c!==undefined&&!yes;b.setAttribute('aria-pressed',String(yes))});root.dataset.merged=branches.map((p,i)=>chosen[i]===undefined?'':p[chosen[i]]).filter(Boolean).join(' ');root.dataset.resolved=Object.keys(chosen).length}$$('[data-part]').forEach(b=>b.onclick=()=>{const p=b.dataset.part,v=+b.dataset.branch;if(chosen[p]===v)delete chosen[p];else chosen[p]=v;render();motion(b,[{transform:'translateY(3px)'},{transform:'none'}])});render();})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scatter Selection · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "점으로 고르는 실험군", "category": "분석·데이터", "summary": "실험마다 비용과 정확도를 점으로 찍은 산점도입니다. 비용 필터를 켜면 기준을 넘는 점이 흐려지고, 점을 누르면 그 실험의 수치가 표시됩니다.", "hint": "오른쪽 위 필터를 누르거나 점 하나를 골라 보세요", "shape": "square", "fluid": true, "hue": "#725FC9", "hue2": "#FF6B8B", "tags": ["scatter-selection", "analytics"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u155 .filter", 0], ["wait", 1400], ["tap", ".u155 .point", 2], ["wait", 1600], ["reset"]] -->
+<!-- @en {"title": "Scatter plot picker", "summary": "A scatter plot with one dot per experiment, by cost and accuracy. Turn on the cost filter to fade dots above the limit, or press a dot to see that experiment’s numbers.", "hint": "Press the filter at the top right, or pick a dot","map":[
+  ["실험별 비용과 정확도", "Cost and accuracy by experiment"],
+  ["정확도 × 요청 비용", "Accuracy × cost per request"],
+  ["≤ 55원", "≤ 55¢"],
+  ["정확도 ↑", "Accuracy ↑"],
+  ["비용 / 요청 →", "Cost / request →"],
+  ["실험 ${i+1}, 비용 ${x[0]}원, 정확도 ${x[1]}%", "Experiment ${i+1}, cost ${x[0]}¢, accuracy ${x[1]}%"],
+  ["${filter?'55원 이하 · ':''}${filter?5:10}개 실험", "${filter?'≤ 55¢ · ':''}${filter?5:10} experiments"],
+  ["${d[selected][0]}원 /", "${d[selected][0]}¢ /"]
+]} -->
+<style>.u155{width:100%;max-width:390px;padding:16px;position:relative;font-size:13px;line-height:1.45}.u155 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:44px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}.u155 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}.u155 button:active{transform:scale(.97)}.u155 small{color:var(--ux-ink-2);font-size:12px}.u155 .status{margin-top:10px;color:var(--ux-ink-2);font-size:12px;line-height:1.5}.u155 .status b{color:var(--ux-ink)}.u155 .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.u155 svg{display:block;width:100%;overflow:visible}.u155 svg text{font-family:inherit;fill:var(--ux-ink-2);font-size:11px}.u155 .gridline{stroke:var(--ux-line-2);fill:none}.u155 input[type="range"]{width:100%;height:44px;accent-color:var(--ux-accent);margin:0}.u155 .inline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.u155{border-radius:15px;border-top:4px solid #537CD4}.u155 .plot{height:175px;position:relative;background:linear-gradient(90deg,var(--ux-line) 1px,transparent 1px),linear-gradient(var(--ux-line) 1px,transparent 1px);background-size:25% 25%;margin:6px 10px 0 26px;border-left:1px solid var(--ux-line-2);border-bottom:1px solid var(--ux-line-2)}.u155 .point{z-index:1;position:absolute;width:28px;height:28px;min-height:28px;padding:0;border:6px solid var(--ux-surface);border-radius:50%;background:#5981C5;transform:translate(-50%,50%);box-shadow:0 0 0 1px #5981C5;transition:left .4s,opacity .3s,box-shadow .3s}.u155 .point:active{transform:translate(-50%,50%) scale(.97)}.u155 .point[aria-pressed="true"]{background:#C27440;box-shadow:0 0 0 4px #C2744055;border-color:var(--ux-surface)}.u155 .region{pointer-events:none;position:absolute;inset:0 45% 0 0;background:#4EAFA922;border-right:1px dashed #249B82;opacity:0;transition:opacity .3s}.u155 .axis{display:flex;justify-content:space-between;margin-top:8px;color:var(--ux-ink-2)}.u155{min-height:0;box-shadow:none}.u155 .status{background:transparent;border:0;padding:0;min-height:0;height:auto}.u155 .inline{margin-bottom:8px}.u155{border:0;border-radius:0}.u155 .point{width:32px;height:32px;min-height:32px;border:9px solid var(--ux-page);box-shadow:none}.u155 .point[aria-pressed="true"]{border-color:var(--ux-page)}.u155 .plot{margin-left:16px;background:none;height:180px}.u155 .filter{border:0;background:var(--ux-surface-3)}.u155 .status{text-align:center}</style>
+<div class="ux u155"><div class="inline"><small>정확도 × 요청 비용</small><button class="filter" aria-pressed="false">≤ 55원</button></div><div class="plot" role="group" aria-label="실험별 비용과 정확도"><div class="region"></div></div><div class="axis"><small>정확도 ↑</small><small>비용 / 요청 →</small></div><div class="status" aria-live="polite"></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];const d=[[12,42],[19,74],[31,52],[43,85],[56,67],[65,78],[71,94],[84,88],[92,65],[37,94]];q('.plot').insertAdjacentHTML('beforeend',d.map((x,i)=>`<button class="point" data-i="${i}" aria-label="실험 ${i+1}, 비용 ${x[0]}원, 정확도 ${x[1]}%" style="left:${x[0]}%;bottom:${x[1]-20}%"></button>`).join(''));let filter=false,selected=-1;function draw(){qa('.point').forEach((b,i)=>{b.disabled=filter&&d[i][0]>55;b.style.opacity=filter&&d[i][0]>55?'.18':'1';b.setAttribute('aria-pressed',i===selected)});q('.region').style.opacity=filter?1:0;q('.filter').setAttribute('aria-pressed',filter);q('.status').innerHTML=selected<0?`${filter?'55원 이하 · ':''}${filter?5:10}개 실험`:`E-${selected+1} · <b>${d[selected][0]}원 / ${d[selected][1]}%</b>`;root.dataset.state=filter+':'+selected}qa('.point').forEach((b,i)=>b.onclick=()=>{selected=selected===i?-1:i;draw()});q('.filter').onclick=()=>{filter=!filter;selected=-1;draw()};draw();})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

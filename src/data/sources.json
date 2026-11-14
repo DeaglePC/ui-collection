@@ -7,8 +7,8 @@
     "license": "MIT",
     "licenseUrl": "https://github.com/Seokwoooo/lucian-uxui-prompt/blob/main/LICENSE",
     "author": "Seokwoooo",
-    "included": "精选 11 个可交互 HTML 元素（完整源码、提示词模板、实时预览）。原仓库 400 个全部 MIT。",
-    "excluded": "其余 389 个未整库搬入，避免堆砌；均可在源站和 GitHub 获取。",
+    "included": "Lucian 仓库中全部 MIT HTML 元素（约 400 个），含独立预览和可复制源码。",
+    "excluded": "没有跳过 MIT 元素。",
     "why": "仓库 LICENSE 为 MIT。复制的代码顶部保留原作者要求的来源与许可证注释。"
   },
   {
@@ -19,8 +19,8 @@
     "license": "MIT",
     "licenseUrl": "https://github.com/pbakaus/radiant/blob/main/LICENSE",
     "author": "Paul Bakaus",
-    "included": "精选 8 个独立 HTML 着色器（含完整源码与实时预览）。原仓库 88 个全部 MIT。",
-    "excluded": "其余未整库搬入。没有提示词（官方建议把源码交给编码代理去改）。",
+    "included": "static/ 下全部独立 HTML 着色器，含已有的 8 个。",
+    "excluded": "教程分步页（learn/）不是独立组件，没有逐页搬入。",
     "why": "GitHub LICENSE 为 MIT，Copyright (c) 2025 Paul Bakaus。"
   },
   {
@@ -31,8 +31,8 @@
     "license": "MIT（仅 9 个免费组件）",
     "licenseUrl": "https://foundry44.dev/license/",
     "author": "Foundry44",
-    "included": "全部 9 个免费组件：Text Scramble、Rolling Number、Spotlight Card、Line Reveal、Word Loop、Clip Reveal、Image Parallax、Sticky Header、Word Fill。含官方 JS 与 React 源码、实时预览。",
-    "excluded": "其余约 119 个 Pro 组件。Pro 许可明确禁止再分发或放入公开组件库。演示页的场景、文案和照片也不在 MIT 范围内。",
+    "included": "全部 9 个免费 MIT 组件。",
+    "excluded": "Pro 组件禁止再分发，没有收录。",
     "why": "官方许可页写明这 9 个组件（引擎、样式、React、脚本、AI 提示词）均为 MIT，Copyright (c) 2026 Foundry44。源码从官方公开的 /demos/*.js 与 /r/*.json 取得。"
   },
   {
@@ -43,8 +43,8 @@
     "license": "MIT",
     "licenseUrl": "https://github.com/aloksivastava1025-prog/cue-foundations/blob/main/LICENSE",
     "author": "Alok Srivastava",
-    "included": "精选 11 项：4 个带独立 HTML 预览，6 个带 React 源码与官方提示词，1 个仅提示词（Burn Reveal）。源码来自公开的 cue-foundations 仓库。",
-    "excluded": "主站 Cue+ 的付费组件不在 Cue Kit / 该仓库中，未收录。仓库其余组件未全部搬入。",
+    "included": "cue-foundations 里 foundations 目录的 HTML 与 TSX。",
+    "excluded": "Cue+ 付费组件不在该仓库。",
     "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Alok Srivastava (Cue)。官方 llms.txt 也写明 Cue Kit 是 MIT、无需注册。"
   },
   {
@@ -55,8 +55,8 @@
     "license": "MIT",
     "licenseUrl": "https://github.com/amunozdev/voiceorbs/blob/main/LICENSE",
     "author": "Alexis Munoz",
-    "included": "6 个纯 CSS 光球（Pulse、Glass、Aurora、Halo、Equalizer、Minimal）及共享的 7 状态协议源码，带实时预览（可切换状态）。",
-    "excluded": "其余约 14 个（含 WebGL / Three / @paper-design/shaders-react 的 Plasma、Dither、Nebula 等）未做站内预览，以免引入额外重依赖；它们同样是 MIT，可在 GitHub 取用。",
+    "included": "registry/orbe 下全部光球源码。原先 6 个纯 CSS 光球保留实时预览。",
+    "excluded": "依赖 Three / 外部着色器的光球只提供源码，避免每张卡片再开一个 WebGL 上下文。",
     "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Alexis Munoz。"
   },
   {
@@ -67,8 +67,8 @@
     "license": "MIT（53 个免费组件）",
     "licenseUrl": "https://github.com/mekai-ui/mekai-ui/blob/main/LICENSE",
     "author": "Mekai Games",
-    "included": "精选 13 个免费组件（文字、按钮、游戏 UI、Shader 背景、卡片），带完整源码与实时预览。源码来自公开 GitHub 仓库。",
-    "excluded": "其余免费组件未全部搬入。167 个里付费的那部分不在该公开仓库中，未收录。",
+    "included": "公开仓库 components/ui 的全部免费组件源码。原先 13 个保留实时预览。",
+    "excluded": "付费组件不在公开仓库。新增项以源码卡片呈现。",
     "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Mekai Games。README 写明这 53 个永久免费。"
   },
   {
@@ -79,8 +79,8 @@
     "license": "MIT（库代码）",
     "licenseUrl": "https://github.com/Jakubantalik/Libraries.dev/blob/main/LICENSE",
     "author": "Jakub Antalik",
-    "included": "7 个 MIT 库的用法示例与实时预览：Border Beam、Thinking Orbs、Metal FX、Liquid Gooey、Voice Glow、Bot Avatars、Image FX。通过官方 npm 包运行，不复制 Pro 内容。",
-    "excluded": "Pro Studio 导出、Pro 预设和食谱（付费许可）。模型文件（如 Magnet.mfxl）受 Libraries.dev Model License 约束，未收录。SwiftUI Distortion Waves 未做 Web 预览。",
+    "included": "原先 7 个 npm 库的实时预览，加上 voice-ring 与 magnetkit-web 的 MIT 说明。",
+    "excluded": "Pro Studio、Pro 预设、模型许可证文件，以及 Swift 的 distortion-waves。",
     "why": "仓库根 LICENSE 与各包 LICENSE 均为 MIT，Copyright (c) 2026 Jakub Antalik。官方说明商业项目可用这些库；Pro 内容另算。"
   },
   {
@@ -91,8 +91,8 @@
     "license": "MIT（114 个免费组件）",
     "licenseUrl": "https://crucibleui.com/license",
     "author": "Crucible",
-    "included": "精选 11 个免费组件（文字、AI 界面、按钮、加载），源码来自公开注册表 JSON，并做了实时预览。",
-    "excluded": "124 个 Pro 组件：官方明确「源码不会公开提供」，许可为付费单座许可，未收录。其余免费组件未全部搬入。",
+    "included": "注册表里 tier=free 且能拉到源码的组件。",
+    "excluded": "Pro 组件。拉取失败的免费项记在构建日志里。",
     "why": "官方许可页写明全部 114 个免费组件（从 crucibleui.com/r/<name>.json 安装的）以 MIT 发布，Copyright (c) 2026 Crucible (crucibleui.com)。公开的 registry.json 只列出免费项。"
   },
   {
@@ -103,8 +103,8 @@
     "license": "MIT",
     "licenseUrl": "https://github.com/NdekoCode/ndekoui/blob/main/LICENCE.md",
     "author": "ndekocode（LICENCE 同时保留 ibelick 的版权声明）",
-    "included": "精选 3 个与 AI 界面相关的源码文件（对话输入、Agent 状态），供阅读和再分发。因依赖该库内部设计系统，未做站内实时预览。",
-    "excluded": "其余约数百个组件、block 和模板未整库搬入。它们同样是 MIT，可用官方 shadcn 注册表或 MCP 安装。",
+    "included": "components/core 下的 TSX。",
+    "excluded": "网站外壳、图标和文档页。",
     "why": "仓库 LICENCE.md 为 MIT，Copyright (c) 2024 ibelick 与 Copyright (c) 2024-present ndekocode。"
   },
   {
@@ -115,8 +115,8 @@
     "license": "专有条款（免费可用，非标准开源许可）",
     "licenseUrl": "https://uibrik.com/terms",
     "author": "uibrik",
-    "included": "仅 1 张链接卡片，无源码。",
-    "excluded": "全部源码。条款写免费组件可用于个人和商业项目、安装后的源码可以改，但没有 MIT 等许可，也没有明确允许再分发到集合站。Pro 更是禁止再发布。部分免费组件在 21st.dev 另以 MIT 发布，本站未逐项核对，故一律不复制。",
+    "included": "仅链接。",
+    "excluded": "许可不是标准开源，不复制代码。",
     "why": "许可不清晰时只放链接，不复制代码。"
   },
   {
@@ -127,8 +127,8 @@
     "license": "专有条款（免费可复制，无标准开源许可）",
     "licenseUrl": "https://ditherui.dev/terms",
     "author": "DitherUI / indieninad",
-    "included": "3 张仅链接卡片（Prompt Input、Agent Thinking、Voice Orb），无源码。",
-    "excluded": "全部源码。免费项没有找到 LICENSE。All-Access（50 美元买断）明确禁止把源码再发布为组件库；Agent Run 等是 Pro 组件，未收录。",
+    "included": "仅链接。",
+    "excluded": "没有标准开源许可。",
     "why": "许可不清晰或禁止再分发时，只放链接。"
   },
   {
@@ -139,8 +139,8 @@
     "license": "专有条款；免费项「看，不要发布」",
     "licenseUrl": "https://motionprompts.dev/terms/",
     "author": "Vanguardia / Soluciones IA Procursa SAS",
-    "included": "1 张仅链接卡片，无提示词、无源码。",
-    "excluded": "全部提示词和源码。服务条款写明：免费项仅供评估，「看，不要发布」；付费许可禁止再分发提示词或源码，也禁止用来做竞争性的提示词或组件库。另禁止大规模自动抓取。",
+    "included": "仅链接。",
+    "excluded": "条款禁止再发布。",
     "why": "ToS 明确禁止再发布。"
   },
   {
@@ -151,8 +151,20 @@
     "license": "专有条款（个人和客户站点可用，禁止再分发模板/提示词）",
     "licenseUrl": "https://www.scrolltide.co/terms",
     "author": "Scrolltide",
-    "included": "3 张仅链接卡片（免费模板 Otis、SELENE、Glacier 的入口），无提示词、无源码。",
-    "excluded": "全部模板和提示词。条款允许用来做自己的或客户的网站，但禁止把模板或提示词再分发为产品、主题或提示词包。复制超过一个免费模板需要账号，本站未登录抓取。大部分库是付费的。",
+    "included": "仅链接。",
+    "excluded": "条款禁止再分发模板。",
     "why": "ToS 禁止再分发源模板和提示词。"
+  },
+  {
+    "id": "shaders",
+    "name": "Shaders",
+    "url": "https://shaders.com/",
+    "repo": "https://www.npmjs.com/package/shaders",
+    "license": "MIT",
+    "licenseUrl": "https://www.npmjs.com/package/shaders",
+    "author": "Shaders",
+    "included": "npm 包 shaders 中的 200 个免费 WebGPU 组件，带实时预览（不支持 WebGPU 时显示说明）和可复制的 React / vanilla 用法。",
+    "excluded": "Shaders Pro 的付费着色器、可视化编辑器导出和 MCP。它们不在免费包里。",
+    "why": "npm 包 shaders@4.0.7 的 license 字段为 MIT。llms-full.txt 列出的是免费组件目录。"
   }
 ]

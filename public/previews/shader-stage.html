@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shaders</title>
+    <style>
+      html, body, #root { margin: 0; height: 100%; background: #090807; color: #f4efe6; }
+      body { font-family: "Noto Sans SC", sans-serif; }
+      #root { display: grid; }
+      #root canvas { width: 100%; height: 100%; display: block; }
+      .note { place-self: center; max-width: 28rem; padding: 1.25rem; text-align: center; line-height: 1.6; color: #c9c2b6; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module">
+      import { createShader, isWebGPUSupported } from "../vendor/shaders/bundle.js";
+      const name = new URLSearchParams(location.search).get("name") || "";
+      const root = document.getElementById("root");
+      function note(text) {
+        root.innerHTML = '<p class="note"></p>';
+        root.querySelector("p").textContent = text;
+      }
+      const withTimeout = (promise, ms) =>
+        Promise.race([
+          promise,
+          new Promise((resolve) => setTimeout(() => resolve(null), ms)),
+        ]);
+      if (!name) note("缺少着色器名称。");
+      else if (!isWebGPUSupported() || !navigator.gpu) note("当前环境没有 WebGPU。这个效果的源码仍可在条目页复制。");
+      else {
+        const adapter = await withTimeout(navigator.gpu.requestAdapter().catch(() => null), 1200);
+        if (!adapter) note("当前环境没有可用的 WebGPU 适配器。这个效果的源码仍可在条目页复制。");
+        else {
+          const started = await withTimeout(
+            createShader(root, { components: [{ type: name }] }).then(() => true).catch((error) => error),
+            2500,
+          );
+          if (started instanceof Error || !root.querySelector("canvas")) {
+            note(
+              started instanceof Error
+                ? "无法启动「" + name + "」：" + started.message
+                : "WebGPU 没有在这个环境里画出「" + name + "」。源码仍可复制。",
+            );
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -3,6 +3,44 @@ import type { Item } from "@/data/types";
 import { PreviewMap } from "@/previews/index";
 
 const NEAR = "240px";
+const MAX_HEAVY = 6;
+const heavySlots = new Set<string>();
+const heavyQueue: Array<() => void> = [];
+
+function usePreviewSlot(id: string, needsSlot: boolean) {
+  const [granted, setGranted] = useState(false);
+  useEffect(() => {
+    if (!needsSlot) {
+      setGranted(false);
+      return;
+    }
+    let held = false;
+    let dead = false;
+    const acquire = () => {
+      if (dead) return;
+      if (heavySlots.size < MAX_HEAVY) {
+        heavySlots.add(id);
+        held = true;
+        setGranted(true);
+        return;
+      }
+      heavyQueue.push(acquire);
+    };
+    acquire();
+    return () => {
+      dead = true;
+      const index = heavyQueue.indexOf(acquire);
+      if (index >= 0) heavyQueue.splice(index, 1);
+      if (held) {
+        heavySlots.delete(id);
+        setGranted(false);
+        const next = heavyQueue.shift();
+        next?.();
+      }
+    };
+  }, [id, needsSlot]);
+  return granted;
+}
 
 function assetUrl(src: string): string {
   if (!src) return src;
@@ -61,6 +99,10 @@ export function PreviewFrame({
   const { ref, near } = useNearViewport();
   const h = height ?? (interactive ? item.iframeHeight || 440 : 220);
   const live = item.preview === "iframe" || item.preview === "react";
+  const heavy = Boolean(item.heavy);
+  const wantsLive = near && live && item.kind !== "link" && item.preview !== "code" && item.preview !== "none";
+  const slot = usePreviewSlot(item.id, heavy && wantsLive);
+  const showLive = wantsLive && (!heavy || slot);
 
   if (item.preview === "none" || item.kind === "link") {
     return (
@@ -82,8 +124,6 @@ export function PreviewFrame({
       </div>
     );
   }
-
-  const showLive = near && live;
 
   return (
     <div

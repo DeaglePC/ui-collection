@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Correlation Matrix · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "관계를 정렬하는 상관 행렬", "category": "분석·데이터", "summary": "네 변수 사이의 상관 계수를 색으로 나타낸 행렬입니다. 칸을 누르면 그 변수 쌍과 계수가 아래에 표시되고, 다시 누르면 선택이 풀립니다.", "hint": "행렬의 칸을 하나 눌러 보세요", "shape": "square", "fluid": true, "hue": "#517CDA", "hue2": "#FF6B8B", "tags": ["correlation-matrix", "analytics"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u162 .matrix button[data-r=\"2\"][data-c=\"3\"]", 0], ["wait", 1600], ["tap", ".u162 .matrix button[data-r=\"0\"][data-c=\"3\"]", 0], ["wait", 1600], ["tap", ".u162 .matrix button[data-r=\"0\"][data-c=\"3\"]", 0], ["wait", 1000]] -->
+<!-- @en {"title": "Correlation matrix", "summary": "A matrix that colors the correlation between four variables. Press a cell to show that pair and its coefficient below, and press again to clear it.", "hint": "Press one of the cells","map":[
+  ["변수 간 상관 계수", "Correlation between variables"],
+  ["['가격','사용','만족','이탈']", "['Price','Usage','CSAT','Churn']"],
+  ["${labels[r]}와 ${labels[c]} 상관 ${v}", "Correlation of ${labels[r]} and ${labels[c]}: ${v}"],
+  ["상관 계수 r", "Correlation r"]
+]} -->
+<style>.u162{width:100%;max-width:390px;padding:16px;position:relative;font-size:13px;line-height:1.45}.u162 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:44px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}.u162 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}.u162 button:active{transform:scale(.97)}.u162 small{color:var(--ux-ink-2);font-size:12px}.u162 .status{margin-top:10px;color:var(--ux-ink-2);font-size:12px;line-height:1.5}.u162 .status b{color:var(--ux-ink)}.u162 .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.u162 svg{display:block;width:100%;overflow:visible}.u162 svg text{font-family:inherit;fill:var(--ux-ink-2);font-size:11px}.u162 .gridline{stroke:var(--ux-line-2);fill:none}.u162 input[type="range"]{width:100%;height:44px;accent-color:var(--ux-accent);margin:0}.u162 .inline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.u162{border-radius:24px 5px 5px 24px;background:var(--ux-surface-2)}.u162 .matrix{display:grid;grid-template-columns:38px repeat(4,1fr);gap:5px;margin-top:20px}.u162 .matrix span{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ux-ink-2)}.u162 .matrix button{border:0;border-radius:5px;min-height:38px;padding:0;background:var(--col);color:var(--txt);font-variant-numeric:tabular-nums;animation:u162-cell .4s var(--ux-ease)}.u162 .matrix button[aria-pressed="true"]{outline:2px solid var(--ux-ink);outline-offset:1px}.u162 .status{font-size:13px}@keyframes u162-cell{from{transform:translateY(7px);opacity:.2}to{transform:translateY(0);opacity:1}}.u162{min-height:0;box-shadow:none}.u162 .status{background:transparent;border:0;padding:0;min-height:0;height:auto}.u162 .inline{margin-bottom:8px}.u162{background:transparent;border-radius:0}.u162 .matrix{margin-top:0}.u162 .matrix button{min-height:48px;font-size:12px}.u162 .matrix span{font-size:12px}.u162 .status{text-align:center}</style>
+<div class="ux u162"><div class="matrix" role="group" aria-label="변수 간 상관 계수"></div><div class="status" aria-live="polite"></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling,q=s=>root.querySelector(s),labels=['가격','사용','만족','이탈'],data=[[1,.25,.12,-.31],[.25,1,.81,-.72],[.12,.81,1,-.88],[-.31,-.72,-.88,1]];let selected='';q('.matrix').innerHTML='<span></span>'+labels.map(v=>`<span>${v}</span>`).join('')+data.map((row,r)=>`<span>${labels[r]}</span>`+row.map((v,c)=>`<button data-r="${r}" data-c="${c}" style="--col:${r===c?'var(--ux-surface-3)':Math.abs(v)>.5?(v<0?'#865B49':'#426F90'):'var(--ux-surface)'};--txt:${r!==c&&Math.abs(v)>.5?'white':'var(--ux-ink)'}" aria-label="${labels[r]}와 ${labels[c]} 상관 ${v}">${v.toFixed(2)}</button>`).join('')).join('');function draw(){root.querySelectorAll('.matrix button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.r+':'+b.dataset.c===selected));let pair=selected.split(':').map(Number);q('.status').textContent=selected?`${labels[pair[0]]} × ${labels[pair[1]]} · ${data[pair[0]][pair[1]].toFixed(2)}`:'상관 계수 r';root.dataset.state=selected||'none'}q('.matrix').onclick=e=>{const b=e.target.closest('button');if(b){let pair=b.dataset.r+':'+b.dataset.c;selected=selected===pair?'':pair;draw()}};draw()})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

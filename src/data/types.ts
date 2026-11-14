@@ -37,6 +37,8 @@ export interface Item {
   hasPrompt: boolean;
   install: string;
   notice: string;
+  /** WebGPU/WebGL preview. Only a few of these run at once. */
+  heavy?: boolean;
 }
 
 export interface ItemSource {

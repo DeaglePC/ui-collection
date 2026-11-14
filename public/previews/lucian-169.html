@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schema Relationships · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "테이블을 잇는 관계 지도", "category": "분석·데이터", "summary": "테이블 사이의 키 관계를 선으로 이은 스키마 지도입니다. 테이블을 누르면 연결된 관계만 강조되고, 아래에 어떤 키로 이어지는지 표시됩니다.", "hint": "orders 테이블을 눌러 보세요", "shape": "square", "fluid": true, "hue": "#CD6E39", "hue2": "#FF6B8B", "tags": ["schema-relationships", "analytics"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u169 .table.orders", 0], ["wait", 1600], ["tap", ".u169 .table.users", 0], ["wait", 1600], ["tap", ".u169 .table.users", 0], ["wait", 1000]] -->
+<!-- @en {"title": "Table relation map", "summary": "A schema map that draws the key relationships between tables. Press a table to highlight only its links, with the keys that connect them shown below.", "hint": "Press the orders table","map":[
+  ["orders → users / order_items · 두 관계", "orders → users / order_items · 2 relations"],
+  ["1:N · 외래 키 관계", "1:N · foreign key relations"]
+]} -->
+<style>.u169{width:100%;max-width:390px;padding:16px;position:relative;font-size:13px;line-height:1.45}.u169 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:44px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}.u169 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}.u169 button:active{transform:scale(.97)}.u169 small{color:var(--ux-ink-2);font-size:12px}.u169 .status{margin-top:10px;color:var(--ux-ink-2);font-size:12px;line-height:1.5}.u169 .status b{color:var(--ux-ink)}.u169 .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.u169 svg{display:block;width:100%;overflow:visible}.u169 svg text{font-family:inherit;fill:var(--ux-ink-2);font-size:11px}.u169 .gridline{stroke:var(--ux-line-2);fill:none}.u169 input[type="range"]{width:100%;height:44px;accent-color:var(--ux-accent);margin:0}.u169 .inline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.u169{border-radius:8px;background:var(--ux-surface-2);padding:16px}.u169 .schema{height:222px;position:relative;background-image:radial-gradient(var(--ux-line-2) 1px,transparent 1px);background-size:13px 13px;border-radius:8px}.u169 .schema svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.u169 .schema path{stroke:var(--ux-ink-3);stroke-width:2;fill:none;transition:stroke .4s,stroke-width .4s}.u169 .schema path.active{stroke:var(--ux-accent);stroke-width:3;stroke-dasharray:5 4;animation:u169-link 1s linear infinite}.u169 .table{position:absolute;width:105px;padding:0;border-radius:8px;background:var(--ux-surface);box-shadow:0 5px 12px var(--ux-shadow);overflow:hidden;text-align:left;min-height:70px}.u169 .table b{display:block;padding:8px;background:var(--ux-surface-3);font-size:11px}.u169 .table small{display:block;padding:5px 8px;font-size:10px}.u169 .table[aria-pressed="true"]{border-color:var(--ux-accent);transform:translateY(-3px)}.u169 .table[aria-pressed="true"] b{background:var(--ux-accent-soft)}.u169 .table.users{left:4%;top:26px}.u169 .table.orders{right:4%;top:70px}.u169 .table.items{left:9%;top:136px}.u169 .status{min-height:30px}@keyframes u169-link{to{stroke-dashoffset:-18}}.u169{min-height:0;box-shadow:none}.u169 .status{background:transparent;border:0;padding:0;min-height:0;height:auto}.u169 .inline{margin-bottom:8px}.u169{background:transparent;border-radius:0}.u169 .schema{background:none;height:214px}.u169 .table{box-shadow:none;min-height:64px;width:112px;border-color:var(--ux-line-2)}.u169 .table b,.u169 .table small{font-size:12px}.u169 .table b{background:var(--ux-surface-2)}.u169 .schema path.active{stroke-dasharray:none;animation:none}.u169 .status{margin-top:8px;font-size:12px}</style>
+<div class="ux u169"><div class="schema"><svg viewBox="0 0 300 222" aria-hidden="true"><path data-link="0" d="M96 61H162V108H200"/><path data-link="1" d="M94 170H160V115H200"/></svg><button class="table users" data-k="0"><b>users</b><small>id · PK</small></button><button class="table orders" data-k="1"><b>orders</b><small>id · PK</small><small>user_id · FK</small></button><button class="table items" data-k="2"><b>order_items</b><small>order_id · FK</small></button></div><div class="status" aria-live="polite"></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];const text=['users.id → orders.user_id · 1:N','orders → users / order_items · 두 관계','orders.id → order_items.order_id · 1:N'];function choose(k){qa('.table').forEach((b,i)=>b.setAttribute('aria-pressed',i===k));qa('.schema path').forEach((p,i)=>p.classList.toggle('active',k===1||k===0&&i===0||k===2&&i===1));q('.status').innerHTML=k<0?'1:N · 외래 키 관계':text[k];root.dataset.state=String(k)}qa('.table').forEach((b,i)=>b.onclick=()=>choose(root.dataset.state===String(i)?-1:i));choose(-1);})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

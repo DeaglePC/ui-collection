@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circular-reveal dark mode · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"누른 자리에서 원으로 번지는 다크 모드","category":"내비게이션","summary":"사이트 헤더의 해 아이콘을 누르면 그 버튼 자리에서 어두운 화면이 동그랗게 번져 나가 페이지 전체를 덮고, 아이콘은 해에서 달로 돌며 바뀝니다. 다시 누르면 밝은 화면이 같은 자리에서 원으로 번지며 돌아옵니다. 두 테마의 글자·카드·그래프 색이 모두 함께 바뀝니다.","hint":"오른쪽 위 해·달 버튼을 눌러 테마를 바꿔 보세요","shape":"square","tags":["dark-mode","theme","toggle","circular-reveal","navigation"]} -->
+<!-- @demo [["wait",1100],["tap",".u219-tg",0,{"after":1800}],["tap",".u219-tg",0,{"after":1800}]] -->
+<!-- @en {"title":"Circular-reveal dark mode","summary":"Press the sun icon in the site header and a dark screen spreads out in a circle from that button until it covers the whole page, as the icon spins from sun to moon. Press it again and the light screen spreads back from the same spot. Text, cards and charts all change color with the theme.","hint":"Press the sun/moon button in the top right to switch themes","map":[
+  [">대시보드<", ">Dashboard<"],
+  [">보고서<", ">Reports<"],
+  [">10월 요약<", ">October summary<"],
+  [">방문<", ">Visits<"],
+  [">가입<", ">Sign-ups<"],
+  [">전환<", ">Conversion<"],
+  [">주간 방문 추이<", ">Weekly visits<"],
+  ["'다크 모드로 바꾸기'", "'Switch to dark mode'"],
+  ["'라이트 모드로 바꾸기'", "'Switch to light mode'"]
+]} -->
+<style>
+.u219{position:relative;width:340px;height:340px;border-radius:30px;overflow:hidden;box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong)}
+.u219-pg{position:absolute;inset:0;padding:14px 16px;background:var(--bg);color:var(--fg);--bg:#F7F7FA;--fg:#14151A;--card:#fff;--mut:#7A7D8C;--ln:#E7E8EE;--ac:#4F46E5}
+.u219-pg.is-dark{--bg:#0D0E14;--fg:#ECEDF5;--card:#171925;--mut:#8C90A6;--ln:#262938;--ac:#A5B4FC}
+.u219-dk{clip-path:circle(0px at var(--cx,300px) var(--cy,30px));transition:clip-path .7s cubic-bezier(.65,0,.35,1);pointer-events:none}
+.u219.is-on .u219-dk{clip-path:circle(520px at var(--cx,300px) var(--cy,30px));pointer-events:auto}
+.u219-nv{display:flex;align-items:center;gap:12px;height:32px;font-size:11px;font-weight:750;color:var(--mut)}
+.u219-nv b{margin-right:auto;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;color:var(--fg)}
+.u219-nv b i{width:14px;height:14px;border-radius:50%;background:var(--ac)}
+.u219-tg{width:32px;height:32px;border:0;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1px var(--ln);color:var(--fg);display:grid;place-items:center;cursor:pointer}
+.u219-tg:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.u219-tg svg{width:16px;height:16px;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.u219-dk .u219-tg svg{transform:rotate(-90deg)}
+.u219-h{margin:16px 0 10px;font-size:20px;font-weight:900;letter-spacing:-.035em}
+.u219-kp{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.u219-kp div{padding:9px 10px;border-radius:12px;background:var(--card);box-shadow:inset 0 0 0 1px var(--ln)}
+.u219-kp small{display:block;font-size:9.5px;font-weight:800;color:var(--mut)}
+.u219-kp b{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums}
+.u219-ch{margin-top:8px;padding:10px 12px;border-radius:14px;background:var(--card);box-shadow:inset 0 0 0 1px var(--ln)}
+.u219-ch small{font-size:9.5px;font-weight:800;color:var(--mut)}
+.u219-ch svg{display:block;width:100%;height:112px;margin-top:4px}
+@media (prefers-reduced-motion: reduce){.u219-dk{transition:none}}
+</style>
+<div class="ux u219">
+  <div class="u219-pg u219-lt"></div>
+  <div class="u219-pg u219-dk is-dark" aria-hidden="true"></div>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var lt = root.querySelector('.u219-lt'), dk = root.querySelector('.u219-dk');
+  var SUN = '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><g stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 1.5v1.4M8 13.1v1.4M1.5 8h1.4M13.1 8h1.4M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/></g></svg>';
+  var MOON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 9.8A5.6 5.6 0 0 1 6.2 2.5a5.6 5.6 0 1 0 7.3 7.3z" fill="currentColor"/></svg>';
+  // 같은 페이지를 밝은 판과 어두운 판 두 장으로 만들고, 어두운 판을 원으로 열고 닫습니다
+  function page(dark) {
+    return '<div class="u219-nv"><b><i></i>Pulse</b><span>대시보드</span><span>보고서</span><button type="button" class="u219-tg">' + (dark ? MOON : SUN) + '</button></div>' +
+      '<h3 class="u219-h">10월 요약</h3><div class="u219-kp"><div><small>방문</small><b>18.4k</b></div><div><small>가입</small><b>1,206</b></div><div><small>전환</small><b>6.5%</b></div></div>' +
+      '<div class="u219-ch"><small>주간 방문 추이</small><svg viewBox="0 0 280 112" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--ac)" stop-opacity=".35"/><stop offset="1" stop-color="var(--ac)" stop-opacity="0"/></linearGradient></defs><path d="M0 84 C30 70 50 92 80 66 S130 40 160 54 S220 20 280 26 L280 112 L0 112 Z" fill="url(#g)"/><path d="M0 84 C30 70 50 92 80 66 S130 40 160 54 S220 20 280 26" fill="none" stroke="var(--ac)" stroke-width="2.5"/></svg></div>';
+  }
+  lt.innerHTML = page(false); dk.innerHTML = page(true);
+  // 그라디언트 id가 페이지 안에서 겹치지 않게 바꿉니다
+  var uid = 'u219' + Math.random().toString(36).slice(2, 7);
+  [lt, dk].forEach(function (pg, i) { var g = pg.querySelector('linearGradient'); g.id = uid + i; pg.querySelector('path').setAttribute('fill', 'url(#' + uid + i + ')'); });
+  var on = false, T = [lt.querySelector('.u219-tg'), dk.querySelector('.u219-tg')];
+  function sync() {
+    root.classList.toggle('is-on', on); dk.setAttribute('aria-hidden', !on); lt.setAttribute('aria-hidden', on);
+    T[0].tabIndex = on ? -1 : 0; T[1].tabIndex = on ? 0 : -1;
+    T.forEach(function (t) { t.setAttribute('aria-label', on ? '라이트 모드로 바꾸기' : '다크 모드로 바꾸기'); t.setAttribute('aria-pressed', on); });
+  }
+  T.forEach(function (t) {
+    t.addEventListener('click', function () {
+      // 원의 중심 = 누른 버튼의 가운데
+      var r = root.getBoundingClientRect(), b = t.getBoundingClientRect(), k = root.offsetWidth / (r.width || 1);
+      root.style.setProperty('--cx', ((b.left + b.width / 2 - r.left) * k).toFixed(0) + 'px'); root.style.setProperty('--cy', ((b.top + b.height / 2 - r.top) * k).toFixed(0) + 'px');
+      on = !on; sync(); (on ? T[1] : T[0]).focus({ preventScroll: true });
+    });
+  });
+  sync();
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

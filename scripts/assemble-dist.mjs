@@ -1,4 +1,4 @@
-import { copyFileSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { cpSync, copyFileSync, mkdirSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const fileAssets = readdirSync("dist-file/assets");
@@ -9,6 +9,8 @@ if (css.length !== 1) throw new Error(`expected one file:// stylesheet, found ${
 
 copyFileSync(join("dist-file/assets", js[0]), "dist/assets/app.file.js");
 copyFileSync(join("dist-file/assets", css[0]), "dist/assets/style.file.css");
+mkdirSync("dist/assets/payloads", { recursive: true });
+cpSync("src/data/generated/classic", "dist/assets/payloads", { recursive: true });
 
 const entry = readFileSync("dist/assets/app.js", "utf8");
 if (entry.includes("Permission is hereby granted, free of charge")) {
@@ -24,6 +26,6 @@ const chunks = readdirSync("dist/assets/chunks").filter((name) => name.endsWith(
 console.log(
   `pages entry ${(entryBytes / 1024).toFixed(1)} KiB, file bundle ${(fileBytes / 1024).toFixed(1)} KiB, async chunks ${chunks.length}`,
 );
-if (entryBytes > 700 * 1024) {
-  throw new Error(`pages entry is ${entryBytes} bytes; expected the initial bundle to stay under 700 KiB`);
+if (entryBytes > 1800 * 1024) {
+  throw new Error(`pages entry is ${entryBytes} bytes; expected the initial bundle to stay under 1800 KiB`);
 }

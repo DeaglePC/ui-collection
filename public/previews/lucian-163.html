@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bullet Target · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "기준을 넘어가는 실적 눈금", "category": "분석·데이터", "summary": "실적 막대와 목표 눈금을 한 줄에 겹친 불릿 차트입니다. 목표 슬라이더를 움직이면 눈금이 옮겨 가고, 목표 대비 차이와 달성률이 다시 계산됩니다.", "hint": "목표 기준 슬라이더를 움직여 보세요", "shape": "square", "fluid": true, "hue": "#B4598E", "hue2": "#FF6B8B", "tags": ["bullet-target", "analytics"]} -->
+<!-- @demo [["wait", 500], ["set", ".u163 .range", 0, "80", 1500], ["set", ".u163 .range", 0, "60", 1500], ["set", ".u163 .range", 0, "70", 1000]] -->
+<!-- @en {"title": "Bullet chart target", "summary": "A bullet chart that layers the actual bar and the target mark on one line. Move the target slider and the mark shifts while the gap and attainment recalculate.", "hint": "Move the target slider","map":[
+  ["실적 <b>74</b>백만 원", "Actual <b>$74K</b>"],
+  ["분기 목표 백만 원", "Quarterly target in $K"],
+  ["목표 기준", "Target"],
+  ["목표 대비 <b>${74-v>=0?'+':''}${74-v}백만 원</b>", "vs target <b>${74-v>=0?'+':'−'}$${Math.abs(74-v)}K</b>"]
+]} -->
+<style>.u163{width:100%;max-width:390px;padding:16px;position:relative;font-size:13px;line-height:1.45}.u163 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:44px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}.u163 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}.u163 button:active{transform:scale(.97)}.u163 small{color:var(--ux-ink-2);font-size:12px}.u163 .status{margin-top:10px;color:var(--ux-ink-2);font-size:12px;line-height:1.5}.u163 .status b{color:var(--ux-ink)}.u163 .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.u163 svg{display:block;width:100%;overflow:visible}.u163 svg text{font-family:inherit;fill:var(--ux-ink-2);font-size:11px}.u163 .gridline{stroke:var(--ux-line-2);fill:none}.u163 input[type="range"]{width:100%;height:44px;accent-color:var(--ux-accent);margin:0}.u163 .inline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.u163{background:transparent;box-shadow:none;padding:22px 18px}.u163 .metric{display:flex;align-items:end;gap:8px;margin-top:18px}.u163 .metric strong{font-size:40px;font-weight:850;letter-spacing:-.06em}.u163 .bullet{height:57px;position:relative;margin-top:24px;border-radius:3px;background:linear-gradient(90deg,var(--ux-surface-3) 0 50%,color-mix(in srgb,var(--ux-accent) 25%,var(--ux-surface)) 50% 75%,color-mix(in srgb,var(--ux-accent) 45%,var(--ux-surface)) 75%)}.u163 .actual{position:absolute;height:17px;top:20px;left:0;width:74%;background:var(--ux-ink);border-radius:0 3px 3px 0}.u163 .target{position:absolute;width:3px;top:-7px;bottom:-7px;background:var(--ux-danger);left:70%;transition:left .4s}.u163 .target::before{content:attr(data-value);position:absolute;top:-17px;left:-10px;font-size:11px;color:var(--ux-danger)}.u163 .ticks{display:flex;justify-content:space-between;margin:12px 0 22px;color:var(--ux-ink-2)}.u163 label{display:block;font-size:12px;color:var(--ux-ink-2)}.u163{min-height:0;box-shadow:none}.u163 .status{background:transparent;border:0;padding:0;min-height:0;height:auto}.u163 .inline{margin-bottom:8px}.u163{padding:16px}.u163 .actual-label{font-size:13px;color:var(--ux-ink-2)}.u163 .actual-label b{font-size:22px;color:var(--ux-ink);margin:0 3px}.u163 .bullet{margin-top:32px;height:44px}.u163 .actual{top:14px}.u163 .ticks{margin:10px 0}.u163 label{font-size:12px}.u163 .status{margin-top:2px}</style>
+<div class="ux u163"><div class="actual-label">실적 <b>74</b>백만 원</div><div class="bullet"><div class="actual"></div><div class="target" data-value="70"></div></div><div class="ticks"><small>0</small><small>50</small><small>75</small><small>100</small></div><label>목표 기준 <input class="range" type="range" min="40" max="100" step="2" value="70" aria-label="분기 목표 백만 원"></label><div class="status" aria-live="polite"></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];function draw(){const v=+q('.range').value;q('.target').style.left=v+'%';q('.target').dataset.value=v;q('.status').innerHTML=`목표 대비 <b>${74-v>=0?'+':''}${74-v}백만 원</b> · ${(74/v*100).toFixed(1)}%`;root.dataset.state=String(v)}q('.range').oninput=draw;draw();})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>
