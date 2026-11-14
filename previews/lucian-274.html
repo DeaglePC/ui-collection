@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button that morphs into a form · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"입력창으로 변신하는 버튼","category":"폼·입력","summary":"‘뉴스레터 받기’ 버튼을 누르면 버튼이 옆으로 늘어나며 이메일 입력창과 보내기 버튼으로 바뀝니다. 보내면 전체가 동그라미로 줄어들어 테두리가 돌다가 체크가 그려지고, 다시 ‘구독했어요’ 알약으로 펴집니다. 형식이 틀리면 입력창이 고개를 젓듯 흔들립니다.","hint":"버튼을 눌러 이메일을 넣고 보내 보세요. Esc로 닫습니다","shape":"square","tags":["morph","button","form","newsletter","feedback"]} -->
+<!-- @demo [["wait",800],["tap",".u274-lb",0,{"after":700}],["type",".u274-in",0,"hello@lucian",70],["tap",".u274-go",0,{"after":1100}],["type",".u274-in",0,".dev",80],["tap",".u274-go",0,{"after":3200}],["tap",".u274-re",0,{"after":900}]] -->
+<!-- @en {"title":"Button that morphs into a form","summary":"Press ‘Get the newsletter’ and the button stretches sideways into an email field with a send button. Send it and the whole thing shrinks into a circle whose ring spins before a check is drawn, then it opens back out into a ‘Subscribed’ pill. If the format is wrong, the field shakes its head.","hint":"Press the button, enter an email and send it. Esc closes it","map":[
+  [">뉴스레터 받기<", ">Get the newsletter<"],
+  ["placeholder=\"이메일 주소\"", "placeholder=\"Email address\""],
+  ["aria-label=\"이메일 주소\"", "aria-label=\"Email address\""],
+  ["aria-label=\"보내기\"", "aria-label=\"Send\""],
+  [">구독했어요<", ">Subscribed<"],
+  [">매주 목요일, 디자인 이야기 한 통<", ">One design letter every Thursday<"],
+  [">다시 해 보기<", ">Try again<"],
+  ["'이메일 형식을 확인해 주세요'", "'Please check the email format'"],
+  ["'구독 완료'", "'Subscribed'"]
+]} -->
+<style>
+.u274{position:relative;width:340px;height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;border-radius:28px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden}
+.u274-k{margin:0;font-size:13.5px;font-weight:700;color:var(--ux-ink-2)}
+.u274-sh{position:relative;width:var(--w,200px);height:54px;border:0;padding:0;border-radius:27px;background:var(--ux-ink);color:var(--ux-page);overflow:hidden;transition:width .6s cubic-bezier(.3,1.25,.4,1),background-color .4s;cursor:pointer}
+.u274[data-s="form"] .u274-sh{--w:300px;background:var(--ux-surface-2);box-shadow:inset 0 0 0 1.5px var(--ux-line-2);cursor:default}
+.u274[data-s="busy"] .u274-sh,.u274[data-s="ok"] .u274-sh{--w:54px;background:var(--ux-ink)}
+.u274[data-s="done"] .u274-sh{--w:170px;background:var(--ux-mint);cursor:default}
+.u274-lb,.u274-fm,.u274-sp,.u274-dn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s;pointer-events:none}
+.u274[data-s="idle"] .u274-lb,.u274[data-s="form"] .u274-fm,.u274[data-s="busy"] .u274-sp,.u274[data-s="ok"] .u274-sp,.u274[data-s="done"] .u274-dn{opacity:1;pointer-events:auto;transition-delay:.18s}
+.u274-lb{font-size:15px;font-weight:800;gap:8px}
+.u274-lb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.u274-fm{justify-content:space-between;padding:0 5px 0 18px}
+.u274-in{flex:1;min-width:0;height:100%;border:0;background:none;outline:none;font-size:15px;color:var(--ux-ink)}
+.u274-go{flex:none;width:44px;height:44px;border:0;border-radius:50%;display:grid;place-items:center;background:var(--ux-ink);color:var(--ux-page);transition:transform .35s var(--ux-spring)}
+.u274-go:active{transform:scale(.9)}
+.u274-go svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.u274-sp svg{width:54px;height:54px}
+.u274-sp .r{fill:none;stroke:var(--ux-page);stroke-width:3;stroke-linecap:round;stroke-dasharray:40 200;transform-origin:27px 27px;animation:u274-rot .8s linear infinite}
+.u274[data-s="ok"] .u274-sp .r{stroke-dasharray:200 0;animation:none;transition:stroke-dasharray .35s}
+.u274-sp .c{fill:none;stroke:var(--ux-page);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .35s var(--ux-ease) .2s}
+.u274[data-s="ok"] .u274-sp .c{stroke-dashoffset:0}
+@keyframes u274-rot{to{transform:rotate(360deg)}}
+.u274-dn{gap:6px;font-size:15px;font-weight:800;color:var(--ux-accent-ink)}
+.u274-dn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.u274.is-bad .u274-sh{animation:u274-no .45s}
+@keyframes u274-no{20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+/* 안내 문구와 다시 해 보기는 묶음 밖에 띄워, 보이는 제목과 버튼이 카드 세로 가운데에 오게 합니다 */
+.u274-msg{position:absolute;left:0;right:0;top:calc(50% + 58px);height:16px;margin:0;text-align:center;font-size:12px;font-weight:700;color:var(--ux-danger)}
+.u274-re{position:absolute;left:50%;top:calc(50% + 52px);transform:translateX(-50%);height:30px;padding:0 12px;border:0;border-radius:999px;background:none;font-size:12px;font-weight:700;color:var(--ux-ink-3);opacity:0;pointer-events:none;transition:opacity .3s}
+.u274[data-s="done"] .u274-re{opacity:1;pointer-events:auto}
+</style>
+<div class="ux u274" data-s="idle">
+  <p class="u274-k">매주 목요일, 디자인 이야기 한 통</p>
+  <div class="u274-sh" role="group">
+    <button class="u274-lb" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/></svg>뉴스레터 받기</button>
+    <div class="u274-fm"><input class="u274-in" type="email" placeholder="이메일 주소" aria-label="이메일 주소" autocomplete="email"><button class="u274-go" type="button" aria-label="보내기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+    <div class="u274-sp" aria-hidden="true"><svg viewBox="0 0 54 54"><circle class="r" cx="27" cy="27" r="21"/><path class="c" d="M19 27.5l5.5 5.5L35 22"/></svg></div>
+    <div class="u274-dn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>구독했어요</div>
+  </div>
+  <p class="u274-msg" role="status"></p>
+  <button class="u274-re" type="button">다시 해 보기</button>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var input = root.querySelector('.u274-in'), msg = root.querySelector('.u274-msg');
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function state(s) { root.setAttribute('data-s', s); }
+  root.querySelector('.u274-lb').addEventListener('click', function () {
+    state('form'); msg.textContent = '';
+    setTimeout(function () { input.focus(); }, 350);
+  });
+  function send() {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(input.value.trim())) {
+      msg.textContent = '이메일 형식을 확인해 주세요';
+      root.classList.remove('is-bad'); void root.offsetWidth; root.classList.add('is-bad');
+      return;
+    }
+    msg.textContent = '';
+    // 버튼이 동그라미로 줄어 기다린 뒤 체크, 그다음 완료 알약으로 펴집니다
+    state('busy');
+    setTimeout(function () {
+      if (!root.isConnected) return;
+      state('ok');
+      setTimeout(function () { if (root.isConnected) { state('done'); msg.textContent = ''; root.querySelector('.u274-dn').setAttribute('aria-label', '구독 완료'); } }, rm ? 100 : 900);
+    }, rm ? 100 : 1100);
+  }
+  root.querySelector('.u274-go').addEventListener('click', send);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); send(); }
+    if (e.key === 'Escape') { state('idle'); msg.textContent = ''; root.querySelector('.u274-lb').focus(); }
+  });
+  root.addEventListener('animationend', function () { root.classList.remove('is-bad'); });
+  root.querySelector('.u274-re').addEventListener('click', function () { input.value = ''; state('idle'); });
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

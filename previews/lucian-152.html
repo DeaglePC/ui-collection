@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treemap Drilldown · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "폴더 안으로 커지는 면적 지도", "category": "분석·데이터", "summary": "저장 공간을 폴더 크기만큼의 면적으로 나눠 보여 주는 트리맵입니다. 폴더 타일을 누르면 그 안의 항목으로 들어가고, 화살표로 다시 상위로 돌아옵니다.", "hint": "‘미디어’ 타일을 눌러 들어갔다가 왼쪽 위 화살표로 돌아와 보세요", "shape": "square", "fluid": true, "hue": "#517CDA", "hue2": "#FF6B8B", "tags": ["treemap-drilldown", "analytics"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u152 .map button:first-child", 0], ["wait", 1900], ["reset"]] -->
+<!-- @en {"title": "Drill-down treemap", "summary": "A treemap that splits storage into areas sized by each folder. Press a folder tile to go inside, and use the arrow to climb back up.", "hint": "Press the “Media” tile to go in, then use the top-left arrow to come back","map":[
+  ["전체 저장소 / 미디어", "All storage / Media"],
+  ["전체 저장소", "All storage"],
+  ["상위 폴더", "Parent folder"],
+  ["영상 원본", "Raw video"],
+  ["사진", "Photos"],
+  ["음원", "Audio"],
+  ["미디어", "Media"],
+  ["프로젝트", "Projects"],
+  ["문서", "Documents"]
+]} -->
+<style>.u152{width:100%;max-width:390px;padding:16px;position:relative;font-size:13px;line-height:1.45}.u152 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:44px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}.u152 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}.u152 button:active{transform:scale(.97)}.u152 small{color:var(--ux-ink-2);font-size:12px}.u152 .status{margin-top:10px;color:var(--ux-ink-2);font-size:12px;line-height:1.5}.u152 .status b{color:var(--ux-ink)}.u152 .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.u152 svg{display:block;width:100%;overflow:visible}.u152 svg text{font-family:inherit;fill:var(--ux-ink-2);font-size:11px}.u152 .gridline{stroke:var(--ux-line-2);fill:none}.u152 input[type="range"]{width:100%;height:44px;accent-color:var(--ux-accent);margin:0}.u152 .inline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.u152{padding:0;overflow:hidden}.u152 .head{padding:18px 18px 0}.u152 .path{padding:0 18px 10px;display:flex;align-items:center;gap:8px;color:var(--ux-ink-2)}.u152 .map{height:205px;display:grid;grid-template-columns:1.35fr 1fr;grid-template-rows:1.1fr .9fr;gap:5px;padding:0 12px}.u152 .map button{color:#fff;border:0;display:flex;flex-direction:column;justify-content:end;align-items:start;padding:14px;border-radius:7px;transition:transform .35s,background .4s;font-weight:700}.u152 .map button:first-child{grid-row:span 2;background:#357A64}.u152 .map button:nth-child(2){background:#4F6DA5}.u152 .map button:nth-child(3){background:#B06447}.u152 .map small{color:#fff;font-weight:400;margin-top:5px}.u152 .status{padding:0 18px}.u152 .back{border:0;background:transparent;min-height:28px;padding:3px}.u152 .map button{animation:u152-enter .45s var(--ux-ease)}@keyframes u152-enter{from{transform:scale(.92)}to{transform:scale(1)}}.u152 .map.zoom{grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr}.u152 .map.zoom button:first-child{grid-row:auto}.u152{min-height:0;box-shadow:none}.u152 .status{background:transparent;border:0;padding:0;min-height:0;height:auto}.u152 .inline{margin-bottom:8px}.u152{padding:12px;background:transparent;overflow:visible}.u152 .path{padding:0 0 8px;min-height:44px;font-size:12px}.u152 .back{min-width:44px;min-height:44px}.u152 .map{padding:0;height:210px}.u152 .map button:first-child{background:#3E6585}.u152 .map button:nth-child(2){background:#466F8C}.u152 .map button:nth-child(3){background:#56717F}.u152 .map button{font-size:14px}.u152 .map small{font-size:12px}</style>
+<div class="ux u152"><div class="path" aria-live="polite"><button class="back" aria-label="상위 폴더">↖</button><span>전체 저장소</span></div><div class="map"></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];let folder=false;function draw(){const d=folder?[['영상 원본','12 GB'],['사진','8 GB'],['음원','4 GB']]:[['미디어','24 GB'],['프로젝트','16 GB'],['문서','8 GB']];q('.map').classList.toggle('zoom',folder);q('.map').innerHTML=d.map((x,i)=>`<button data-i="${i}">${x[0]}<small>${x[1]}</small></button>`).join('');q('.path span').textContent=folder?'전체 저장소 / 미디어':'전체 저장소';root.dataset.state=folder?'media':'root'}q('.map').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(!folder&&+b.dataset.i===0){folder=true;draw();q('.back').focus()}else{qa('.map button').forEach(x=>x.setAttribute('aria-pressed',x===b));q('.path span').textContent=b.textContent;root.dataset.state='selected'+b.dataset.i}};q('.back').onclick=()=>{folder=false;draw();q('.map button').focus()};draw();})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Platform-aware download section · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"내 기기에 맞춘 다운로드 안내","category":"섹션·콘텐츠","summary":"앱 다운로드 섹션이 접속한 기기를 알아보고 그 운영체제용 큰 버튼을 먼저 보여 줍니다. 위쪽 플랫폼 탭을 바꾸면 버튼 아이콘과 문구, 버전·용량 줄이 위로 넘어가며 바뀝니다. 다운로드를 누르면 버튼이 체크로 바뀌고 설치 단계 세 개가 차례로 켜지며, 오른쪽 위 구석에서 화살표가 다운로드 목록을 가리키며 통통 튑니다.","hint":"플랫폼 탭을 바꿔 보고 다운로드를 눌러 보세요","shape":"square","tags":["download","platform","os-detect","install","landing"]} -->
+<!-- @demo [["wait",1000],["tap",".u393-tb",1,{"after":1100}],["tap",".u393-tb",2,{"after":1100}],["tap",".u393-tb",0,{"after":900}],["tap",".u393-dl",0,{"after":3600}],["reset"]] -->
+<!-- @en {"title":"Platform-aware download section","summary":"An app download section detects your device and leads with a big button for that operating system. Switch the platform tabs above and the button's icon, label and version/size line flip upward to the new platform. Press Download and the button turns into a check, three install steps light up in turn, and an arrow bounces in the top right corner pointing at your downloads.","hint":"Switch platform tabs, then press Download","map":[
+  ["var OS = [['macOS', 'Mac용 다운로드', 'v2.4.1 · 128MB · macOS 12 이상'], ['Windows', 'Windows용 다운로드', 'v2.4.1 · 142MB · Windows 10 이상'], ['Linux', 'Linux용 다운로드', 'v2.4.1 · .deb · .AppImage']]", "var OS = [['macOS', 'Download for Mac', 'v2.4.1 · 128MB · macOS 12+'], ['Windows', 'Download for Windows', 'v2.4.1 · 142MB · Windows 10+'], ['Linux', 'Download for Linux', 'v2.4.1 · .deb · .AppImage']]"],
+  ["var STEPS = [['파일 열기', '받은 설치 파일을 열어요'], ['설치하기', '안내에 따라 몇 번 누르면 끝'], ['로그인', '쓰던 계정으로 바로 이어져요']]", "var STEPS = [['Open the file', 'Open the installer you downloaded'], ['Install', 'A few clicks and you’re done'], ['Sign in', 'Pick up right where you left off']]"],
+  [">데스크톱 앱<", ">Desktop app<"],
+  [">어디서든 같은 작업 공간<", ">The same workspace, anywhere<"],
+  ["'다운로드가 시작됐어요'", "'Your download has started'"],
+  [">여기서 열기<", ">Open here<"],
+  ["aria-label=\"운영체제\"", "aria-label=\"Operating system\""]
+]} -->
+<style>
+.u393{position:relative;width:340px;height:340px;border-radius:30px;overflow:hidden;background:radial-gradient(70% 50% at 50% 0%,var(--ux-accent-soft),transparent 70%),var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);color:var(--ux-ink);text-align:center}
+.u393-tp{padding-top:26px}
+.u393-tp small{font-size:10px;font-weight:850;letter-spacing:.08em;color:var(--ux-accent)}
+.u393-tp h3{margin:4px 0 0;font-size:20px;font-weight:900;letter-spacing:-.035em}
+.u393-tl{position:relative;display:inline-flex;margin-top:16px;padding:3px;border-radius:12px;background:var(--ux-surface-2);box-shadow:inset 0 0 0 1px var(--ux-line)}
+.u393-pl{position:absolute;left:3px;top:3px;bottom:3px;width:calc((100% - 6px) / 3);border-radius:9px;background:var(--ux-surface);box-shadow:0 1px 4px -1px var(--ux-shadow-strong),0 0 0 1px var(--ux-line);transition:transform .35s cubic-bezier(.3,1.3,.5,1)}
+.u393-tb{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:5px;width:84px;height:30px;border:0;border-radius:9px;background:none;color:var(--ux-ink-3);font:inherit;font-size:11px;font-weight:800;cursor:pointer;transition:color .2s}
+.u393-tb[aria-selected="true"]{color:var(--ux-ink)}
+.u393-tb svg{width:13px;height:13px}
+.u393-dl{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:9px;width:236px;height:54px;margin-top:18px;border:0;border-radius:16px;background:var(--ux-ink);color:var(--ux-surface);font:inherit;font-size:14px;font-weight:850;cursor:pointer;overflow:hidden;transition:background .35s,transform .15s}
+.u393-dl:active{transform:scale(.98)}
+.u393-dl.is-ok{background:#059669}
+.u393-sw{position:relative;display:block;height:22px;overflow:hidden}
+.u393-sw>span{display:flex;align-items:center;gap:9px;height:22px;transition:transform .4s cubic-bezier(.3,1.3,.5,1),opacity .3s}
+.u393-sw>span.is-in{position:absolute;left:0;right:0;top:0;transform:translateY(100%);opacity:0;transition:none}
+.u393-sw>span.is-out{transform:translateY(-100%);opacity:0}
+.u393-sw svg{width:18px;height:18px;flex:none}
+.u393-mt{position:relative;height:16px;margin-top:9px;overflow:hidden;font-size:10.5px;font-weight:700;color:var(--ux-ink-3)}
+.u393-mt>span{position:absolute;left:0;right:0;top:0;transition:transform .4s cubic-bezier(.3,1.3,.5,1),opacity .3s}
+.u393-mt>span.is-in{transform:translateY(100%);opacity:0;transition:none}
+.u393-mt>span.is-out{transform:translateY(-100%);opacity:0}
+.u393-st{display:flex;justify-content:center;gap:8px;margin-top:16px;padding:0 18px;text-align:left}
+.u393-sp{flex:1;padding:9px 9px;border-radius:12px;background:var(--ux-surface-2);box-shadow:inset 0 0 0 1px var(--ux-line);opacity:.4;transform:translateY(6px);transition:opacity .35s,transform .45s cubic-bezier(.3,1.4,.5,1),box-shadow .3s}
+.u393-sp.is-on{opacity:1;transform:none;box-shadow:inset 0 0 0 1.5px var(--ux-accent)}
+.u393-sp i{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--ux-accent);color:#fff;font-style:normal;font-size:9.5px;font-weight:900}
+.u393-sp b{display:block;margin-top:5px;font-size:10.5px;font-weight:850}
+.u393-sp small{display:block;margin-top:1px;font-size:9px;line-height:1.3;font-weight:650;color:var(--ux-ink-3)}
+.u393-ar{position:absolute;right:16px;top:12px;display:flex;flex-direction:column;align-items:flex-end;gap:2px;color:var(--ux-accent);font-size:9.5px;font-weight:850;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .4s;pointer-events:none}
+.u393.is-got .u393-ar{opacity:1;transform:none}
+.u393-ar svg{width:26px;height:26px;animation:u393-bo .8s ease-in-out infinite alternate}
+@keyframes u393-bo{to{transform:translate(3px,-4px)}}
+.u393 button:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.u393-pl,.u393-sw>span,.u393-mt>span,.u393-sp,.u393-ar{transition:none}.u393-ar svg{animation:none}}
+</style>
+<div class="ux u393">
+  <div class="u393-tp"><small>데스크톱 앱</small><h3>어디서든 같은 작업 공간</h3></div>
+  <div class="u393-tl" role="tablist" aria-label="운영체제"><span class="u393-pl" aria-hidden="true"></span></div>
+  <div><button type="button" class="u393-dl"><span class="u393-sw"></span></button></div>
+  <div class="u393-mt"></div>
+  <div class="u393-st"></div>
+  <div class="u393-ar" aria-hidden="true"><svg viewBox="0 0 26 26"><path d="M5 21L20 6M11 6h9v9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>여기서 열기</div>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var tl = root.querySelector('.u393-tl'), pl = root.querySelector('.u393-pl'), dl = root.querySelector('.u393-dl'), sw = root.querySelector('.u393-sw'), mt = root.querySelector('.u393-mt'), st = root.querySelector('.u393-st');
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // [이름, 버튼 문구, 버전 줄]
+  var OS = [['macOS', 'Mac용 다운로드', 'v2.4.1 · 128MB · macOS 12 이상'], ['Windows', 'Windows용 다운로드', 'v2.4.1 · 142MB · Windows 10 이상'], ['Linux', 'Linux용 다운로드', 'v2.4.1 · .deb · .AppImage']];
+  var STEPS = [['파일 열기', '받은 설치 파일을 열어요'], ['설치하기', '안내에 따라 몇 번 누르면 끝'], ['로그인', '쓰던 계정으로 바로 이어져요']];
+  // 상표 대신 쓰는 단순한 기기 그림
+  var IC = ['<svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2.5" y="3.5" width="13" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1 14.5h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>', '<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.5 4l5.5-.8v5.3H2.5zM9.3 3l6.2-.9v6.4H9.3zM2.5 9.6H8v5.2l-5.5-.8zM9.3 9.6h6.2V16l-6.2-.9z" fill="currentColor"/></svg>', '<svg viewBox="0 0 18 18" aria-hidden="true"><rect x="2" y="3" width="14" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 7.5l2 1.5-2 1.5M8.5 11.5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'];
+  var CHK = '<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5l3.2 3.2L14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var T = OS.map(function (o, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'u393-tb'; b.setAttribute('role', 'tab'); b.innerHTML = IC[i] + '<span></span>'; b.lastChild.textContent = o[0];
+    b.querySelector('svg').style.cssText = 'width:13px;height:13px';
+    b.addEventListener('click', function () { pick(i); });
+    tl.appendChild(b); return b;
+  });
+  var S = STEPS.map(function (s, i) { var d = document.createElement('div'); d.className = 'u393-sp'; d.innerHTML = '<i>' + (i + 1) + '</i><b></b><small></small>'; d.querySelector('b').textContent = s[0]; d.querySelector('small').textContent = s[1]; st.appendChild(d); return d; });
+  // 새 문구를 아래에서 올리고 옛 문구는 위로 빼냅니다
+  function swap(box, html) {
+    var old = box.firstElementChild, nw = document.createElement('span'); nw.innerHTML = html;
+    if (!old || rm) { box.innerHTML = ''; box.appendChild(nw); return; }
+    nw.className = 'is-in'; box.appendChild(nw); void nw.offsetWidth; nw.className = ''; old.className = 'is-out'; setTimeout(function () { old.remove(); }, 420);
+  }
+  var cur = -1, got = false, sub = [];
+  function reset() { got = false; root.classList.remove('is-got'); dl.classList.remove('is-ok'); sub.forEach(clearTimeout); sub = []; S.forEach(function (s) { s.classList.remove('is-on'); }); }
+  function pick(i) {
+    if (i === cur) return;
+    cur = i; reset();
+    T.forEach(function (t, k) { t.setAttribute('aria-selected', k === i); t.tabIndex = k === i ? 0 : -1; });
+    pl.style.transform = 'translateX(' + i * 100 + '%)';
+    swap(sw, IC[i] + '<span></span>'); sw.lastElementChild.lastChild.textContent = OS[i][1];
+    swap(mt, ''); mt.lastElementChild.textContent = OS[i][2];
+  }
+  dl.addEventListener('click', function () {
+    if (got) return;
+    got = true; dl.classList.add('is-ok'); root.classList.add('is-got');
+    swap(sw, CHK + '<span></span>'); sw.lastElementChild.lastChild.textContent = '다운로드가 시작됐어요';
+    S.forEach(function (s, k) { sub.push(setTimeout(function () { s.classList.add('is-on'); }, rm ? 0 : 350 + k * 450)); });
+  });
+  // 접속한 기기를 짐작해 첫 탭을 고릅니다
+  var ua = navigator.userAgent || '', guess = /Win/.test(ua) ? 1 : /Linux|X11/.test(ua) && !/Android/.test(ua) ? 2 : 0;
+  pick(guess);
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

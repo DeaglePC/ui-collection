@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clip Reveal · Foundry44</title>
+<!-- Foundry44 · Clip Reveal · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/clip-reveal/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+
+</style>
+</head>
+<body>
+<div data-f44="clip-reveal" class="ph" style="width:min(520px,90vw);height:280px;border-radius:18px;overflow:hidden"><div style="width:100%;height:100%;background:linear-gradient(135deg,#3a2a18,#c9a06a 40%,#6b3a1f 80%);"></div></div>
+<script>
+/*!
+ * Foundry44 · Clip Reveal — https://foundry44.dev/components/clip-reveal
+ * Image is revealed by an expanding clip-path when scrolled into view.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="clip-reveal" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-direction="up"
+ *   data-f44-duration="1000"
+ *   data-f44-zoom="1.1"
+ *   data-f44-once="true"
+ * Manual: const instance = Foundry44.clipReveal(element, { direction: "up", duration: 1000, zoom: 1.1, once: true });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — clip-reveal
+   * When the element scrolls into view, a clip opens from one edge (or from the
+   * center) until the whole element shows, like a curtain pulled away. The media
+   * inside settles from a slight zoom at the same time, so the reveal has depth.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const clipRevealDefaults = {
+    direction: "up",
+    duration: 1000,
+    zoom: 1.1,
+    once: true,
+  };
+  const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+  const REDUCED_DURATION = 300;
+  const SHOWN_CLIP = "inset(0 0 0 0)";
+  // inset(top right bottom left): the side that starts at 100% is the one the reveal moves away from.
+  const HIDDEN_CLIPS = {
+    up: "inset(100% 0 0 0)",
+    down: "inset(0 0 100% 0)",
+    left: "inset(0 0 0 100%)",
+    right: "inset(0 100% 0 0)",
+    center: "inset(50% 50% 50% 50%)",
+  };
+  function clipReveal(el, options = {}) {
+    var _a, _b, _c;
+    let opts = { ...clipRevealDefaults, ...options };
+    if (typeof window === "undefined") return { update() {}, destroy() {} };
+    // Reduced motion: no moving edge and no zoom, the element simply fades in.
+    const reduced =
+      ((_a = window.matchMedia) === null || _a === void 0
+        ? void 0
+        : _a.call(window, "(prefers-reduced-motion: reduce)").matches) === true;
+    // The zoom goes on the child, not the element: scaling the element would scale its clip too.
+    const media = el.firstElementChild instanceof HTMLElement ? el.firstElementChild : null;
+    const original = {
+      clipPath: el.style.clipPath,
+      opacity: el.style.opacity,
+      transition: el.style.transition,
+      mediaTransform:
+        (_b = media === null || media === void 0 ? void 0 : media.style.transform) !== null && _b !== void 0 ? _b : "",
+      mediaTransition:
+        (_c = media === null || media === void 0 ? void 0 : media.style.transition) !== null && _c !== void 0 ? _c : "",
+    };
+    let observer = null;
+    let shown = false;
+    let played = false;
+    const hiddenClip = () => {
+      var _a;
+      return (_a = HIDDEN_CLIPS[opts.direction]) !== null && _a !== void 0 ? _a : HIDDEN_CLIPS.up;
+    };
+    const applyHidden = () => {
+      el.style.transition = "none";
+      if (reduced) {
+        el.style.opacity = "0";
+        return;
+      }
+      el.style.clipPath = hiddenClip();
+      if (media) {
+        media.style.transition = "none";
+        media.style.transform = opts.zoom === 1 ? original.mediaTransform : `scale(${opts.zoom})`;
+      }
+    };
+    const show = () => {
+      if (shown) return;
+      shown = true;
+      played = true;
+      // Flush the hidden state so the transition has a start value.
+      void el.offsetWidth;
+      if (reduced) {
+        el.style.transition = `opacity ${REDUCED_DURATION}ms ease`;
+        el.style.opacity = original.opacity;
+        return;
+      }
+      el.style.transition = `clip-path ${opts.duration}ms ${EASE_OUT}`;
+      el.style.clipPath = SHOWN_CLIP;
+      if (media && opts.zoom !== 1) {
+        media.style.transition = `transform ${opts.duration}ms ${EASE_OUT}`;
+        media.style.transform = original.mediaTransform;
+      }
+    };
+    const hide = () => {
+      if (!shown) return;
+      shown = false;
+      applyHidden();
+    };
+    const bind = () => {
+      if (opts.once && played) return;
+      if (typeof IntersectionObserver === "undefined") {
+        show();
+        return;
+      }
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              show();
+              if (opts.once) unbind();
+              continue;
+            }
+            // The observed area is shrunk at the bottom, so "not intersecting" can still be
+            // partly on screen: close only once the element is entirely out of sight.
+            const { top, bottom } = entry.boundingClientRect;
+            if (bottom <= 0 || top >= window.innerHeight) hide();
+          }
+        },
+        // Wait until the element is a little inside the viewport so the opening is actually seen.
+        { rootMargin: "0px 0px -15% 0px" },
+      );
+      observer.observe(el);
+    };
+    const unbind = () => {
+      observer === null || observer === void 0 ? void 0 : observer.disconnect();
+      observer = null;
+    };
+    applyHidden();
+    bind();
+    return {
+      update(next) {
+        const previous = opts;
+        opts = { ...opts, ...next };
+        // duration is read when a reveal starts; direction and zoom only matter while hidden.
+        if (!shown) applyHidden();
+        if (opts.once !== previous.once) {
+          unbind();
+          bind();
+        }
+      },
+      destroy() {
+        unbind();
+        el.style.clipPath = original.clipPath;
+        el.style.opacity = original.opacity;
+        el.style.transition = original.transition;
+        if (media) {
+          media.style.transform = original.mediaTransform;
+          media.style.transition = original.mediaTransition;
+        }
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="clip-reveal"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["direction", "data-f44-direction"],
+        ["duration", "data-f44-duration"],
+        ["zoom", "data-f44-zoom"],
+        ["once", "data-f44-once"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = clipReveal(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.clipReveal = clipReveal;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+<script src="./_fit.js"></script>
+</body>
+</html>

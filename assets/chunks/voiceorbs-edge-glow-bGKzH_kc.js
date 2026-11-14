@@ -1,0 +1,403 @@
+const n=[{path:"edge-glow/edge-glow.module.css",language:"css",content:`@property --edge-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --edge-from {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f472b6;
+}
+
+@property --edge-to {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #60a5fa;
+}
+
+@property --edge-glow {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.3;
+}
+
+@property --edge-line {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.5;
+}
+
+@property --edge-boost {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --edge-err {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --edge-throb {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+.frame {
+  --orb-size: 168px;
+  --orb-speed: 1;
+  --orb-color-from: #f472b6;
+  --orb-color-to: #60a5fa;
+  --orb-level: 0;
+  --edge-from: var(--orb-color-from);
+  --edge-to: var(--orb-color-to);
+  --edge-width: clamp(1.5px, calc(var(--orb-size) * 0.014), 3px);
+  --edge-radius: 24px;
+  --edge-inset: 4px;
+  --edge-glow: 0.3;
+  --edge-line: 0.5;
+  --edge-boost: 0;
+  --edge-err: 0;
+  --orb-dur: 0.2s;
+  --orb-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  border-radius: var(--edge-radius);
+  isolation: isolate;
+  transition-property:
+    opacity, filter, --edge-from, --edge-to, --edge-glow, --edge-line, --edge-boost, --edge-err;
+  transition-duration: var(--orb-dur);
+  transition-timing-function: var(--orb-ease);
+}
+
+.frame:is([data-state='idle'], [data-state='disabled']) {
+  --orb-dur: 0.6s;
+  --orb-ease: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.frame[data-state='connecting'] {
+  --edge-glow: 0.22;
+  --edge-line: 0.35;
+}
+
+.frame[data-state='listening'] {
+  --edge-glow: 0.42;
+  --edge-line: 0.62;
+  --edge-boost: 1;
+}
+
+.frame[data-state='thinking'] {
+  --edge-glow: 0.34;
+}
+
+.frame[data-state='speaking'] {
+  --edge-glow: 0.52;
+  --edge-line: 0.72;
+  --edge-boost: 1;
+}
+
+.frame[data-state='error'] {
+  --edge-glow: 0.48;
+  --edge-line: 0.75;
+  --edge-err: 1;
+}
+
+.frame[data-state='disabled'] {
+  filter: grayscale(0.85);
+  opacity: 0.55;
+}
+
+.aura,
+.band,
+.sweep,
+.chase {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: var(--edge-width);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  transition-property: opacity, padding;
+  transition-duration: var(--orb-dur);
+  transition-timing-function: var(--orb-ease);
+}
+
+.aura {
+  padding: calc(var(--edge-width) * 3);
+  background: conic-gradient(
+    from var(--edge-angle) in oklab,
+    var(--edge-from),
+    var(--edge-to),
+    var(--edge-from)
+  );
+  filter: blur(9px)
+    brightness(
+      calc(1 + 0.7 * var(--orb-level) * var(--edge-boost) + 0.55 * var(--edge-throb) * var(--edge-err))
+    );
+  opacity: calc(var(--edge-glow) + 0.45 * var(--orb-level) * var(--edge-boost));
+  animation:
+    edgeSpin calc(14s / var(--orb-speed)) linear infinite,
+    edgeSpin calc(25.2s / var(--orb-speed)) linear infinite,
+    edgeSpin calc(3.818s / var(--orb-speed)) linear infinite,
+    edgeSpin calc(18.667s / var(--orb-speed)) linear infinite,
+    edgeThrob calc(1.3s / var(--orb-speed)) ease-in-out infinite;
+  animation-composition: replace, add, add, add, replace;
+  animation-play-state: running, paused, paused, paused, running;
+}
+
+.band {
+  background: conic-gradient(
+    from var(--edge-angle) in oklab,
+    var(--edge-from),
+    var(--edge-to),
+    var(--edge-from)
+  );
+  opacity: calc(var(--edge-line) + 0.32 * var(--orb-level) * var(--edge-boost));
+  animation:
+    edgeSpin calc(14s / var(--orb-speed)) linear infinite,
+    edgeSpin calc(25.2s / var(--orb-speed)) linear infinite,
+    edgeSpin calc(3.818s / var(--orb-speed)) linear infinite,
+    edgeSpin calc(18.667s / var(--orb-speed)) linear infinite;
+  animation-composition: replace, add, add, add;
+  animation-play-state: running, paused, paused, paused;
+}
+
+.sweep {
+  background: conic-gradient(
+    from var(--edge-angle) in oklab,
+    var(--edge-from) 0deg,
+    transparent 85deg,
+    transparent 160deg,
+    var(--edge-to) 180deg,
+    transparent 265deg,
+    transparent 340deg,
+    var(--edge-from) 360deg
+  );
+  opacity: 0;
+  animation: edgeSpin calc(7s / var(--orb-speed)) linear infinite;
+}
+
+.chase {
+  background: conic-gradient(
+    from var(--edge-angle),
+    transparent 0deg,
+    transparent 220deg,
+    color-mix(in oklab, var(--edge-from), transparent 70%) 280deg,
+    color-mix(in oklab, var(--edge-from) 35%, var(--edge-to)) 330deg,
+    var(--edge-to) 352deg,
+    transparent 356deg
+  );
+  opacity: 0;
+  animation: edgeSpin calc(1.4s / var(--orb-speed)) linear infinite;
+}
+
+.frame:is([data-state='connecting'], [data-state='thinking']) .band {
+  opacity: 0;
+}
+
+.frame[data-state='connecting'] .chase {
+  opacity: 1;
+}
+
+.frame[data-state='thinking'] .sweep {
+  opacity: 0.9;
+}
+
+.frame[data-state='listening'] .aura {
+  animation-play-state: running, running, paused, paused, running;
+}
+
+.frame[data-state='listening'] .band {
+  animation-play-state: running, running, paused, paused;
+}
+
+.frame[data-state='speaking'] .aura {
+  animation-play-state: running, paused, running, paused, running;
+}
+
+.frame[data-state='speaking'] .band {
+  animation-play-state: running, paused, running, paused;
+}
+
+.frame[data-state='error'] .aura {
+  animation-play-state: running, paused, paused, running, running;
+}
+
+.frame[data-state='error'] .band {
+  animation-play-state: running, paused, paused, running;
+}
+
+.frame[data-state='disabled'] .aura,
+.frame[data-state='disabled'] .sweep,
+.frame[data-state='disabled'] .chase {
+  opacity: 0;
+}
+
+.frame[data-state='disabled'] .band {
+  padding: 1px;
+  opacity: 0.5;
+  animation-play-state: paused;
+}
+
+.content {
+  position: absolute;
+  inset: var(--edge-inset);
+  border-radius: calc(var(--edge-radius) - var(--edge-inset));
+  overflow: hidden;
+}
+
+.demo {
+  display: grid;
+  place-items: center;
+  background: light-dark(rgb(255 255 255 / 0.72), rgb(10 12 20 / 0.78));
+}
+
+.demoLabel {
+  font-size: clamp(11px, calc(var(--orb-size) * 0.085), 17px);
+  letter-spacing: 0.02em;
+  color: light-dark(rgb(30 41 59 / 0.75), rgb(226 232 240 / 0.8));
+  opacity: var(--orb-label-opacity, 1);
+  transition: opacity var(--orb-label-duration, 0.3s) ease var(--orb-label-delay, 0s);
+}
+
+@keyframes edgeSpin {
+  to {
+    --edge-angle: 360deg;
+  }
+}
+
+@keyframes edgeThrob {
+  0%,
+  100% {
+    --edge-throb: 0;
+  }
+  50% {
+    --edge-throb: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura,
+  .band,
+  .sweep,
+  .chase {
+    animation: none;
+  }
+
+  .frame[data-state='idle'] .band {
+    opacity: 0.4;
+  }
+
+  .frame[data-state='idle'] .aura {
+    opacity: 0.22;
+  }
+
+  .frame[data-state='listening'] .band {
+    opacity: 0.85;
+  }
+
+  .frame[data-state='listening'] .aura {
+    opacity: 0.55;
+  }
+
+  .frame[data-state='speaking'] .band {
+    opacity: 1;
+  }
+
+  .frame[data-state='speaking'] .aura {
+    opacity: 0.8;
+  }
+
+  .frame[data-state='thinking'] .sweep {
+    opacity: 0.95;
+  }
+
+  .frame[data-state='connecting'] .chase {
+    opacity: 1;
+  }
+
+  .frame[data-state='error'] .band {
+    opacity: 0.9;
+  }
+}
+`},{path:"edge-glow/edge-glow.tsx",language:"tsx",content:`'use client';
+
+import { useCallback, useRef } from 'react';
+import type { ReactNode } from 'react';
+import { ERROR_COLOR_FROM, ERROR_COLOR_TO, orbVars, type OrbProps } from '../../lib/orb-state';
+import { useOrbLevel } from '../../lib/use-orb-level';
+import styles from './edge-glow.module.css';
+
+export interface EdgeGlowProps extends OrbProps {
+  children?: ReactNode;
+}
+
+export const EdgeGlow = ({
+  state = 'idle',
+  size = 168,
+  speed = 1,
+  colorFrom = '#f472b6',
+  colorTo = '#60a5fa',
+  levelRef,
+  label = 'Edge Glow frame',
+  className,
+  ref,
+  children,
+}: EdgeGlowProps) => {
+  const innerRef = useRef<HTMLDivElement>(null);
+  const mergedRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      innerRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) ref.current = node;
+    },
+    [ref],
+  );
+  useOrbLevel(innerRef, state, levelRef, undefined, speed);
+  const hasChildren = children != null;
+  const isError = state === 'error';
+
+  return (
+    <div
+      ref={mergedRef}
+      role={hasChildren ? undefined : 'img'}
+      aria-label={hasChildren ? undefined : label}
+      data-state={state}
+      className={[styles.frame, className].filter(Boolean).join(' ')}
+      style={{
+        ...orbVars({
+          size,
+          speed,
+          colorFrom: isError ? ERROR_COLOR_FROM : colorFrom,
+          colorTo: isError ? ERROR_COLOR_TO : colorTo,
+        }),
+        width: hasChildren ? '100%' : size,
+        height: hasChildren ? '100%' : size,
+        ...(hasChildren ? null : { '--edge-radius': '50%' }),
+      }}
+    >
+      <span aria-hidden className={styles.aura} />
+      <span aria-hidden className={styles.band} />
+      <span aria-hidden className={styles.sweep} />
+      <span aria-hidden className={styles.chase} />
+      <div className={hasChildren ? styles.content : \`\${styles.content} \${styles.demo}\`}>
+        {children ??
+          (size >= 96 ? (
+            <span aria-hidden className={styles.demoLabel}>
+              Your UI here
+            </span>
+          ) : null)}
+      </div>
+    </div>
+  );
+};
+`}],e="",a={files:n,prompt:e};export{a as default,n as files,e as prompt};

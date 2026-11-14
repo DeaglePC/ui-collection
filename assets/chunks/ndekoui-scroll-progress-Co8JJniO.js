@@ -1,0 +1,67 @@
+const n=[{path:"scroll-progress.tsx",language:"tsx",content:`'use client';
+
+import {
+  motion,
+  MotionValue,
+  SpringOptions,
+  useScroll,
+  useSpring,
+} from 'motion/react';
+import { cn } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/registry/ndeko/hooks/use-prefers-reduced-motion';
+import { RefObject } from 'react';
+
+export type ScrollProgressProps = {
+  className?: string;
+  springOptions?: SpringOptions;
+  containerRef?: RefObject<HTMLDivElement | null>;
+};
+
+const DEFAULT_SPRING_OPTIONS: SpringOptions = {
+  stiffness: 200,
+  damping: 50,
+  restDelta: 0.001,
+};
+
+function followerOf(
+  prefersReducedMotion: boolean | null,
+  target: MotionValue<number>,
+  spring: MotionValue<number>
+) {
+  if (prefersReducedMotion) {
+    return target;
+  }
+  return spring;
+}
+
+export function ScrollProgress({
+  className,
+  springOptions,
+  containerRef,
+}: ScrollProgressProps) {
+  const { scrollYProgress } = useScroll({
+    container: containerRef,
+  });
+
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const springScaleX = useSpring(scrollYProgress, {
+    ...DEFAULT_SPRING_OPTIONS,
+    ...(springOptions ?? {}),
+  });
+  const scaleX = followerOf(
+    prefersReducedMotion,
+    scrollYProgress,
+    springScaleX
+  );
+
+  return (
+    <motion.div
+      className={cn('inset-x-0 top-0 h-1 origin-left', className)}
+      style={{
+        scaleX,
+      }}
+    />
+  );
+}
+`}],e="",o={files:n,prompt:e};export{o as default,n as files,e as prompt};

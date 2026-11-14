@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Read-to-agree terms · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"끝까지 읽고 동의하는 약관","category":"로그인·가입","summary":"약관 본문을 내리는 만큼 테두리 막대가 차오르고, 끝에 닿으면 잠겨 있던 필수 동의가 풀리며 체크가 튀어 나옵니다. ‘모두 동의’는 아래 항목들을 차례로 체크하고, 필수를 모두 고르면 시작 버튼이 켜집니다.","hint":"약관 상자를 끝까지 스크롤한 뒤 ‘모두 동의’나 각 항목을 눌러 보세요. 다 읽기 전에는 필수 항목이 잠겨 있습니다","shape":"tall","hue":"#6366F1","hue2":"#22C3A6","tags":["terms","consent","scroll","checkbox","select-all"]} -->
+<!-- @demo [["wait",800],["tap",".u068-c.all"],["wait",1400],["scroll",".u068-txt",0,"end",1700],["wait",1000],["tap",".u068-c.all"],["wait",1300],["tap",".u068-go"],["wait",1700],["reset"]] -->
+<!-- @en {"title":"Read-to-agree terms","summary":"The border bar fills as you scroll the terms, and reaching the end unlocks the required consents as their checks pop out. “Agree to all” checks the items below one after another, and the start button turns on once every required item is chosen.","hint":"Scroll the terms box to the end, then press “Agree to all” or individual items. Required items stay locked until you have read it all","map":[
+  ["약관을 확인해 주세요", "Review the terms"],
+  ["서비스 이용약관 본문", "Terms of service text"],
+  ["제1조 목적", "1. Purpose"],
+  ["이 약관은 Lumen이 제공하는 서비스를 이용하는 데 필요한 권리와 의무를 정합니다.", "These terms set out the rights and duties for using the services Lumen provides."],
+  ["제2조 계정", "2. Accounts"],
+  ["회원은 하나의 이메일로 하나의 계정을 만들 수 있으며, 계정 정보를 안전하게 지킬 책임이 있습니다.", "Each email can hold one account, and members are responsible for keeping their account details safe."],
+  ["제3조 콘텐츠", "3. Content"],
+  ["회원이 올린 파일의 권리는 회원에게 있습니다. 회사는 서비스를 제공하는 데 필요한 범위에서만 이를 사용합니다.", "Members own the files they upload. The company uses them only as needed to provide the service."],
+  ["제4조 개인정보", "4. Personal data"],
+  ["회사는 가입과 결제에 필요한 최소한의 정보만 모으며, 목적을 다하면 지체 없이 파기합니다.", "We collect only what sign-up and payment need, and delete it promptly once its purpose is served."],
+  ["제5조 해지", "5. Cancellation"],
+  ["회원은 언제든 설정에서 탈퇴할 수 있고, 남은 데이터는 30일 뒤 완전히 지워집니다.", "Members can leave anytime from Settings, and remaining data is erased after 30 days."],
+  ["끝까지 읽으면 필수 동의가 열려요", "Read to the end to unlock required items"],
+  ["모두 동의하기", "Agree to all"],
+  ["서비스 이용약관", "Terms of service"],
+  ["<em class=\"req\">필수</em>", "<em class=\"req\">Required</em>"],
+  ["개인정보 수집·이용", "Personal data use"],
+  ["새 소식 메일 받기", "Product news by email"],
+  ["<em>선택</em>", "<em>Optional</em>"],
+  ["동의하고 시작하기", "Agree and start"],
+  ["끝까지 읽었어요 · 이제 동의할 수 있어요", "All read · You can agree now"],
+  ["먼저 약관을 끝까지 내려 주세요", "Scroll the terms to the end first"],
+  ["환영해요!", "Welcome!"]
+]} -->
+<style>
+.u068{position:relative;width:340px;height:500px;display:flex;flex-direction:column;padding:24px 22px 22px;border-radius:30px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden}
+.u068 h3{margin:0;font-size:21px;font-weight:850;letter-spacing:-.045em}
+.u068-doc{position:relative;height:150px;margin-top:14px;border-radius:18px;background:var(--ux-surface-2);overflow:hidden}
+.u068-doc::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:3px;background:var(--ux-grad);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.u068-txt{height:100%;overflow-y:auto;padding:14px 16px;font-size:12.5px;line-height:1.65;color:var(--ux-ink-2);overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--ux-line-2) transparent}
+.u068-txt:focus-visible{outline:2px solid var(--ux-accent);outline-offset:-3px;border-radius:18px}
+.u068-txt b{display:block;margin:10px 0 2px;font-size:13px;color:var(--ux-ink)}
+.u068-txt b:first-child{margin-top:0}
+.u068-txt p{margin:0}
+.u068-read{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:700;color:var(--ux-ink-3);transition:color .3s}
+.u068-read i{width:8px;height:8px;border-radius:50%;background:var(--ux-line-2);transition:background-color .3s,transform .4s var(--ux-spring)}
+.u068.is-read .u068-read{color:var(--ux-mint)}
+.u068.is-read .u068-read i{background:var(--ux-mint);transform:scale(1.3)}
+.u068-list{margin:12px 0 0;padding:0;list-style:none}
+.u068-c{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 4px;border-radius:12px;cursor:pointer;font-size:14px;font-weight:650;color:var(--ux-ink-2);transition:opacity .3s}
+.u068-c.all{min-height:54px;padding:0 14px;margin-bottom:6px;border-radius:16px;background:var(--ux-surface-2);font-size:15px;font-weight:780;color:var(--ux-ink)}
+.u068-c input{position:absolute;opacity:0;pointer-events:none}
+.u068-c:has(input:disabled){opacity:.45;cursor:not-allowed}
+.u068-c:has(input:focus-visible) .u068-box{outline:2px solid var(--ux-accent);outline-offset:2px}
+.u068-box{position:relative;width:24px;height:24px;flex:none;border-radius:8px;box-shadow:inset 0 0 0 2px var(--ux-line-2);transition:background-color .25s,box-shadow .25s,transform .35s var(--ux-spring)}
+.u068-box svg{position:absolute;inset:3px;width:18px;height:18px;fill:none;stroke:var(--ux-accent-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.u068-box path{stroke-dasharray:18;stroke-dashoffset:18;transition:stroke-dashoffset .3s var(--ux-ease) .05s}
+.u068-c:has(input:checked) .u068-box{background:var(--ux-accent);box-shadow:none;animation:u068-pop .4s var(--ux-spring)}
+.u068-c:has(input:checked) .u068-box path{stroke-dashoffset:0}
+@keyframes u068-pop{40%{transform:scale(1.18)}}
+.u068-c em{margin-left:auto;font-style:normal;font-size:11.5px;font-weight:800;color:var(--ux-ink-3)}
+.u068-c em.req{color:var(--ux-accent)}
+.u068-lock{width:14px;height:14px;margin-left:-6px;fill:none;stroke:currentColor;stroke-width:2;transition:opacity .3s,transform .4s var(--ux-spring)}
+.u068.is-read .u068-lock{opacity:0;transform:scale(0)}
+.u068-go{height:54px;margin-top:auto;border:0;border-radius:17px;font-size:15.5px;font-weight:760;background:var(--ux-surface-2);color:var(--ux-ink-3);transition:background-color .35s,color .35s,transform .3s var(--ux-spring)}
+.u068-go[aria-disabled="false"]{background:var(--ux-ink);color:var(--ux-page)}
+.u068-go[aria-disabled="false"]:active{transform:scale(.97)}
+.u068-go:focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+</style>
+<div class="ux u068">
+  <h3>약관을 확인해 주세요</h3>
+  <div class="u068-doc"><div class="u068-txt" tabindex="0" role="document" aria-label="서비스 이용약관 본문">
+    <b>제1조 목적</b><p>이 약관은 Lumen이 제공하는 서비스를 이용하는 데 필요한 권리와 의무를 정합니다.</p>
+    <b>제2조 계정</b><p>회원은 하나의 이메일로 하나의 계정을 만들 수 있으며, 계정 정보를 안전하게 지킬 책임이 있습니다.</p>
+    <b>제3조 콘텐츠</b><p>회원이 올린 파일의 권리는 회원에게 있습니다. 회사는 서비스를 제공하는 데 필요한 범위에서만 이를 사용합니다.</p>
+    <b>제4조 개인정보</b><p>회사는 가입과 결제에 필요한 최소한의 정보만 모으며, 목적을 다하면 지체 없이 파기합니다.</p>
+    <b>제5조 해지</b><p>회원은 언제든 설정에서 탈퇴할 수 있고, 남은 데이터는 30일 뒤 완전히 지워집니다.</p>
+  </div></div>
+  <div class="u068-read" aria-live="polite"><i aria-hidden="true"></i><span>끝까지 읽으면 필수 동의가 열려요</span></div>
+  <ul class="u068-list">
+    <li><label class="u068-c all"><input type="checkbox" class="u068-all"><span class="u068-box" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3.5 9.4l3.4 3.4L14.5 5"/></svg></span>모두 동의하기</label></li>
+    <li><label class="u068-c"><input type="checkbox" data-req="1" disabled><span class="u068-box" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3.5 9.4l3.4 3.4L14.5 5"/></svg></span>서비스 이용약관<svg class="u068-lock" viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M4.5 6V4.5a2.5 2.5 0 0 1 5 0V6"/></svg><em class="req">필수</em></label></li>
+    <li><label class="u068-c"><input type="checkbox" data-req="1" disabled><span class="u068-box" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3.5 9.4l3.4 3.4L14.5 5"/></svg></span>개인정보 수집·이용<svg class="u068-lock" viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="6" width="9" height="6.5" rx="1.5"/><path d="M4.5 6V4.5a2.5 2.5 0 0 1 5 0V6"/></svg><em class="req">필수</em></label></li>
+    <li><label class="u068-c"><input type="checkbox"><span class="u068-box" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M3.5 9.4l3.4 3.4L14.5 5"/></svg></span>새 소식 메일 받기<em>선택</em></label></li>
+  </ul>
+  <button class="u068-go" type="button" aria-disabled="true">동의하고 시작하기</button>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var txt = root.querySelector('.u068-txt'), doc = root.querySelector('.u068-doc'), readMsg = root.querySelector('.u068-read span');
+  var all = root.querySelector('.u068-all'), subs = Array.prototype.slice.call(root.querySelectorAll('.u068-list input:not(.u068-all)'));
+  var go = root.querySelector('.u068-go');
+  var read = false, ts = [];
+  // 읽은 만큼 아래 막대를 채우고, 끝에 닿으면 필수 항목을 풉니다
+  txt.addEventListener('scroll', function () {
+    var max = txt.scrollHeight - txt.clientHeight, p = max > 0 ? txt.scrollTop / max : 1;
+    doc.style.setProperty('--p', Math.min(1, p).toFixed(3));
+    if (!read && p > 0.97) {
+      read = true;
+      root.classList.add('is-read');
+      readMsg.textContent = '끝까지 읽었어요 · 이제 동의할 수 있어요';
+      subs.forEach(function (s) { s.disabled = false; });
+      all.disabled = false;
+    }
+  }, { passive: true });
+  function sync() {
+    var on = subs.filter(function (s) { return s.checked; }).length;
+    all.checked = on === subs.length;
+    all.indeterminate = on > 0 && on < subs.length;
+    var ok = subs.every(function (s) { return !s.getAttribute('data-req') || s.checked; });
+    go.setAttribute('aria-disabled', String(!ok));
+  }
+  // ‘모두 동의’는 항목을 위에서부터 하나씩 차례로 체크합니다
+  all.addEventListener('change', function () {
+    var v = all.checked;
+    if (!read) { all.checked = false; txt.animate([{ transform: 'translateX(-5px)' }, { transform: 'translateX(4px)' }, { transform: 'none' }], { duration: 300 }); readMsg.textContent = '먼저 약관을 끝까지 내려 주세요'; return; }
+    ts.forEach(clearTimeout); ts = [];
+    subs.forEach(function (s, i) { ts.push(setTimeout(function () { if (!root.isConnected) return; s.checked = v; sync(); }, i * 90)); });
+  });
+  subs.forEach(function (s) { s.addEventListener('change', sync); });
+  go.addEventListener('click', function () {
+    if (go.getAttribute('aria-disabled') === 'true') {
+      if (!read) txt.focus();
+      go.animate([{ transform: 'translateX(-5px)' }, { transform: 'translateX(4px)' }, { transform: 'none' }], { duration: 300 });
+      return;
+    }
+    go.textContent = '환영해요!';
+  });
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+import{j as a}from"../app.js";function i({children:e,className:t="",pad:r=!0}){return a.jsx("div",{className:`h-full w-full flex items-center justify-center ${r?"p-6":""} ${t}`,style:{background:"radial-gradient(80% 70% at 50% 0%, #1c1914 0%, #0e0d0b 70%)"},children:e})}export{i as S};

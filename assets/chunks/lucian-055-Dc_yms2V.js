@@ -1,0 +1,174 @@
+const t=JSON.parse(`[{"path":"055-music-player-card.html","language":"html","content":"<!-- Lucian UX/UI Prompt #055 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/en/uxui-prompt/#055 -->\\n<!-- @meta {\\"title\\":\\"레코드가 꺼내지는 플레이어\\",\\"category\\":\\"카드·콘텐츠\\",\\"summary\\":\\"재생하면 레코드가 앨범 슬리브에서 미끄러져 나와 돌고, 톤암이 레코드 위로 내려옵니다. 다음 곡으로 넘기면 슬리브가 옆으로 바뀌고 레코드 가운데 색도 바뀝니다. 진행 막대는 끌어서 옮깁니다.\\",\\"hint\\":\\"재생 버튼을 눌러 레코드가 나오는 것을 보고, 이전·다음 곡과 하트도 눌러 보세요. 진행 막대는 끌거나 방향키로 옮깁니다\\",\\"shape\\":\\"tall\\",\\"hue\\":\\"#FF6B8B\\",\\"hue2\\":\\"#7B61FF\\",\\"tags\\":[\\"music\\",\\"player\\",\\"vinyl\\",\\"tonearm\\",\\"seek\\"]} -->\\n<!-- @demo [[\\"wait\\",700],[\\"tap\\",\\".u055-pp\\"],[\\"wait\\",2600],[\\"tap\\",\\".u055-next\\"],[\\"wait\\",1900],[\\"tap\\",\\".u055-like\\"],[\\"wait\\",900],[\\"drag\\",\\".u055-prog\\",0,[0.15,0.5],[0.7,0.5],900],[\\"wait\\",1500],[\\"tap\\",\\".u055-pp\\"],[\\"wait\\",1300],[\\"reset\\"]] -->\\n<!-- @en {\\"title\\":\\"Vinyl record player card\\",\\"summary\\":\\"Press play and the record slides out of its sleeve and spins while the tonearm lowers onto it. Skip to the next track and the sleeve swaps sideways as the record’s label color changes. Drag the progress bar to seek.\\",\\"hint\\":\\"Press play to see the record come out, then try previous, next and the heart. Drag the progress bar or use the arrow keys\\",\\"map\\":[\\n  [\\"좋아요 취소\\", \\"Unlike\\"],\\n  [\\"좋아요\\", \\"Like\\"],\\n  [\\"재생 위치\\", \\"Playback position\\"],\\n  [\\"이전 곡\\", \\"Previous track\\"],\\n  [\\"다음 곡\\", \\"Next track\\"],\\n  [\\"일시정지\\", \\"Pause\\"],\\n  [\\"재생\\", \\"Play\\"]\\n]} -->\\n<style>\\n.u055{--a1:#FF8A65;--a2:#B04FD0;position:relative;width:330px;height:456px;display:flex;flex-direction:column;padding:0 22px 20px;border-radius:32px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden}\\n.u055::before{content:\\"\\";position:absolute;left:-40px;right:-40px;top:-80px;height:300px;background:radial-gradient(closest-side,color-mix(in srgb,var(--a1) 30%,transparent),transparent);transition:background .8s;pointer-events:none}\\n.u055-stage{position:relative;height:250px;flex:none;margin:0 -22px}\\n.u055-disc{position:absolute;left:30px;top:34px;width:190px;height:190px;border-radius:50%;transition:transform .9s var(--ux-spring)}\\n.u055.is-on .u055-disc{transform:translateX(86px)}\\n.u055-vinyl{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,transparent 20%,rgba(255,255,255,.06) 20.5%,transparent 21%),repeating-radial-gradient(circle,#121219 0 2px,#1E1E28 2px 3.2px);box-shadow:0 18px 30px -16px rgba(0,0,0,.6);animation:u055-spin 2.2s linear infinite paused}\\n.u055-vinyl::before{content:\\"\\";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent,rgba(255,255,255,.14) 10%,transparent 22%,transparent 50%,rgba(255,255,255,.1) 60%,transparent 72%)}\\n.u055-vinyl::after{content:\\"\\";position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:radial-gradient(circle,#111 0 3px,transparent 3.5px),linear-gradient(140deg,var(--a1),var(--a2));transition:background .6s}\\n.u055.is-on .u055-vinyl{animation-play-state:running}\\n.u055-sleeve{position:absolute;left:20px;top:24px;width:210px;height:210px;border-radius:14px;overflow:hidden;background:linear-gradient(150deg,var(--a1),var(--a2));box-shadow:0 24px 36px -20px rgba(30,10,60,.6)}\\n.u055-sleeve::before{content:\\"\\";position:absolute;width:150px;height:150px;left:-30px;bottom:-40px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.55),transparent 65%)}\\n.u055-sleeve::after{content:\\"\\";position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,255,255,.18),transparent 40%)}\\n.u055-sleeve b{position:absolute;right:14px;top:14px;font-size:28px;font-weight:900;letter-spacing:-.06em;color:rgba(255,255,255,.9);line-height:.9;text-align:right}\\n.u055-arm{position:absolute;right:20px;top:20px;width:20px;height:116px;transform-origin:10px 10px;transform:rotate(-8deg);transition:transform .8s var(--ux-spring)}\\n.u055.is-on .u055-arm{transform:rotate(28deg);transition-delay:.35s}\\n.u055-arm::before{content:\\"\\";position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--ux-surface-3);box-shadow:inset 0 0 0 5px var(--ux-surface),0 2px 6px rgba(0,0,0,.2)}\\n.u055-arm::after{content:\\"\\";position:absolute;left:8px;top:16px;width:4px;height:84px;border-radius:2px;background:var(--ux-ink-3)}\\n.u055-arm i{position:absolute;left:5px;top:96px;width:10px;height:18px;border-radius:3px;background:var(--ux-ink-2)}\\n.u055-row{position:relative;display:flex;align-items:center;gap:10px}\\n.u055-t{flex:1;min-width:0}\\n.u055-t b{display:block;font-size:20px;font-weight:800;letter-spacing:-.04em;white-space:nowrap}\\n.u055-t small{display:block;margin-top:2px;font-size:13px;font-weight:600;color:var(--ux-ink-3)}\\n.u055-like{width:42px;height:42px;border:0;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--ux-surface-2);color:var(--ux-ink-3);transition:transform .35s var(--ux-spring),color .3s}\\n.u055-like svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}\\n.u055-like[aria-pressed=\\"true\\"]{color:#FF5A6E}\\n.u055-like[aria-pressed=\\"true\\"] svg{fill:currentColor;animation:u055-pop .45s var(--ux-spring)}\\n@keyframes u055-pop{40%{transform:scale(1.35)}}\\n.u055-prog{position:relative;height:28px;margin-top:14px;display:flex;align-items:center;cursor:pointer;touch-action:none}\\n.u055-rail{position:relative;width:100%;height:5px;border-radius:5px;background:var(--ux-surface-3);transition:height .25s}\\n.u055-prog:hover .u055-rail,.u055-prog.drag .u055-rail{height:8px}\\n.u055-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p);border-radius:inherit;background:linear-gradient(90deg,var(--a1),var(--a2));transition:background .6s}\\n.u055-knob{position:absolute;top:50%;left:var(--p);width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);transform:scale(.7);transition:transform .3s var(--ux-spring)}\\n.u055-prog:hover .u055-knob,.u055-prog.drag .u055-knob,.u055-prog:focus-visible .u055-knob{transform:none}\\n.u055-prog:focus-visible{outline:none}\\n.u055-prog:focus-visible .u055-rail{box-shadow:0 0 0 3px var(--ux-accent-soft)}\\n.u055-times{display:flex;justify-content:space-between;font-size:11.5px;font-weight:650;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}\\n.u055-ctl{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:auto}\\n.u055-c{width:48px;height:48px;border:0;padding:0;border-radius:50%;display:grid;place-items:center;background:none;color:var(--ux-ink);transition:transform .3s var(--ux-spring),background-color .3s}\\n.u055-c:hover{background:var(--ux-surface-2)}\\n.u055-c:active{transform:scale(.88)}\\n.u055-c svg{width:24px;height:24px;fill:currentColor}\\n.u055-pp{width:70px;height:70px;background:var(--ux-ink);color:var(--ux-page);box-shadow:0 14px 24px -12px var(--ux-shadow-strong)}\\n.u055-pp:hover{background:var(--ux-ink);transform:scale(1.05)}\\n.u055-pp svg{width:28px;height:28px}\\n.u055-c:focus-visible,.u055-like:focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}\\n@keyframes u055-spin{to{transform:rotate(360deg)}}\\n</style>\\n<div class=\\"ux u055\\">\\n  <div class=\\"u055-stage\\" aria-hidden=\\"true\\">\\n    <div class=\\"u055-disc\\"><div class=\\"u055-vinyl\\"></div></div>\\n    <div class=\\"u055-sleeve\\"><b>SOFT<br>SPRING</b></div>\\n    <span class=\\"u055-arm\\"><i></i></span>\\n  </div>\\n  <div class=\\"u055-row\\">\\n    <div class=\\"u055-t\\" aria-live=\\"polite\\"><b>Soft Spring</b><small>Lumen · 2026</small></div>\\n    <button class=\\"u055-like\\" type=\\"button\\" aria-pressed=\\"false\\" aria-label=\\"좋아요\\"><svg viewBox=\\"0 0 24 24\\"><path d=\\"M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z\\"/></svg></button>\\n  </div>\\n  <div class=\\"u055-prog\\" role=\\"slider\\" tabindex=\\"0\\" aria-label=\\"재생 위치\\" aria-valuemin=\\"0\\"><div class=\\"u055-rail\\"><span class=\\"u055-fill\\"></span><span class=\\"u055-knob\\"></span></div></div>\\n  <div class=\\"u055-times\\"><span class=\\"u055-cur\\">0:00</span><span class=\\"u055-tot\\">0:00</span></div>\\n  <div class=\\"u055-ctl\\">\\n    <button class=\\"u055-c u055-prev\\" type=\\"button\\" aria-label=\\"이전 곡\\"><svg viewBox=\\"0 0 24 24\\"><path d=\\"M7 6h2v12H7zM20 6.5v11a.5.5 0 0 1-.8.4L11 12.4a.5.5 0 0 1 0-.8l8.2-5.5a.5.5 0 0 1 .8.4z\\"/></svg></button>\\n    <button class=\\"u055-c u055-pp\\" type=\\"button\\" aria-label=\\"재생\\"><svg viewBox=\\"0 0 24 24\\"><path d=\\"M8 5.5l11 6.5-11 6.5z\\"/></svg></button>\\n    <button class=\\"u055-c u055-next\\" type=\\"button\\" aria-label=\\"다음 곡\\"><svg viewBox=\\"0 0 24 24\\"><path d=\\"M15 6h2v12h-2zM4 6.5v11a.5.5 0 0 0 .8.4L13 12.4a.5.5 0 0 0 0-.8L4.8 6.1a.5.5 0 0 0-.8.4z\\"/></svg></button>\\n  </div>\\n</div>\\n<script>\\n(function () {\\n  var root = document.currentScript.previousElementSibling;\\n  var pp = root.querySelector('.u055-pp'), like = root.querySelector('.u055-like');\\n  var prog = root.querySelector('.u055-prog'), cur = root.querySelector('.u055-cur'), tot = root.querySelector('.u055-tot');\\n  var sleeve = root.querySelector('.u055-sleeve'), title = root.querySelector('.u055-t');\\n  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;\\n  var T = [\\n    ['Soft Spring', 'Lumen · 2026', 220, '#FF8A65', '#B04FD0', 'SOFT<br>SPRING'],\\n    ['Blue Hour', 'Sola · 2025', 194, '#5B8CFF', '#22C3A6', 'BLUE<br>HOUR'],\\n    ['Paper Moon', 'Haru · 2026', 251, '#FFC24B', '#E5484D', 'PAPER<br>MOON']\\n  ];\\n  var PLAY = 'M8 5.5l11 6.5-11 6.5z', PAUSE = 'M7 5h3.6v14H7zM13.4 5H17v14h-3.6z';\\n  var ti = 0, pos = 68, on = false, timer = 0;\\n  function fmt(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }\\n  function paint() {\\n    var t = T[ti][2];\\n    prog.style.setProperty('--p', (pos / t * 100).toFixed(2) + '%');\\n    prog.setAttribute('aria-valuemax', t);\\n    prog.setAttribute('aria-valuenow', Math.round(pos));\\n    prog.setAttribute('aria-valuetext', fmt(pos) + ' / ' + fmt(t));\\n    cur.textContent = fmt(pos); tot.textContent = fmt(t);\\n  }\\n  function load(i) {\\n    var t = T[i];\\n    root.style.setProperty('--a1', t[3]); root.style.setProperty('--a2', t[4]);\\n    sleeve.querySelector('b').innerHTML = t[5];\\n    title.innerHTML = '<b>' + t[0] + '</b><small>' + t[1] + '</small>';\\n  }\\n  function setPlay(v) {\\n    on = v;\\n    root.classList.toggle('is-on', v);\\n    pp.setAttribute('aria-label', v ? '일시정지' : '재생');\\n    pp.querySelector('path').setAttribute('d', v ? PAUSE : PLAY);\\n    clearInterval(timer);\\n    if (!v) return;\\n    timer = setInterval(function () {\\n      if (!root.isConnected) { clearInterval(timer); return; }\\n      pos += 1;\\n      if (pos >= T[ti][2]) { pos = 0; skip(1); return; }\\n      paint();\\n    }, 1000);\\n  }\\n  // 곡을 넘기면 슬리브가 넘긴 방향으로 빠지고 새 앨범이 반대편에서 들어옵니다\\n  function skip(dir) {\\n    ti = (ti + dir + T.length) % T.length;\\n    pos = 0;\\n    if (rm) { load(ti); paint(); return; }\\n    sleeve.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateX(' + (-dir * 60) + 'px) rotate(' + (-dir * 8) + 'deg)', opacity: 0 }], { duration: 220, easing: 'ease-in' }).onfinish = function () {\\n      load(ti); paint();\\n      sleeve.animate([{ transform: 'translateX(' + (dir * 60) + 'px) rotate(' + (dir * 8) + 'deg)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.34,1.4,.64,1)' });\\n    };\\n    title.animate([{ opacity: 1 }, { opacity: 0, offset: .3 }, { opacity: 1 }], { duration: 600 });\\n  }\\n  pp.addEventListener('click', function () { setPlay(!on); });\\n  root.querySelector('.u055-next').addEventListener('click', function () { skip(1); });\\n  root.querySelector('.u055-prev').addEventListener('click', function () { if (pos > 3) { pos = 0; paint(); } else skip(-1); });\\n  like.addEventListener('click', function () {\\n    var p = like.getAttribute('aria-pressed') !== 'true';\\n    like.setAttribute('aria-pressed', String(p));\\n    like.setAttribute('aria-label', p ? '좋아요 취소' : '좋아요');\\n  });\\n  // 진행 막대는 끌거나 방향키로 5초씩 옮깁니다\\n  function seek(e) {\\n    var r = prog.getBoundingClientRect();\\n    pos = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * T[ti][2];\\n    paint();\\n  }\\n  prog.addEventListener('pointerdown', function (e) { prog.setPointerCapture(e.pointerId); prog.classList.add('drag'); seek(e); });\\n  prog.addEventListener('pointermove', function (e) { if (prog.classList.contains('drag')) seek(e); });\\n  prog.addEventListener('pointerup', function () { prog.classList.remove('drag'); pos = Math.round(pos); });\\n  prog.addEventListener('pointercancel', function () { prog.classList.remove('drag'); });\\n  prog.addEventListener('keydown', function (e) {\\n    var d = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 5 : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -5 : 0;\\n    if (e.key === 'Home') d = -pos; if (e.key === 'End') d = T[ti][2] - 1 - pos;\\n    if (d) { e.preventDefault(); pos = Math.max(0, Math.min(T[ti][2] - 1, pos + d)); paint(); }\\n  });\\n  load(0); paint();\\n})();\\n<\/script>\\n"}]`),e=`请把下面这个 UI 元素做到我的项目里。
+
+1. 先确认项目的框架（React、Next、Vue、Svelte、纯 HTML 等）、样式方式（CSS 模块、Tailwind、全局 CSS）和主题方式（data-theme、dark 类、CSS 变量）。
+2. 先找到插入位置的文件和已有元素，说明它在哪里被使用。
+3. 在插入位置作为新组件添加；如果有要替换的对象，用下面的元素替换。
+4. 保留已有数据、props、事件处理、表单值和无障碍属性。
+5. 以下面代码的结构、形态、动效值（时间、曲线、延迟）为基准移植。可以按框架改成组件和状态，但不要重新猜测设计。
+6. 把下面的 --ux-* 令牌映射到项目已有的主题变量，同时保留亮色和暗色两套值，并在两种主题下确认。
+7. 样式只放在这个元素的类（.uNNN）里，不要改全局 CSS 或全局脚本。避免类名冲突。
+8. 示例文案和数据换成项目的真实数据。不要带走图库专用的演示代码。把代码顶部的许可证注释留在新组件文件顶部。
+9. 在 prefers-reduced-motion 开启时，功能和最终状态仍然要可用。
+
+完成后请报告：改了哪些文件、和原来相比行为有何不同、确认了哪些范围（两套主题、移动宽度、键盘）、哪些没能确认。
+
+--- 代码开始（以下是原作者提供的、实际可运行的原件，MIT License） ---
+<!-- Lucian UX/UI Prompt #055 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/en/uxui-prompt/#055 -->
+<!-- @meta {"title":"레코드가 꺼내지는 플레이어","category":"카드·콘텐츠","summary":"재생하면 레코드가 앨범 슬리브에서 미끄러져 나와 돌고, 톤암이 레코드 위로 내려옵니다. 다음 곡으로 넘기면 슬리브가 옆으로 바뀌고 레코드 가운데 색도 바뀝니다. 진행 막대는 끌어서 옮깁니다.","hint":"재생 버튼을 눌러 레코드가 나오는 것을 보고, 이전·다음 곡과 하트도 눌러 보세요. 진행 막대는 끌거나 방향키로 옮깁니다","shape":"tall","hue":"#FF6B8B","hue2":"#7B61FF","tags":["music","player","vinyl","tonearm","seek"]} -->
+<!-- @demo [["wait",700],["tap",".u055-pp"],["wait",2600],["tap",".u055-next"],["wait",1900],["tap",".u055-like"],["wait",900],["drag",".u055-prog",0,[0.15,0.5],[0.7,0.5],900],["wait",1500],["tap",".u055-pp"],["wait",1300],["reset"]] -->
+<!-- @en {"title":"Vinyl record player card","summary":"Press play and the record slides out of its sleeve and spins while the tonearm lowers onto it. Skip to the next track and the sleeve swaps sideways as the record’s label color changes. Drag the progress bar to seek.","hint":"Press play to see the record come out, then try previous, next and the heart. Drag the progress bar or use the arrow keys","map":[
+  ["좋아요 취소", "Unlike"],
+  ["좋아요", "Like"],
+  ["재생 위치", "Playback position"],
+  ["이전 곡", "Previous track"],
+  ["다음 곡", "Next track"],
+  ["일시정지", "Pause"],
+  ["재생", "Play"]
+]} -->
+<style>
+.u055{--a1:#FF8A65;--a2:#B04FD0;position:relative;width:330px;height:456px;display:flex;flex-direction:column;padding:0 22px 20px;border-radius:32px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden}
+.u055::before{content:"";position:absolute;left:-40px;right:-40px;top:-80px;height:300px;background:radial-gradient(closest-side,color-mix(in srgb,var(--a1) 30%,transparent),transparent);transition:background .8s;pointer-events:none}
+.u055-stage{position:relative;height:250px;flex:none;margin:0 -22px}
+.u055-disc{position:absolute;left:30px;top:34px;width:190px;height:190px;border-radius:50%;transition:transform .9s var(--ux-spring)}
+.u055.is-on .u055-disc{transform:translateX(86px)}
+.u055-vinyl{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,transparent 20%,rgba(255,255,255,.06) 20.5%,transparent 21%),repeating-radial-gradient(circle,#121219 0 2px,#1E1E28 2px 3.2px);box-shadow:0 18px 30px -16px rgba(0,0,0,.6);animation:u055-spin 2.2s linear infinite paused}
+.u055-vinyl::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent,rgba(255,255,255,.14) 10%,transparent 22%,transparent 50%,rgba(255,255,255,.1) 60%,transparent 72%)}
+.u055-vinyl::after{content:"";position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:radial-gradient(circle,#111 0 3px,transparent 3.5px),linear-gradient(140deg,var(--a1),var(--a2));transition:background .6s}
+.u055.is-on .u055-vinyl{animation-play-state:running}
+.u055-sleeve{position:absolute;left:20px;top:24px;width:210px;height:210px;border-radius:14px;overflow:hidden;background:linear-gradient(150deg,var(--a1),var(--a2));box-shadow:0 24px 36px -20px rgba(30,10,60,.6)}
+.u055-sleeve::before{content:"";position:absolute;width:150px;height:150px;left:-30px;bottom:-40px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.55),transparent 65%)}
+.u055-sleeve::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,255,255,.18),transparent 40%)}
+.u055-sleeve b{position:absolute;right:14px;top:14px;font-size:28px;font-weight:900;letter-spacing:-.06em;color:rgba(255,255,255,.9);line-height:.9;text-align:right}
+.u055-arm{position:absolute;right:20px;top:20px;width:20px;height:116px;transform-origin:10px 10px;transform:rotate(-8deg);transition:transform .8s var(--ux-spring)}
+.u055.is-on .u055-arm{transform:rotate(28deg);transition-delay:.35s}
+.u055-arm::before{content:"";position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--ux-surface-3);box-shadow:inset 0 0 0 5px var(--ux-surface),0 2px 6px rgba(0,0,0,.2)}
+.u055-arm::after{content:"";position:absolute;left:8px;top:16px;width:4px;height:84px;border-radius:2px;background:var(--ux-ink-3)}
+.u055-arm i{position:absolute;left:5px;top:96px;width:10px;height:18px;border-radius:3px;background:var(--ux-ink-2)}
+.u055-row{position:relative;display:flex;align-items:center;gap:10px}
+.u055-t{flex:1;min-width:0}
+.u055-t b{display:block;font-size:20px;font-weight:800;letter-spacing:-.04em;white-space:nowrap}
+.u055-t small{display:block;margin-top:2px;font-size:13px;font-weight:600;color:var(--ux-ink-3)}
+.u055-like{width:42px;height:42px;border:0;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--ux-surface-2);color:var(--ux-ink-3);transition:transform .35s var(--ux-spring),color .3s}
+.u055-like svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.u055-like[aria-pressed="true"]{color:#FF5A6E}
+.u055-like[aria-pressed="true"] svg{fill:currentColor;animation:u055-pop .45s var(--ux-spring)}
+@keyframes u055-pop{40%{transform:scale(1.35)}}
+.u055-prog{position:relative;height:28px;margin-top:14px;display:flex;align-items:center;cursor:pointer;touch-action:none}
+.u055-rail{position:relative;width:100%;height:5px;border-radius:5px;background:var(--ux-surface-3);transition:height .25s}
+.u055-prog:hover .u055-rail,.u055-prog.drag .u055-rail{height:8px}
+.u055-fill{position:absolute;left:0;top:0;bottom:0;width:var(--p);border-radius:inherit;background:linear-gradient(90deg,var(--a1),var(--a2));transition:background .6s}
+.u055-knob{position:absolute;top:50%;left:var(--p);width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);transform:scale(.7);transition:transform .3s var(--ux-spring)}
+.u055-prog:hover .u055-knob,.u055-prog.drag .u055-knob,.u055-prog:focus-visible .u055-knob{transform:none}
+.u055-prog:focus-visible{outline:none}
+.u055-prog:focus-visible .u055-rail{box-shadow:0 0 0 3px var(--ux-accent-soft)}
+.u055-times{display:flex;justify-content:space-between;font-size:11.5px;font-weight:650;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.u055-ctl{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:auto}
+.u055-c{width:48px;height:48px;border:0;padding:0;border-radius:50%;display:grid;place-items:center;background:none;color:var(--ux-ink);transition:transform .3s var(--ux-spring),background-color .3s}
+.u055-c:hover{background:var(--ux-surface-2)}
+.u055-c:active{transform:scale(.88)}
+.u055-c svg{width:24px;height:24px;fill:currentColor}
+.u055-pp{width:70px;height:70px;background:var(--ux-ink);color:var(--ux-page);box-shadow:0 14px 24px -12px var(--ux-shadow-strong)}
+.u055-pp:hover{background:var(--ux-ink);transform:scale(1.05)}
+.u055-pp svg{width:28px;height:28px}
+.u055-c:focus-visible,.u055-like:focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+@keyframes u055-spin{to{transform:rotate(360deg)}}
+</style>
+<div class="ux u055">
+  <div class="u055-stage" aria-hidden="true">
+    <div class="u055-disc"><div class="u055-vinyl"></div></div>
+    <div class="u055-sleeve"><b>SOFT<br>SPRING</b></div>
+    <span class="u055-arm"><i></i></span>
+  </div>
+  <div class="u055-row">
+    <div class="u055-t" aria-live="polite"><b>Soft Spring</b><small>Lumen · 2026</small></div>
+    <button class="u055-like" type="button" aria-pressed="false" aria-label="좋아요"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>
+  </div>
+  <div class="u055-prog" role="slider" tabindex="0" aria-label="재생 위치" aria-valuemin="0"><div class="u055-rail"><span class="u055-fill"></span><span class="u055-knob"></span></div></div>
+  <div class="u055-times"><span class="u055-cur">0:00</span><span class="u055-tot">0:00</span></div>
+  <div class="u055-ctl">
+    <button class="u055-c u055-prev" type="button" aria-label="이전 곡"><svg viewBox="0 0 24 24"><path d="M7 6h2v12H7zM20 6.5v11a.5.5 0 0 1-.8.4L11 12.4a.5.5 0 0 1 0-.8l8.2-5.5a.5.5 0 0 1 .8.4z"/></svg></button>
+    <button class="u055-c u055-pp" type="button" aria-label="재생"><svg viewBox="0 0 24 24"><path d="M8 5.5l11 6.5-11 6.5z"/></svg></button>
+    <button class="u055-c u055-next" type="button" aria-label="다음 곡"><svg viewBox="0 0 24 24"><path d="M15 6h2v12h-2zM4 6.5v11a.5.5 0 0 0 .8.4L13 12.4a.5.5 0 0 0 0-.8L4.8 6.1a.5.5 0 0 0-.8.4z"/></svg></button>
+  </div>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var pp = root.querySelector('.u055-pp'), like = root.querySelector('.u055-like');
+  var prog = root.querySelector('.u055-prog'), cur = root.querySelector('.u055-cur'), tot = root.querySelector('.u055-tot');
+  var sleeve = root.querySelector('.u055-sleeve'), title = root.querySelector('.u055-t');
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var T = [
+    ['Soft Spring', 'Lumen · 2026', 220, '#FF8A65', '#B04FD0', 'SOFT<br>SPRING'],
+    ['Blue Hour', 'Sola · 2025', 194, '#5B8CFF', '#22C3A6', 'BLUE<br>HOUR'],
+    ['Paper Moon', 'Haru · 2026', 251, '#FFC24B', '#E5484D', 'PAPER<br>MOON']
+  ];
+  var PLAY = 'M8 5.5l11 6.5-11 6.5z', PAUSE = 'M7 5h3.6v14H7zM13.4 5H17v14h-3.6z';
+  var ti = 0, pos = 68, on = false, timer = 0;
+  function fmt(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+  function paint() {
+    var t = T[ti][2];
+    prog.style.setProperty('--p', (pos / t * 100).toFixed(2) + '%');
+    prog.setAttribute('aria-valuemax', t);
+    prog.setAttribute('aria-valuenow', Math.round(pos));
+    prog.setAttribute('aria-valuetext', fmt(pos) + ' / ' + fmt(t));
+    cur.textContent = fmt(pos); tot.textContent = fmt(t);
+  }
+  function load(i) {
+    var t = T[i];
+    root.style.setProperty('--a1', t[3]); root.style.setProperty('--a2', t[4]);
+    sleeve.querySelector('b').innerHTML = t[5];
+    title.innerHTML = '<b>' + t[0] + '</b><small>' + t[1] + '</small>';
+  }
+  function setPlay(v) {
+    on = v;
+    root.classList.toggle('is-on', v);
+    pp.setAttribute('aria-label', v ? '일시정지' : '재생');
+    pp.querySelector('path').setAttribute('d', v ? PAUSE : PLAY);
+    clearInterval(timer);
+    if (!v) return;
+    timer = setInterval(function () {
+      if (!root.isConnected) { clearInterval(timer); return; }
+      pos += 1;
+      if (pos >= T[ti][2]) { pos = 0; skip(1); return; }
+      paint();
+    }, 1000);
+  }
+  // 곡을 넘기면 슬리브가 넘긴 방향으로 빠지고 새 앨범이 반대편에서 들어옵니다
+  function skip(dir) {
+    ti = (ti + dir + T.length) % T.length;
+    pos = 0;
+    if (rm) { load(ti); paint(); return; }
+    sleeve.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateX(' + (-dir * 60) + 'px) rotate(' + (-dir * 8) + 'deg)', opacity: 0 }], { duration: 220, easing: 'ease-in' }).onfinish = function () {
+      load(ti); paint();
+      sleeve.animate([{ transform: 'translateX(' + (dir * 60) + 'px) rotate(' + (dir * 8) + 'deg)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+    };
+    title.animate([{ opacity: 1 }, { opacity: 0, offset: .3 }, { opacity: 1 }], { duration: 600 });
+  }
+  pp.addEventListener('click', function () { setPlay(!on); });
+  root.querySelector('.u055-next').addEventListener('click', function () { skip(1); });
+  root.querySelector('.u055-prev').addEventListener('click', function () { if (pos > 3) { pos = 0; paint(); } else skip(-1); });
+  like.addEventListener('click', function () {
+    var p = like.getAttribute('aria-pressed') !== 'true';
+    like.setAttribute('aria-pressed', String(p));
+    like.setAttribute('aria-label', p ? '좋아요 취소' : '좋아요');
+  });
+  // 진행 막대는 끌거나 방향키로 5초씩 옮깁니다
+  function seek(e) {
+    var r = prog.getBoundingClientRect();
+    pos = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * T[ti][2];
+    paint();
+  }
+  prog.addEventListener('pointerdown', function (e) { prog.setPointerCapture(e.pointerId); prog.classList.add('drag'); seek(e); });
+  prog.addEventListener('pointermove', function (e) { if (prog.classList.contains('drag')) seek(e); });
+  prog.addEventListener('pointerup', function () { prog.classList.remove('drag'); pos = Math.round(pos); });
+  prog.addEventListener('pointercancel', function () { prog.classList.remove('drag'); });
+  prog.addEventListener('keydown', function (e) {
+    var d = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 5 : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -5 : 0;
+    if (e.key === 'Home') d = -pos; if (e.key === 'End') d = T[ti][2] - 1 - pos;
+    if (d) { e.preventDefault(); pos = Math.max(0, Math.min(T[ti][2] - 1, pos + d)); paint(); }
+  });
+  load(0); paint();
+})();
+<\/script>
+`,n={files:t,prompt:e};export{n as default,t as files,e as prompt};
