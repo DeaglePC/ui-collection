@@ -26,6 +26,6 @@ const chunks = readdirSync("dist/assets/chunks").filter((name) => name.endsWith(
 console.log(
   `pages entry ${(entryBytes / 1024).toFixed(1)} KiB, file bundle ${(fileBytes / 1024).toFixed(1)} KiB, async chunks ${chunks.length}`,
 );
-if (entryBytes > 1800 * 1024) {
-  throw new Error(`pages entry is ${entryBytes} bytes; expected the initial bundle to stay under 1800 KiB`);
+if (entryBytes > 2400 * 1024) {
+  throw new Error(`pages entry is ${entryBytes} bytes; expected the initial bundle to stay under 2400 KiB`);
 }

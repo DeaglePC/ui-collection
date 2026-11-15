@@ -19,6 +19,7 @@ export const categories = [
   "游戏 UI",
   "提示词",
   "着色器/WebGPU",
+  "数据图表",
 ] as const;
 
 export function itemById(id: string): Item | undefined {

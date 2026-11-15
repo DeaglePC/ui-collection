@@ -142,3 +142,23 @@
 - 收录：npm 包 shaders 中的 200 个免费 WebGPU 组件，带实时预览（不支持 WebGPU 时显示说明）和可复制的 React / vanilla 用法。
 - 未收录：Shaders Pro 的付费着色器、可视化编辑器导出和 MCP。它们不在免费包里。
 - 依据：npm 包 shaders@4.0.7 的 license 字段为 MIT。llms-full.txt 列出的是免费组件目录。
+
+## ns-ui
+- 站点：https://design.helpmarq.com
+- 仓库：https://github.com/nikolas-sapa/ns-ui
+- 许可：MIT
+- 许可原文：https://github.com/nikolas-sapa/ns-ui/blob/main/LICENSE
+- 作者：Nikolas Sapalidis
+- 收录：注册表中的全部免费组件（core 与 loud）源码。
+- 未收录：无。不做逐个实时画布。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Nikolas Sapalidis。
+
+## Sora UI
+- 站点：https://ui.soralabs.studio
+- 仓库：https://github.com/SoraLabsOSS/ui
+- 许可：未确认可再分发
+- 许可原文：https://ui.soralabs.studio/docs/license
+- 作者：Sora Labs
+- 收录：1 张仅链接卡片。
+- 未收录：全部源码。Animate UI 衍生部分为 Commons Clause，且未标明具体文件。
+- 依据：GitHub 许可证为 NOASSERTION，许可边界不清楚。

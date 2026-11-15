@@ -166,5 +166,29 @@
     "included": "npm 包 shaders 中的 200 个免费 WebGPU 组件，带实时预览（不支持 WebGPU 时显示说明）和可复制的 React / vanilla 用法。",
     "excluded": "Shaders Pro 的付费着色器、可视化编辑器导出和 MCP。它们不在免费包里。",
     "why": "npm 包 shaders@4.0.7 的 license 字段为 MIT。llms-full.txt 列出的是免费组件目录。"
+  },
+  {
+    "id": "nsui",
+    "name": "ns-ui",
+    "url": "https://design.helpmarq.com",
+    "repo": "https://github.com/nikolas-sapa/ns-ui",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/nikolas-sapa/ns-ui/blob/main/LICENSE",
+    "author": "Nikolas Sapalidis",
+    "included": "注册表全部 542 个免费组件（core 与 loud）的完整源码，并注明作者、仓库和原页面。",
+    "excluded": "没有跳过注册表中的免费组件。卡片不挂实时 WebGL，源码按条目按需加载。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Nikolas Sapalidis。组件从公开注册表 https://design.helpmarq.com/r/<name>.json 取得。"
+  },
+  {
+    "id": "soraui",
+    "name": "Sora UI",
+    "url": "https://ui.soralabs.studio",
+    "repo": "https://github.com/SoraLabsOSS/ui",
+    "license": "未确认可再分发（GitHub NOASSERTION；许可页对部分组件使用 Commons Clause）",
+    "licenseUrl": "https://ui.soralabs.studio/docs/license",
+    "author": "Sora Labs",
+    "included": "1 张仅链接卡片，无源码。",
+    "excluded": "全部源码。许可页写原创代码是 MIT，但 Animate UI 衍生组件是 Commons Clause，且没有列出分别是哪些文件。",
+    "why": "许可边界不清楚时只放链接，不复制代码。"
   }
 ]
