@@ -47,7 +47,8 @@ function pagesBootstrap(): Plugin {
     transformIndexHtml: {
       order: "post",
       handler(html, ctx) {
-        if (ctx.server) return html;
+        const filename = ctx.filename || ctx.path || "";
+        if (ctx.server || !filename.endsWith("index.html")) return html;
         html = html.replace(/<script type="module"[^>]*src="[^"]+"[^>]*><\/script>/g, "");
         html = html.replace(/<link rel="modulepreload"[^>]*>/g, "");
         html = html.replace(/<link rel="stylesheet" crossorigin href="\.\/assets\//g, '<link rel="stylesheet" href="./assets/');
@@ -114,9 +115,18 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: !file,
       modulePreload: false,
       rollupOptions: {
+        input: file
+          ? fileURLToPath(new URL("./index.html", import.meta.url))
+          : {
+              main: fileURLToPath(new URL("./index.html", import.meta.url)),
+              nsui: fileURLToPath(new URL("./nsui-stage.html", import.meta.url)),
+            },
         output: {
           inlineDynamicImports: file,
-          entryFileNames: file ? "assets/app.file.js" : "assets/app.js",
+          entryFileNames(chunk) {
+            if (chunk.name === "nsui") return "assets/nsui.js";
+            return file ? "assets/app.file.js" : "assets/app.js";
+          },
           chunkFileNames: "assets/chunks/[name]-[hash].js",
           assetFileNames: "assets/[name][extname]",
         },

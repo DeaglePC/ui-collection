@@ -312,10 +312,29 @@ html.page-hidden .ambient-blob {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  gap: 0.35rem;
   padding: 0.9rem 1rem;
   background:
     radial-gradient(90% 80% at 80% 0%, hsl(var(--poster-h) 42% 28% / 0.55), transparent 60%),
     linear-gradient(160deg, #1a1612, #0d0c0a 70%);
+}
+
+.preview-poster.is-static {
+  position: relative;
+  inset: auto;
+  flex: 1;
+  justify-content: center;
+  min-height: 0;
+  padding: 1rem 1rem 0.35rem;
+}
+
+.preview-note {
+  position: relative;
+  margin: 0;
+  padding: 0.15rem 1rem 0.85rem;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-mute);
 }
 
 .preview-poster strong {

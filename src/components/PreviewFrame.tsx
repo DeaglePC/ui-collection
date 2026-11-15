@@ -114,13 +114,34 @@ export function PreviewFrame({
     );
   }
 
-  if (item.preview === "code") {
+  const nsName = item.sourceId === "nsui" ? item.id.replace(/^nsui-/, "") : "";
+  const nsLive = Boolean(nsName) && interactive && location.protocol !== "file:";
+  if (nsLive) {
+    const frameH = Math.max(h, 460);
     return (
-      <div className={`preview-clip ${className}`} style={{ height: Math.min(h, 220) }} data-preview-kind="code">
-        <Poster item={item} />
-        <div className="absolute inset-x-0 bottom-0 px-4 pb-3 text-[12px] leading-relaxed text-[var(--color-mute)]">
-          这项提供源码{item.hasPrompt ? "和提示词" : ""}，因依赖较重或只是提示词，没有站内实时预览。
+      <div ref={ref} className={`preview-clip ${className}`} style={{ height: frameH }} data-preview-kind="nsui" data-preview-mounted="true">
+        <iframe
+          title={`${item.nameZh} 预览`}
+          src={`./nsui-stage.html?name=${encodeURIComponent(nsName)}`}
+          sandbox="allow-scripts allow-same-origin"
+          className="absolute inset-0 h-full w-full border-0 bg-[#0c0b09]"
+        />
+      </div>
+    );
+  }
+
+  if (item.preview === "code") {
+    const note =
+      item.sourceId === "nsui"
+        ? "列表里只放海报。打开条目可看实时效果，源码可复制。"
+        : `这项提供源码${item.hasPrompt ? "和提示词" : ""}，因依赖较重或只是提示词，没有站内实时预览。`;
+    return (
+      <div className={`preview-clip flex flex-col ${className}`} style={{ height: Math.min(h, 240) }} data-preview-kind="code">
+        <div className="preview-poster is-static" style={{ ["--poster-h" as string]: String(posterHue(item.id)) }}>
+          <span className="text-[10px] tracking-[0.16em] uppercase text-[var(--color-accent-2)]">{item.category}</span>
+          <strong>{item.nameZh}</strong>
         </div>
+        <p className="preview-note">{note}</p>
       </div>
     );
   }

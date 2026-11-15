@@ -4,6 +4,8 @@ dist-file
 dist-ssr
 *.tsbuildinfo
 src/data/generated
+nsui-src/components
+nsui-src/mounts
 
 .DS_Store
 *.local
