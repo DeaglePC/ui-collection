@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liquid-wave onboarding · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"물결로 넘어가는 온보딩","category":"섹션·콘텐츠","summary":"‘다음’을 누르면 다음 장의 색이 화면 아래에서 출렁이는 물결로 차올라 전체를 덮고, 물결이 지나간 뒤 그림과 글이 아래에서 떠오릅니다. 물결 마루는 오르는 동안 좌우로 흔들리고, 아래 점 표시는 늘어나며 지금 장을 가리킵니다.","hint":"‘다음’을 눌러 넘기고, 마지막 장에서 ‘시작하기’를 눌러 보세요","shape":"tall","tags":["onboarding","wave","transition","svg","mobile"]} -->
+<!-- @demo [["wait",1200],["tap",".u383-nx",0,{"after":1900}],["tap",".u383-nx",0,{"after":1900}],["tap",".u383-nx",0,{"after":1900}]] -->
+<!-- @en {"title":"Liquid-wave onboarding","summary":"Press ‘Next’ and the next page’s color rises from the bottom as a rolling wave that covers the screen, then the illustration and text float up once it has passed. The crest sways side to side as it rises, and the dots below stretch to mark the current page.","hint":"Press ‘Next’ to move on, and ‘Get started’ on the last page","map":[
+  ["var PAGES = [['차분하게 시작해요', '하루 10분, 숨을 고르는 시간부터 만들어요.'], ['기록이 쌓여요', '매일의 기분과 잠을 한눈에 돌아봐요.'], ['함께 이어 가요', '친구와 작은 목표를 나누고 응원해요.']];", "var PAGES = [['Start calmly', 'Begin with ten minutes a day to catch your breath.'], ['Watch it add up', 'Look back on your mood and sleep at a glance.'], ['Keep going together', 'Share small goals with friends and cheer each other on.']];"],
+  ["'다음'", "'Next'"],
+  ["'시작하기'", "'Get started'"],
+  [">다음<", ">Next<"],
+  [">건너뛰기<", ">Skip<"]
+]} -->
+<style>
+.u383{position:relative;width:300px;height:500px;border-radius:36px;background:var(--bg,#5F3DC4);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden;color:#fff}
+.u383-wv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.u383-ct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:70px 26px 30px;text-align:center}
+.u383-ill{position:relative;width:170px;height:170px}
+.u383-ill i{position:absolute;border-radius:50%;background:rgba(255,255,255,.9)}
+.u383-ct>*{transition:opacity .45s,transform .7s var(--ux-spring)}
+.u383.is-out .u383-ct>*{opacity:0;transform:translateY(-20px)}
+.u383.is-in .u383-ct>*{opacity:0;transform:translateY(30px);transition:none}
+.u383-ct h3{margin:30px 0 0;font-size:24px;font-weight:880;letter-spacing:-.04em}
+.u383-ct p{margin:10px 0 0;font-size:14.5px;line-height:1.6;opacity:.85}
+.u383-ct>:nth-child(2){transition-delay:.06s}
+.u383-ct>:nth-child(3){transition-delay:.12s}
+.u383-sk{position:absolute;right:18px;top:18px;z-index:2;border:0;background:none;color:rgba(255,255,255,.8);font-size:13px;font-weight:700}
+.u383-ft{position:absolute;left:24px;right:24px;bottom:26px;z-index:2;display:flex;align-items:center;justify-content:space-between}
+.u383-dots{display:flex;gap:6px}
+.u383-dots i{width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.4);transition:width .45s var(--ux-spring),background-color .3s}
+.u383-dots i.on{width:24px;background:#fff}
+.u383-nx{height:46px;padding:0 22px;border:0;border-radius:999px;background:#fff;color:var(--fg,#5F3DC4);font-size:14px;font-weight:850;transition:transform .35s var(--ux-spring),color .4s}
+.u383-nx:active{transform:scale(.94)}
+</style>
+<div class="ux u383">
+  <svg class="u383-wv" viewBox="0 0 300 500" preserveAspectRatio="none" aria-hidden="true"><path/></svg>
+  <button class="u383-sk" type="button">건너뛰기</button>
+  <div class="u383-ct" aria-live="polite"><div class="u383-ill" aria-hidden="true"></div><h3></h3><p></p></div>
+  <div class="u383-ft"><div class="u383-dots" aria-hidden="true"><i></i><i></i><i></i></div><button class="u383-nx" type="button">다음</button></div>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var path = root.querySelector('.u383-wv path'), ill = root.querySelector('.u383-ill'), h = root.querySelector('h3'), p = root.querySelector('.u383-ct p'), nx = root.querySelector('.u383-nx');
+  var dots = Array.prototype.slice.call(root.querySelectorAll('.u383-dots i'));
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var PAGES = [['차분하게 시작해요', '하루 10분, 숨을 고르는 시간부터 만들어요.'], ['기록이 쌓여요', '매일의 기분과 잠을 한눈에 돌아봐요.'], ['함께 이어 가요', '친구와 작은 목표를 나누고 응원해요.']];
+  var BG = ['#5F3DC4', '#0C8599', '#E8590C'];
+  var ILL = [
+    [[60, 60, 50, 50], [20, 30, 24, 24], [118, 110, 30, 30]],
+    [[20, 100, 26, 50], [56, 70, 26, 80], [92, 40, 26, 110], [128, 86, 26, 64]],
+    [[30, 50, 60, 60], [80, 50, 60, 60], [62, 112, 46, 46]]
+  ];
+  var cur = 0, busy = false;
+  function fill(i) {
+    root.style.setProperty('--bg', BG[i]); root.style.setProperty('--fg', BG[i]);
+    h.textContent = PAGES[i][0]; p.textContent = PAGES[i][1];
+    ill.innerHTML = ILL[i].map(function (r, k) { return '<i style="left:' + r[0] + 'px;top:' + r[1] + 'px;width:' + r[2] + 'px;height:' + r[3] + 'px;border-radius:' + (i === 1 ? '10px' : '50%') + ';opacity:' + (1 - k * 0.2) + '"></i>'; }).join('');
+    dots.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+    nx.textContent = i === PAGES.length - 1 ? '시작하기' : '다음';
+  }
+  // 물결 마루가 아래(500)에서 위(-60)로 오르며 출렁입니다
+  function wave(y, t, amp) {
+    var pts = [];
+    for (var x = 0; x <= 300; x += 10) pts.push(x + ' ' + (y + Math.sin(x / 38 + t * 9) * amp + Math.sin(x / 17 - t * 6) * amp * 0.35).toFixed(1));
+    return 'M0 520 L' + pts.join(' L') + ' L300 520 Z';
+  }
+  function go(n) {
+    if (busy || n === cur) return;
+    busy = true;
+    root.classList.add('is-out');
+    path.setAttribute('fill', BG[n]);
+    var t0 = performance.now(), D = rm ? 1 : 1100;
+    (function f(now) {
+      if (!root.isConnected) return;
+      var k = Math.max(0, Math.min(1, (now - t0) / D)), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      path.setAttribute('d', wave(520 - e * 600, k, 26 * Math.sin(k * Math.PI)));
+      if (k < 1) { requestAnimationFrame(f); return; }
+      cur = n;
+      root.classList.remove('is-out'); root.classList.add('is-in');
+      fill(n);
+      path.setAttribute('d', '');
+      void root.offsetWidth;
+      root.classList.remove('is-in');
+      busy = false;
+    })(t0);
+  }
+  nx.addEventListener('click', function () { go((cur + 1) % PAGES.length); });
+  root.querySelector('.u383-sk').addEventListener('click', function () { go(PAGES.length - 1); });
+  fill(0);
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

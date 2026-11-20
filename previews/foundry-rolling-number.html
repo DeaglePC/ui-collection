@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rolling Number · Foundry44</title>
+<!-- Foundry44 · Rolling Number · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/rolling-number/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+.row{font:700 80px/1 ui-sans-serif,system-ui;letter-spacing:-.04em} .hint{margin-top:18px;color:#9a9388;font-size:13px}
+</style>
+</head>
+<body>
+<div class="row"><span data-f44="rolling-number" data-f44-value="12840" data-f44-duration="1400">0</span></div><p class="hint">进入画面后数字会翻滚到位。</p>
+<script>
+/*!
+ * Foundry44 · Rolling Number — https://foundry44.dev/components/rolling-number
+ * Digits roll vertically like an odometer up to a value when scrolled into view.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="rolling-number" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-value=""
+ *   data-f44-duration="1200"
+ *   data-f44-stagger="60"
+ *   data-f44-once="true"
+ * Manual: const instance = Foundry44.rollingNumber(element, { value: "", duration: 1200, stagger: 60, once: true });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — rolling-number
+   * Each digit rolls vertically like an odometer, from zero up to the number,
+   * when it enters the viewport. Changing `value` rolls from the current number
+   * to the new one. Symbols and separators ($ , . %) stay in place.
+   *
+   * At rest the element holds plain text: readable, selectable and indexable.
+   * The digit columns only exist while rolling.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const rollingNumberDefaults = {
+    value: "",
+    duration: 1200,
+    stagger: 60,
+    once: true,
+  };
+  // Strong ease-out: the digits spin fast, then settle softly on their value.
+  const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+  const DIGITS = "0123456789";
+  const isDigit = (char) => char >= "0" && char <= "9";
+  function rollingNumber(el, options = {}) {
+    var _a, _b, _c;
+    let opts = { ...rollingNumberDefaults, ...options };
+    const noop = { update() {}, destroy() {} };
+    if (typeof window === "undefined") return noop;
+    const reduced =
+      (_b =
+        (_a = window.matchMedia) === null || _a === void 0
+          ? void 0
+          : _a.call(window, "(prefers-reduced-motion: reduce)").matches) !== null && _b !== void 0
+        ? _b
+        : false;
+    // The text the element shows at rest, or will show once the roll ends.
+    let target = opts.value === "" ? ((_c = el.textContent) !== null && _c !== void 0 ? _c : "") : String(opts.value);
+    let slots = [];
+    // Digits replaced by zeros: two numbers with the same shape can retarget the running columns.
+    let rollingShape = "";
+    let settleTimer = 0;
+    let played = false;
+    let observer = null;
+    if (el.textContent !== target) el.textContent = target;
+    const shapeOf = (text) => text.replace(/[0-9]/g, "0");
+    const settle = () => {
+      clearTimeout(settleTimer);
+      settleTimer = 0;
+      slots = [];
+      rollingShape = "";
+      el.textContent = target;
+    };
+    // Each column holds 0–9 stacked; it is 10 lines tall, so one digit is 10% of its height.
+    const moveColumns = (text, animate) => {
+      const digits = Array.from(text).filter(isDigit);
+      slots.forEach(({ placeholder, column }, index) => {
+        var _a;
+        const digit = Number((_a = digits[index]) !== null && _a !== void 0 ? _a : 0);
+        placeholder.textContent = String(digit);
+        column.style.transition = animate
+          ? `transform ${opts.duration}ms ${EASE_OUT} ${index * opts.stagger}ms`
+          : "none";
+        column.style.transform = `translateY(${-digit * 10}%)`;
+      });
+      clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(settle, opts.duration + Math.max(0, slots.length - 1) * opts.stagger);
+    };
+    const buildColumns = (text) => {
+      // Screen readers get the final number once; the moving digits are hidden from them.
+      const announced = document.createElement("span");
+      announced.textContent = text;
+      announced.style.cssText =
+        "position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap";
+      const visual = document.createElement("span");
+      visual.setAttribute("aria-hidden", "true");
+      visual.style.whiteSpace = "nowrap";
+      slots = [];
+      for (const char of Array.from(text)) {
+        if (!isDigit(char)) {
+          visual.append(char);
+          continue;
+        }
+        // An invisible copy of the final digit gives the slot its width, height and baseline,
+        // so the number sits exactly where the plain text will be once the roll ends.
+        const slot = document.createElement("span");
+        slot.style.cssText = "display:inline-block;position:relative;clip-path:inset(0 -0.2em)";
+        const placeholder = document.createElement("span");
+        placeholder.style.visibility = "hidden";
+        const column = document.createElement("span");
+        column.style.cssText =
+          "position:absolute;top:0;left:0;right:0;display:flex;flex-direction:column;text-align:center";
+        for (const digit of DIGITS) {
+          const cell = document.createElement("span");
+          cell.textContent = digit;
+          column.append(cell);
+        }
+        slot.append(placeholder, column);
+        visual.append(slot);
+        slots.push({ placeholder, column });
+      }
+      el.replaceChildren(announced, visual);
+      rollingShape = shapeOf(text);
+    };
+    const roll = (from, to) => {
+      target = to;
+      if (reduced || opts.duration <= 0) {
+        settle();
+        return;
+      }
+      if (slots.length && shapeOf(to) === rollingShape) {
+        // Same shape as the running roll: CSS transitions retarget from where each digit is now.
+        moveColumns(to, true);
+        return;
+      }
+      buildColumns(to);
+      // Align the starting digits on the right, so 980 → 1,240 rolls units into units.
+      const fromDigits = Array.from(from).filter(isDigit);
+      const startDigits = slots.map((_, index) => {
+        var _a;
+        return (_a = fromDigits[fromDigits.length - slots.length + index]) !== null && _a !== void 0 ? _a : "0";
+      });
+      moveColumns(startDigits.join(""), false);
+      // Commit the starting position before transitioning away from it.
+      el.getBoundingClientRect();
+      moveColumns(to, true);
+    };
+    const play = () => {
+      played = true;
+      roll(shapeOf(target), target);
+    };
+    const bind = () => {
+      if (opts.once && played) return;
+      if (typeof IntersectionObserver === "undefined") {
+        play();
+        return;
+      }
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          play();
+          if (opts.once) unbind();
+        },
+        // Wait until the number is a little inside the viewport so the roll is actually seen.
+        { rootMargin: "0px 0px -10% 0px" },
+      );
+      observer.observe(el);
+    };
+    const unbind = () => {
+      observer === null || observer === void 0 ? void 0 : observer.disconnect();
+      observer = null;
+    };
+    // With reduced motion the number is simply shown; only `value` changes matter.
+    if (!reduced) bind();
+    return {
+      update(next) {
+        const previous = opts;
+        opts = { ...opts, ...next };
+        if (opts.value !== previous.value && opts.value !== "") {
+          const value = String(opts.value);
+          if (played) roll(target, value);
+          else {
+            // Not seen yet: show the value now, it rolls from zero when it scrolls into view.
+            target = value;
+            settle();
+          }
+        }
+        if (!reduced && opts.once !== previous.once) {
+          unbind();
+          bind();
+        }
+      },
+      destroy() {
+        unbind();
+        if (slots.length) settle();
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="rolling-number"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["value", "data-f44-value"],
+        ["duration", "data-f44-duration"],
+        ["stagger", "data-f44-stagger"],
+        ["once", "data-f44-once"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = rollingNumber(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.rollingNumber = rollingNumber;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+<script src="./_fit.js"></script>
+</body>
+</html>

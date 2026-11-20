@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Five underline hovers · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"다섯 가지 밑줄 호버","category":"내비게이션","summary":"메뉴 링크 다섯 개가 저마다 다른 밑줄 움직임을 보여 줍니다. 왼쪽에서 그어져 오른쪽으로 빠져나가는 줄, 가운데서 양쪽으로 퍼지는 줄, 곧은 줄이 흐르는 물결로 바뀌는 줄, 두 가닥이 엇갈려 지나가는 줄, 점 하나가 튕기듯 늘어나는 줄입니다. 키보드 초점에도 같은 밑줄이 나타납니다.","hint":"링크 위로 커서를 하나씩 올렸다 내려 보세요","shape":"square","tags":["underline","link","hover","micro-interaction","navigation"]} -->
+<!-- @demo [["wait",700],["hover",".u373-a",0,{"after":900}],["hover",".u373-a",1,{"after":900}],["hover",".u373-a",2,{"after":1300}],["hover",".u373-a",3,{"after":1000}],["hover",".u373-a",4,{"after":1000}],["hover",".u373-hd",0,{"after":700}]] -->
+<!-- @en {"title":"Five underline hovers","summary":"Five menu links each show a different underline motion: a line that draws in from the left and exits to the right, one that spreads out from the center, a straight line that turns into a flowing wave, two strands that cross as they pass, and a single dot that springs out into a line. The same underlines appear on keyboard focus.","hint":"Hover over each link in turn","map":[
+  [">소개<", ">About<"],
+  [">작업<", ">Work<"],
+  [">글<", ">Writing<"],
+  [">연락<", ">Contact<"],
+  [">채용<", ">Careers<"],
+  [">밀고 지나가기<", ">Slide through<"],
+  [">가운데서 퍼지기<", ">Center spread<"],
+  [">물결로 흐르기<", ">Wave flow<"],
+  [">엇갈려 지나가기<", ">Cross pass<"],
+  [">점에서 늘어나기<", ">Dot stretch<"],
+  [">메뉴<", ">Menu<"],
+  ["aria-label=\"메뉴\"", "aria-label=\"Menu\""]
+]} -->
+<style>
+.u373{position:relative;width:340px;height:340px;border-radius:30px;overflow:hidden;background:#FFFDF7;box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);color:#1C1A2E;padding:24px 28px}
+.u373-hd{font-size:10.5px;font-weight:800;letter-spacing:.16em;color:#A19D92;margin:0 0 8px}
+.u373-ls{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.u373-ls li{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.u373-ls small{font-size:10px;font-weight:650;color:#B5B1A6}
+.u373-a{--c:#5B4CF0;position:relative;display:inline-block;padding:4px 0 8px;font-size:30px;font-weight:850;letter-spacing:-.03em;color:#1C1A2E;text-decoration:none;outline:none}
+.u373-a::before,.u373-a::after{content:"";position:absolute;left:0;bottom:2px;height:3px;border-radius:2px;background:var(--c);pointer-events:none}
+.u373-a:focus-visible{color:var(--c)}
+/* 1 밀고 지나가기: 들어올 땐 왼쪽에서, 나갈 땐 오른쪽으로 빠집니다 */
+.u373-1::after{right:0;transform:scaleX(0);transform-origin:100% 50%;transition:transform .35s cubic-bezier(.6,0,.2,1)}
+.u373-1:hover::after,.u373-1:focus-visible::after{transform:scaleX(1);transform-origin:0 50%}
+.u373-1::before{display:none}
+/* 2 가운데서 퍼지기 */
+.u373-2::after{right:0;transform:scaleX(0);transition:transform .4s cubic-bezier(.3,1.4,.5,1)}
+.u373-2:hover::after,.u373-2:focus-visible::after{transform:scaleX(1)}
+.u373-2::before{display:none}
+/* 3 물결: 곧은 선 위에 물결 SVG를 겹쳐 두고 흐르게 합니다 */
+.u373-3::before,.u373-3::after{display:none}
+.u373-w{position:absolute;left:0;right:0;bottom:-2px;height:12px;overflow:hidden;pointer-events:none}
+.u373-w svg{position:absolute;left:0;top:0;width:120px;height:12px;color:var(--c)}
+.u373-3 .u373-w svg{animation:u373-flow 1s linear infinite;animation-play-state:paused}
+.u373-3:hover .u373-w svg,.u373-3:focus-visible .u373-w svg{animation-play-state:running}
+.u373-3 .u373-w .u373-flat{transition:opacity .25s}
+.u373-3 .u373-w .u373-wave{opacity:0;transition:opacity .25s}
+.u373-3:hover .u373-w .u373-flat,.u373-3:focus-visible .u373-w .u373-flat{opacity:0}
+.u373-3:hover .u373-w .u373-wave,.u373-3:focus-visible .u373-w .u373-wave{opacity:1}
+@keyframes u373-flow{to{transform:translateX(-50%)}}
+/* 4 엇갈려 지나가기: 위아래 두 가닥이 반대로 지나갑니다 */
+.u373-4::before,.u373-4::after{height:2px;right:0;transform:scaleX(0);transition:transform .45s cubic-bezier(.6,0,.2,1)}
+.u373-4::before{bottom:6px;transform-origin:100% 50%;background:#F06595}
+.u373-4::after{transform-origin:0 50%}
+.u373-4:hover::before,.u373-4:focus-visible::before,.u373-4:hover::after,.u373-4:focus-visible::after{transform:scaleX(1)}
+/* 5 점에서 늘어나기: 첫 글자 아래 점이 오른쪽으로 튕기듯 늘어납니다 */
+.u373-5::before{display:none}
+.u373-5::after{width:6px;height:6px;bottom:0;border-radius:3px;transition:width .5s cubic-bezier(.3,1.6,.5,1)}
+.u373-5:hover::after,.u373-5:focus-visible::after{width:100%}
+@media (prefers-reduced-motion: reduce){.u373-a::before,.u373-a::after{transition:none!important}.u373-3 .u373-w svg{animation:none}}
+</style>
+<div class="ux u373">
+  <p class="u373-hd">메뉴</p>
+  <ul class="u373-ls" aria-label="메뉴">
+    <li><a href="#" class="u373-a u373-1">소개</a><small>밀고 지나가기</small></li>
+    <li><a href="#" class="u373-a u373-2">작업</a><small>가운데서 퍼지기</small></li>
+    <li><a href="#" class="u373-a u373-3">글<span class="u373-w" aria-hidden="true"><svg viewBox="0 0 120 12" preserveAspectRatio="none"><path class="u373-flat" d="M0 7 H120" stroke="currentColor" stroke-width="3" fill="none"/><path class="u373-wave" d="M0 7 Q5 1 10 7 T20 7 T30 7 T40 7 T50 7 T60 7 T70 7 T80 7 T90 7 T100 7 T110 7 T120 7" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg></span></a><small>물결로 흐르기</small></li>
+    <li><a href="#" class="u373-a u373-4">연락</a><small>엇갈려 지나가기</small></li>
+    <li><a href="#" class="u373-a u373-5">채용</a><small>점에서 늘어나기</small></li>
+  </ul>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  [].forEach.call(root.querySelectorAll('.u373-a'), function (a) { a.addEventListener('click', function (e) { e.preventDefault(); }); });
+  // 물결 밑줄은 늘어나지 않도록 폭이 고정된 SVG(파장 20px)를 반 폭씩 흘려 이음매 없이 반복합니다
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

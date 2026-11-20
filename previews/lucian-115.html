@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gradient Stops · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "그라디언트 스톱", "category": "공간·일정·디자인 도구", "summary": "세 색으로 된 그라디언트의 가운데 색 위치를 정하는 편집기입니다. 가운데 스톱을 옮기면 색이 섞이는 지점이 바뀌고 위치 값이 함께 표시됩니다.", "hint": "가운데 동그란 스톱을 좌우로 끌어 보세요. ←/→와 Esc도 됩니다", "shape": "square", "fluid": true, "hue": "#3866D5", "hue2": "#3D8BFF", "tags": ["gradient-stops", "native", "spatial"]} -->
+<!-- @demo [["wait", 500], ["key", ".u115 .stop", 0, "ArrowRight", 4, 240], ["wait", 700], ["key", ".u115 .stop", 0, "ArrowLeft", 8, 200], ["wait", 900], ["key", ".u115 .stop", 0, "Escape", 1, 1000]] -->
+<!-- @en {"title": "Gradient stops", "summary": "An editor for placing the middle color of a three-color gradient. Move the middle stop and the point where the colors blend shifts, with its position shown below.", "hint": "Drag the round middle stop left and right. ←/→ and Esc work too","map":[
+  ["세 색상 그라디언트", "Three-color gradient"],
+  ["중간 색상 스톱 위치", "Middle color stop position"]
+]} -->
+<style>
+.u115{width:100%;max-width:400px;min-width:0;font-size:13px}.u115 button{font:inherit;color:inherit;cursor:pointer}.u115 input[type=range]{min-width:0;width:100%;accent-color:var(--ux-accent)}.u115 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.u115{padding:14px 8px 10px}.u115 .gradient{height:185px;border-radius:90px 6px 6px 6px;background:linear-gradient(90deg,#536f9d 0%,#ad899e 50%,#d5ad82 100%)}.u115 .track{height:46px;position:relative;margin:15px 12px 0;border-top:2px solid var(--ux-line-2)}.u115 .end{position:absolute;top:-7px;width:11px;height:11px;border-radius:50%;background:#536f9d;border:2px solid var(--ux-surface)}.u115 .end:last-child{right:0;background:#d5ad82}.u115 .stop{position:absolute;left:calc(var(--pos,50%) - 22px);top:-19px;width:44px;height:44px;background:transparent;border:0;padding:0;touch-action:none;cursor:ew-resize}.u115 .stop:before{content:"";display:block;width:17px;height:17px;margin:4px auto 0;background:#ad899e;border:3px solid var(--ux-surface);border-radius:50%;box-shadow:0 0 0 1px var(--ux-ink-2)}.u115 .stop output{font-size:12px;display:block;margin-top:4px;color:var(--ux-ink-2)}
+</style>
+<div class="ux u115"><div class="gradient" aria-label="세 색상 그라디언트"></div><div class="track"><span class="end"></span><button class="stop" role="slider" aria-label="중간 색상 스톱 위치" aria-valuemin="5" aria-valuemax="95" aria-valuenow="50"><output>50%</output></button><span class="end"></span></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling,q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];let v=50;function set(n){v=Math.max(5,Math.min(95,Math.round(n)));root.style.setProperty('--pos',v+'%');q('.gradient').style.background=`linear-gradient(90deg,#536f9d 0%,#ad899e ${v}%,#d5ad82 100%)`;q('.stop').setAttribute('aria-valuenow',v);q('output').textContent=v+'%'}q('.stop').onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End','Escape'].includes(e.key)){e.preventDefault();set(e.key==='Escape'?50:e.key==='Home'?5:e.key==='End'?95:v+(e.key==='ArrowRight'?5:-5))}};q('.stop').onpointerdown=e=>e.currentTarget.setPointerCapture(e.pointerId);q('.stop').onpointermove=e=>{if(e.currentTarget.hasPointerCapture(e.pointerId)){const r=q('.track').getBoundingClientRect();set((e.clientX-r.left)/r.width*100)}};})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

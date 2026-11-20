@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe Scale · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "비율로 늘리는 레시피", "category": "문서·데이터 편집", "summary": "인분 수에 맞춰 재료 양을 함께 바꾸는 레시피 카드입니다. ＋/− 버튼으로 인분을 바꾸면 모든 재료가 같은 비율로 다시 계산됩니다.", "hint": "＋와 − 버튼을 눌러 인분을 바꿔 보세요", "shape": "square", "fluid": true, "hue": "#885ACC", "hue2": "#22C3A6", "tags": ["recipe-scale", "editing", "interactive"]} -->
+<!-- @demo [["wait", 500], ["tap", ".u135 [data-more]", 0], ["wait", 700], ["tap", ".u135 [data-more]", 0], ["wait", 1300], ["tap", ".u135 [data-less]", 0], ["wait", 500], ["tap", ".u135 [data-less]", 0], ["wait", 1000]] -->
+<!-- @en {"title": "Recipe scaler", "summary": "A recipe card whose ingredients scale with the number of servings. Change the servings with + and − and every ingredient recalculates in the same proportion.", "hint": "Press + and − to change the servings","map":[
+  ["인분 줄이기", "Fewer servings"],
+  ["인분 늘리기", "More servings"],
+  ["레몬 팬케이크", "Lemon pancakes"],
+  ["인분", "Servings"],
+  ["밀가루", "Flour"],
+  ["우유", "Milk"],
+  ["설탕", "Sugar"]
+]} -->
+<style>
+.u135{width:min(100%,370px);font-size:14px;line-height:1.6;color:var(--ux-ink)}.u135 button,.u135 input,.u135 textarea,.u135 select{font:inherit;color:inherit;max-width:100%;min-width:0}.u135 button{cursor:pointer;min-height:44px;border:1px solid var(--ux-line-2);border-radius:8px;background:var(--ux-surface);padding:8px 12px}.u135 input,.u135 textarea,.u135 select{border:1px solid var(--ux-line-2);border-radius:6px;background:var(--ux-surface);padding:8px 10px}.u135 .quiet{color:var(--ux-ink-2)}.u135 .primary{background:var(--ux-accent);color:var(--ux-accent-ink);border-color:transparent}.u135 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.u135 [hidden]{display:none!important}.u135 :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}@media(prefers-reduced-motion:reduce){.u135 *{animation:none!important;transition:none!important}}
+.u135{background:var(--ux-surface);border-radius:2px 15px 15px 2px;border-left:5px double var(--ux-line-2);padding:22px 24px;box-shadow:0 8px 20px var(--ux-shadow)}.u135 .recipe{font:700 25px/1.4 Georgia,'Apple SD Gothic Neo',serif;margin:0 0 20px}.u135 .serving{display:flex;align-items:center;gap:10px;padding-bottom:15px;margin-bottom:3px;border-bottom:1px solid var(--ux-line)}.u135 .serving>span{flex:1;color:var(--ux-ink-2)}.u135 .serving button{width:44px;padding:0;border-radius:50%;font-size:20px;color:var(--ux-accent)}.u135 output{font-size:21px;font-weight:750}.u135 .ingredient{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--ux-line)}.u135 .ingredient:last-child{border:0}.u135 .ingredient b{font:600 14px ui-monospace,monospace}.u135 button:disabled{opacity:.4}
+</style>
+<div class="ux u135"><h3 class="recipe">레몬 팬케이크</h3><div class="serving"><span>인분</span><button data-less aria-label="인분 줄이기">−</button><output>2</output><button data-more aria-label="인분 늘리기">+</button></div><div class="ingredients"><div class="ingredient"><span>밀가루</span><b data-qty="120"></b></div><div class="ingredient"><span>우유</span><b data-qty="160" data-unit="ml"></b></div><div class="ingredient"><span>설탕</span><b data-qty="20"></b></div></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling,$=s=>root.querySelector(s),$$=s=>[...root.querySelectorAll(s)],esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const motion=(node,frames,opts={})=>{if(node?.animate&&!matchMedia('(prefers-reduced-motion:reduce)').matches)node.animate(frames,{duration:220,easing:'cubic-bezier(.2,.8,.2,1)',...opts})};let servings=2;function render(){$('output').textContent=servings;$$('[data-qty]').forEach(e=>e.textContent=(+e.dataset.qty*servings/2)+' '+(e.dataset.unit||'g'));$('[data-less]').disabled=servings<=1;$('[data-more]').disabled=servings>=8}$('[data-more]').onclick=()=>{servings=Math.min(8,servings+1);render();$$('[data-qty]').forEach(o=>motion(o,[{transform:'translateY(3px)'},{transform:'none'}]))};$('[data-less]').onclick=()=>{servings=Math.max(1,servings-1);render()};render();})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

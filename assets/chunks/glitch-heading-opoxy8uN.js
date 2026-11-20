@@ -1,0 +1,1 @@
+import{j as t}from"./client-CsvIHAk3.js";import{G as r}from"./glitch-heading-BkUrAt7X.js";import"./utils-CwbyTHJG.js";function i(){return t.jsx("div",{className:"cybr-stage",children:t.jsx(r,{className:"text-[3.125rem]",children:"Signal lost"})})}export{i as default};

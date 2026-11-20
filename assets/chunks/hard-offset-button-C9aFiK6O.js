@@ -1,0 +1,1 @@
+import{j as e}from"./client-CsvIHAk3.js";import{H as r}from"./hard-offset-button-CTH2FoTD.js";import"./utils-CwbyTHJG.js";function n(){return e.jsx("div",{className:"cybr-stage",children:e.jsxs("div",{className:"flex flex-wrap items-center justify-center gap-12",children:[e.jsx(r,{children:"Deploy now"}),e.jsx(r,{disabled:!0,children:"Offline"})]})})}export{n as default};

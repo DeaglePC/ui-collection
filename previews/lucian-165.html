@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forecast Band · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "예측의 폭을 넓히는 구름", "category": "분석·데이터", "summary": "관측값 뒤로 예측 범위를 구름처럼 펼친 예측 차트입니다. 80%와 95% 구간을 바꾸면 띠의 폭과 예상 범위가 함께 바뀝니다.", "hint": "80% 구간과 95% 구간 버튼을 번갈아 눌러 보세요", "shape": "square", "fluid": true, "hue": "#725FC9", "hue2": "#FF6B8B", "tags": ["forecast-band", "analytics"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u165 button[data-k=\"95\"]", 0], ["wait", 1700], ["tap", ".u165 button[data-k=\"80\"]", 0], ["wait", 1300]] -->
+<!-- @en {"title": "Forecast confidence band", "summary": "A forecast chart that spreads a band of possible values beyond the observed line. Switch between the 80% and 95% intervals and the band’s width and range change together.", "hint": "Switch between the 80% and 95% interval buttons","map":[
+  ["예측 신뢰 수준", "Forecast confidence level"],
+  ["오늘", "Today"],
+  ["4주 뒤", "4 wks"],
+  ["관측", "Observed"],
+  ["80% 구간", "80% interval"],
+  ["95% 구간", "95% interval"],
+  ["예측 120개 · <b>${120-margin}–${120+margin}개</b>", "Forecast 120 · <b>${120-margin}–${120+margin}</b>"]
+]} -->
+<style>.u165{width:100%;max-width:390px;padding:16px;position:relative;font-size:13px;line-height:1.45}.u165 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:44px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}.u165 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}.u165 button:active{transform:scale(.97)}.u165 small{color:var(--ux-ink-2);font-size:12px}.u165 .status{margin-top:10px;color:var(--ux-ink-2);font-size:12px;line-height:1.5}.u165 .status b{color:var(--ux-ink)}.u165 .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.u165 svg{display:block;width:100%;overflow:visible}.u165 svg text{font-family:inherit;fill:var(--ux-ink-2);font-size:11px}.u165 .gridline{stroke:var(--ux-line-2);fill:none}.u165 input[type="range"]{width:100%;height:44px;accent-color:var(--ux-accent);margin:0}.u165 .inline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.u165{border-radius:32px 32px 8px 8px;background:var(--ux-surface-2)}.u165 .forecast{height:195px}.u165 .forecast .band{fill:var(--ux-accent-soft);stroke:var(--ux-accent);stroke-width:.7}.u165 .forecast .past{fill:none;stroke:var(--ux-ink);stroke-width:2.5}.u165 .forecast .future{fill:none;stroke:var(--ux-accent);stroke-width:2.5;stroke-dasharray:5 5}.u165 .controls{justify-content:center}.u165{min-height:0;box-shadow:none}.u165 .status{background:transparent;border:0;padding:0;min-height:0;height:auto}.u165 .inline{margin-bottom:8px}.u165{background:transparent;border-radius:0}.u165 .forecast{height:200px}.u165 .controls{margin-top:0}.u165 .controls button{border:0;background:transparent}.u165 .controls button[aria-pressed="true"]{background:var(--ux-accent-soft)}.u165 .status{text-align:center}</style>
+<div class="ux u165"><svg class="forecast" viewBox="0 0 300 200" aria-hidden="true"><path class="gridline" d="M0 140H300"/><path class="past" d="M6 137L43 110L82 122L118 91L153 95"/><polygon class="band"/><path class="future" d="M153 95L199 77L246 65L294 48"/><line x1="153" x2="153" y1="18" y2="169" class="gridline"/><text x="108" y="188">오늘</text><text x="235" y="188">4주 뒤</text><text x="5" y="188">관측</text></svg><div class="controls" role="group" aria-label="예측 신뢰 수준"><button data-k="80">80% 구간</button><button data-k="95">95% 구간</button></div><div class="status" aria-live="polite"></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];let k=80,af=0;function draw(){const margin=k===80?14:26,x=[153,199,246,294],y=[95,77,65,48],target=x.map((v,i)=>[v,y[i]-margin*(i/3)]).concat(x.map((v,i)=>[v,y[i]+margin*(i/3)]).reverse()),el=q('.band'),old=(el.getAttribute('points')||target.map(p=>p.join(',')).join(' ')).split(' ').map(p=>p.split(',').map(Number));if(af)cancelAnimationFrame(af);const start=performance.now(),duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:500;function tick(now){let t=duration?Math.min(1,(now-start)/duration):1;t=1-Math.pow(1-t,3);el.setAttribute('points',target.map((p,i)=>p.map((v,j)=>old[i][j]+(v-old[i][j])*t).join(',')).join(' '));if(t<1)af=requestAnimationFrame(tick)}tick(start);qa('[data-k]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.k===k));q('.status').innerHTML=`예측 120개 · <b>${120-margin}–${120+margin}개</b>`;root.dataset.state=String(k)}qa('[data-k]').forEach(b=>b.onclick=()=>{k=+b.dataset.k;draw()});draw();})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

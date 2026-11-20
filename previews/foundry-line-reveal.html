@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line Reveal · Foundry44</title>
+<!-- Foundry44 · Line Reveal · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/line-reveal/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+.reveal{font:500 28px/1.45 ui-serif,Georgia,serif;max-width:16em}
+</style>
+</head>
+<body>
+<div data-f44="line-reveal" data-f44-once="false" class="reveal"><p>Lines slide up from a mask.</p><p>One after another, when they come into view.</p><p>Keep the licence notice with the code.</p></div>
+<script>
+/*!
+ * Foundry44 · Line Reveal — https://foundry44.dev/components/line-reveal
+ * Text lines slide up from a mask, or are uncovered by a sweeping colour bar, one after another when scrolled into view.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="line-reveal" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-duration="700"
+ *   data-f44-stagger="80"
+ *   data-f44-block-color=""
+ *   data-f44-direction="left"
+ *   data-f44-keep="false"
+ *   data-f44-once="true"
+ *   data-f44-variant="mask"
+ * Manual: const instance = Foundry44.lineReveal(element, { duration: 700, stagger: 80, blockColor: "", direction: "left", keep: false, once: true, variant: "mask" });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — line-reveal
+   * Text lines appear one after another when the text scrolls into view. Two styles:
+   * - "mask": each line slides up from behind a mask.
+   * - "block": a solid bar grows across each line, the text appears under full cover,
+   *   then the bar shrinks away toward the other edge (or stays as a highlight band).
+   * Lines are the lines as the browser wrapped them, measured when the reveal starts,
+   * so the effect follows any width or font.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const lineRevealDefaults = {
+    duration: 700,
+    stagger: 80,
+    blockColor: "",
+    direction: "left",
+    keep: false,
+    once: true,
+    variant: "mask",
+  };
+  // Block style has its own pace: each half of the bar's sweep is a full movement.
+  const BLOCK_DURATION = 750;
+  const BLOCK_STAGGER = 150;
+  const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+  // A strong in-out: the bar leaves slowly, rushes across, and settles at the edge.
+  const EASE_IN_OUT = "cubic-bezier(0.77, 0, 0.175, 1)";
+  // Further than 100% so descenders, which the mask lets through slightly, start fully hidden.
+  const HIDDEN_TRANSFORM = "translateY(125%)";
+  // The mask clips only the bottom edge, with a little room for descenders; the other sides
+  // are extended so accents and italic overhangs are never cut.
+  const MASK_CLIP = "inset(-0.5em -0.25em -0.12em -0.25em)";
+  const DEFAULT_BLOCK_COLOR = "var(--f44-line-reveal-block, currentColor)";
+  function lineReveal(el, options = {}) {
+    var _a;
+    // What the caller set, kept apart from the defaults: duration and stagger default
+    // differently in each style.
+    let given = { ...options };
+    let opts = { ...lineRevealDefaults, ...given };
+    if (typeof window === "undefined") return { update() {}, destroy() {} };
+    // Reduced motion keeps the line-by-line rhythm but drops the movement and the bar: lines fade in.
+    const reduced =
+      ((_a = window.matchMedia) === null || _a === void 0
+        ? void 0
+        : _a.call(window, "(prefers-reduced-motion: reduce)").matches) === true;
+    // Each original text node and the nodes that replaced it, so destroy() can put back
+    // the very same nodes (frameworks keep references to them).
+    const splits = [];
+    const masks = [];
+    const words = [];
+    const bars = [];
+    const savedPosition = el.style.position;
+    const savedIsolation = el.style.isolation;
+    let observer = null;
+    let resizeObserver = null;
+    let cleanupTimer = 0;
+    let shown = false;
+    let played = false;
+    let lastWidth = -1;
+    const isBlock = () => opts.variant === "block" && !reduced;
+    const duration = () => {
+      var _a;
+      return (_a = given.duration) !== null && _a !== void 0
+        ? _a
+        : isBlock()
+          ? BLOCK_DURATION
+          : lineRevealDefaults.duration;
+    };
+    const stagger = () => {
+      var _a;
+      return (_a = given.stagger) !== null && _a !== void 0
+        ? _a
+        : isBlock()
+          ? BLOCK_STAGGER
+          : lineRevealDefaults.stagger;
+    };
+    const fades = () => reduced || isBlock();
+    const property = () => (fades() ? "opacity" : "transform");
+    const hiddenValue = () => (fades() ? "0" : HIDDEN_TRANSFORM);
+    const shownValue = () => (fades() ? "1" : "none");
+    const barColor = () => opts.blockColor || DEFAULT_BLOCK_COLOR;
+    const fromRight = (line) => opts.direction === "right" || (opts.direction === "alternate" && line % 2 === 1);
+    // Every word gets its own span rather than regrouping words into line elements:
+    // inline markup (links, <em>) stays exactly where it was. Words on the same line
+    // share a delay, so they move as one line.
+    const split = () => {
+      var _a;
+      const textNodes = [];
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (node.data.trim()) textNodes.push(node);
+      }
+      for (const original of textNodes) {
+        const parts = [];
+        for (const chunk of original.data.split(/(\s+)/)) {
+          if (!chunk) continue;
+          if (/^\s+$/.test(chunk)) {
+            parts.push(document.createTextNode(chunk));
+            continue;
+          }
+          const mask = document.createElement("span");
+          mask.style.display = "inline-block";
+          if (!fades()) mask.style.clipPath = MASK_CLIP;
+          const word = document.createElement("span");
+          word.style.display = "inline-block";
+          word.style.setProperty(property(), hiddenValue());
+          word.textContent = chunk;
+          mask.appendChild(word);
+          parts.push(mask);
+          masks.push(mask);
+          words.push(word);
+        }
+        const fragment = document.createDocumentFragment();
+        for (const part of parts) fragment.appendChild(part);
+        (_a = original.parentNode) === null || _a === void 0 ? void 0 : _a.replaceChild(fragment, original);
+        splits.push({ original, parts });
+      }
+    };
+    const unsplit = () => {
+      var _a, _b;
+      for (const { original, parts } of splits) {
+        const first = parts[0];
+        (_a = first === null || first === void 0 ? void 0 : first.parentNode) === null || _a === void 0
+          ? void 0
+          : _a.insertBefore(original, first);
+        for (const part of parts) (_b = part.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(part);
+      }
+      splits.length = 0;
+      masks.length = 0;
+      words.length = 0;
+    };
+    // Groups words by line (same top) and returns, for each word, its line index,
+    // and for each line its box relative to the element.
+    const measure = () => {
+      const box = el.getBoundingClientRect();
+      const lineOf = [];
+      const lines = [];
+      let lineTop = Number.NEGATIVE_INFINITY;
+      for (const mask of masks) {
+        const r = mask.getBoundingClientRect();
+        let current = lines[lines.length - 1];
+        if (!current || r.top > lineTop + 1) {
+          lineTop = r.top;
+          current = { left: r.left, top: r.top, width: r.width, height: r.height };
+          lines.push(current);
+        } else {
+          const right = Math.max(current.left + current.width, r.left + r.width);
+          current.left = Math.min(current.left, r.left);
+          current.width = right - current.left;
+          current.height = Math.max(current.height, r.height);
+        }
+        lineOf.push(lines.length - 1);
+      }
+      for (const line of lines) {
+        line.left -= box.left + el.clientLeft;
+        line.top -= box.top + el.clientTop;
+      }
+      return { lineOf, lines };
+    };
+    const removeBars = () => {
+      window.clearTimeout(cleanupTimer);
+      for (const bar of bars) bar.remove();
+      bars.length = 0;
+    };
+    // A bar is two nested spans: the outer one grows from one edge (cover), the inner one
+    // shrinks toward the other edge (uncover). Their product is the visible bar, so each
+    // half is a plain CSS transition with its own delay.
+    const makeBar = (line, index) => {
+      const right = fromRight(index);
+      const outer = document.createElement("span");
+      outer.setAttribute("aria-hidden", "true");
+      // Larger than the words, so ascenders and descenders never poke out at the switch
+      // and the band frames them like a highlighter.
+      const padX = Math.round(line.height * 0.08);
+      const padY = Math.round(line.height * 0.12);
+      Object.assign(outer.style, {
+        position: "absolute",
+        left: `${line.left - padX}px`,
+        top: `${line.top - padY}px`,
+        width: `${line.width + padX * 2}px`,
+        height: `${line.height + padY * 2}px`,
+        pointerEvents: "none",
+        // In front while it hides the text; behind it when it stays as a band.
+        zIndex: opts.keep ? "-1" : "1",
+        transformOrigin: right ? "right center" : "left center",
+      });
+      const inner = document.createElement("span");
+      Object.assign(inner.style, {
+        display: "block",
+        width: "100%",
+        height: "100%",
+        background: barColor(),
+        transformOrigin: right ? "left center" : "right center",
+      });
+      outer.appendChild(inner);
+      el.appendChild(outer);
+      bars.push(outer);
+      return { outer, inner };
+    };
+    const prepareElement = () => {
+      if (getComputedStyle(el).position === "static") el.style.position = "relative";
+      // The kept band sits behind the text but above the element's own background.
+      if (opts.keep) el.style.isolation = "isolate";
+    };
+    const showBlock = () => {
+      prepareElement();
+      removeBars();
+      const { lineOf, lines } = measure();
+      const half = duration();
+      const step = stagger();
+      const made = lines.map((line, i) => makeBar(line, i));
+      for (const { outer } of made) outer.style.transform = "scaleX(0)";
+      // Flush the start state so the transitions below run from it.
+      void el.offsetWidth;
+      made.forEach(({ outer, inner }, i) => {
+        const delay = i * step;
+        outer.style.transition = `transform ${half}ms ${EASE_IN_OUT} ${delay}ms`;
+        outer.style.transform = "scaleX(1)";
+        if (!opts.keep) {
+          inner.style.transition = `transform ${half}ms ${EASE_IN_OUT} ${delay + half}ms`;
+          inner.style.transform = "scaleX(0)";
+        }
+      });
+      // The text switches on at full cover, hidden by the bar at that instant.
+      words.forEach((word, i) => {
+        var _a;
+        word.style.transition = `opacity 0ms linear ${((_a = lineOf[i]) !== null && _a !== void 0 ? _a : 0) * step + half}ms`;
+        word.style.opacity = "1";
+      });
+      if (!opts.keep) cleanupTimer = window.setTimeout(removeBars, (lines.length - 1) * step + half * 2 + 100);
+      lastWidth = el.clientWidth;
+    };
+    // A kept band follows the text when it rewraps: rebuilt at rest, without animating.
+    const relayoutBands = () => {
+      if (!shown || !opts.keep || !isBlock()) return;
+      if (el.clientWidth === lastWidth) return;
+      lastWidth = el.clientWidth;
+      removeBars();
+      const { lines } = measure();
+      lines.forEach((line, i) => {
+        makeBar(line, i);
+      });
+    };
+    const show = () => {
+      if (shown) return;
+      shown = true;
+      played = true;
+      if (isBlock()) {
+        showBlock();
+        return;
+      }
+      // Measuring also flushes the hidden state, so the transition below has a start value.
+      const { lineOf } = measure();
+      const prop = property();
+      words.forEach((word, i) => {
+        var _a;
+        word.style.transition = `${prop} ${duration()}ms ${EASE_OUT} ${((_a = lineOf[i]) !== null && _a !== void 0 ? _a : 0) * stagger()}ms`;
+        word.style.setProperty(prop, shownValue());
+      });
+    };
+    const hide = () => {
+      if (!shown) return;
+      shown = false;
+      removeBars();
+      for (const word of words) {
+        word.style.transition = "none";
+        word.style.setProperty(property(), hiddenValue());
+      }
+    };
+    const bind = () => {
+      if (isBlock() && opts.keep && typeof ResizeObserver !== "undefined") {
+        resizeObserver = new ResizeObserver(relayoutBands);
+        resizeObserver.observe(el);
+      }
+      if (opts.once && played) return;
+      if (typeof IntersectionObserver === "undefined") {
+        show();
+        return;
+      }
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              show();
+              if (opts.once) {
+                observer === null || observer === void 0 ? void 0 : observer.disconnect();
+                observer = null;
+              }
+              continue;
+            }
+            // The observed area is shrunk at the bottom, so "not intersecting" can still be
+            // partly on screen: hide only once the text is entirely out of sight.
+            const { top, bottom } = entry.boundingClientRect;
+            if (bottom <= 0 || top >= window.innerHeight) hide();
+          }
+        },
+        // Wait until the text is a little inside the viewport so the start is actually seen.
+        { rootMargin: "0px 0px -10% 0px" },
+      );
+      observer.observe(el);
+    };
+    const unbind = () => {
+      observer === null || observer === void 0 ? void 0 : observer.disconnect();
+      observer = null;
+      resizeObserver === null || resizeObserver === void 0 ? void 0 : resizeObserver.disconnect();
+      resizeObserver = null;
+    };
+    const restoreElement = () => {
+      el.style.position = savedPosition;
+      el.style.isolation = savedIsolation;
+    };
+    split();
+    bind();
+    return {
+      update(next) {
+        const previous = opts;
+        given = { ...given, ...next };
+        opts = { ...lineRevealDefaults, ...given };
+        // The style decides how words are wrapped and how bars are built: start over,
+        // and replay at once if the text was already revealed.
+        if (opts.variant !== previous.variant || opts.direction !== previous.direction || opts.keep !== previous.keep) {
+          const wasShown = shown;
+          unbind();
+          removeBars();
+          unsplit();
+          restoreElement();
+          shown = false;
+          played = false;
+          split();
+          if (wasShown) show();
+          bind();
+          return;
+        }
+        if (opts.blockColor !== previous.blockColor) {
+          for (const bar of bars) {
+            const inner = bar.firstElementChild;
+            if (inner) inner.style.background = barColor();
+          }
+        }
+        // duration and stagger are read when a reveal starts; only `once` changes the wiring.
+        if (opts.once !== previous.once) {
+          unbind();
+          bind();
+        }
+      },
+      destroy() {
+        unbind();
+        removeBars();
+        unsplit();
+        restoreElement();
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="line-reveal"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["duration", "data-f44-duration"],
+        ["stagger", "data-f44-stagger"],
+        ["blockColor", "data-f44-block-color"],
+        ["direction", "data-f44-direction"],
+        ["keep", "data-f44-keep"],
+        ["once", "data-f44-once"],
+        ["variant", "data-f44-variant"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = lineReveal(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.lineReveal = lineReveal;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+<script src="./_fit.js"></script>
+</body>
+</html>
