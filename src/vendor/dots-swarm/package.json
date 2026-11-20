@@ -1,0 +1,102 @@
+{
+  "name": "dots-swarm",
+  "version": "0.1.0-alpha.4",
+  "description": "Single-dot motion, morphing particle shapes, UI primitives, sequences, scroll triggers, and physics for React.",
+  "homepage": "https://dotsui.dev",
+  "bugs": {
+    "url": "https://github.com/hamza-al/dots-next/issues"
+  },
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./dot": {
+      "types": "./dist/dot.d.ts",
+      "import": "./dist/dot.js",
+      "default": "./dist/dot.js"
+    },
+    "./scroll": {
+      "types": "./dist/scroll.d.ts",
+      "import": "./dist/scroll.js",
+      "default": "./dist/scroll.js"
+    },
+    "./actions": {
+      "types": "./dist/actions.d.ts",
+      "import": "./dist/actions.js",
+      "default": "./dist/actions.js"
+    },
+    "./physics": {
+      "types": "./dist/physics.d.ts",
+      "import": "./dist/physics.js",
+      "default": "./dist/physics.js"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./shapes": {
+      "types": "./dist/shapes.d.ts",
+      "import": "./dist/shapes.js",
+      "default": "./dist/shapes.js"
+    },
+    "./navigation": {
+      "types": "./dist/navigation.d.ts",
+      "import": "./dist/navigation.js",
+      "default": "./dist/navigation.js"
+    },
+    "./ui": {
+      "types": "./dist/ui.d.ts",
+      "import": "./dist/ui.js",
+      "default": "./dist/ui.js"
+    },
+    "./ui.css": "./dist/ui.css",
+    "./sequence": {
+      "types": "./dist/dots-sequence.d.ts",
+      "import": "./dist/dots-sequence.js",
+      "default": "./dist/dots-sequence.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamza-al/dots-next.git",
+    "directory": "packages/react"
+  },
+  "keywords": [
+    "react",
+    "particles",
+    "swarm",
+    "animation",
+    "canvas",
+    "morph",
+    "dots",
+    "navigation",
+    "maps"
+  ],
+  "dependencies": {
+    "@radix-ui/react-checkbox": "^1.3.11",
+    "@radix-ui/react-select": "^2.3.7",
+    "@radix-ui/react-slider": "^1.4.7",
+    "@radix-ui/react-slot": "^1.3.3",
+    "@radix-ui/react-switch": "^1.3.7",
+    "cmdk": "^1.1.1",
+    "radix-ui": "^1.6.7",
+    "vaul": "^1.1.2"
+  }
+}

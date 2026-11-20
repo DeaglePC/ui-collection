@@ -190,5 +190,41 @@
     "included": "1 张仅链接卡片，无源码。",
     "excluded": "全部源码。许可页写原创代码是 MIT，但 Animate UI 衍生组件是 Commons Clause，且没有列出分别是哪些文件。",
     "why": "许可边界不清楚时只放链接，不复制代码。"
+  },
+  {
+    "id": "cybr",
+    "name": "CYBR//UI",
+    "url": "https://cybr-ui.com",
+    "repo": "https://github.com/JLTDigital/cybr-ui",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/JLTDigital/cybr-ui/blob/main/LICENSE",
+    "author": "JLTDigital and Jonathan Taft",
+    "included": "注册表中的 38 个免费组件，外加 tokens、effects、Acid Terminal、Ice Neon 和 use-reduced-motion。安装入口为 npx shadcn@latest add @cybr/all。",
+    "excluded": "没有付费档。主题只作为可选预设收录，不替换本站自己的颜色。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 JLTDigital and Jonathan Taft。组件与样式从公开仓库和 https://cybr-ui.com/r/{name}.json 取得。"
+  },
+  {
+    "id": "thinkingorbs",
+    "name": "Thinking Orbs",
+    "url": "https://www.thinkingorbs.com",
+    "repo": "https://github.com/yogesharc/thinking-orbs",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/yogesharc/thinking-orbs/blob/main/LICENSE",
+    "author": "Yogesh",
+    "included": "React 光球，以及仓库里的额外形状和绘制方式（shapes.ts、renders.ts）。",
+    "excluded": "Swift 包不是这个网站的 React 预览，没有单独做卡片。没有发明仓库里不存在的文件。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Yogesh。源码在 apps/web/registry/orb。"
+  },
+  {
+    "id": "dots",
+    "name": "Dots",
+    "url": "https://dotsui.dev",
+    "repo": "https://github.com/hamza-al/dots-next",
+    "license": "MIT（免费核心 dots-swarm）",
+    "licenseUrl": "https://cdn.jsdelivr.net/npm/dots-swarm@0.1.0-alpha.4/LICENSE",
+    "author": "hamza-al",
+    "included": "已发布 npm 包 dots-swarm@0.1.0-alpha.4 的 MIT 构建，含粒子形变、单点和导航。完整文件在 src/vendor/dots-swarm。",
+    "excluded": "@dots-swarm/pro、Pro 形状、Studio 付费功能和 $149 付费墙后的内容。公开 GitHub 仓库目前 404，没有从那里取文件。",
+    "why": "npm 包内 LICENSE 为 MIT，Copyright (c) 2026 hamza-al（经 jsDelivr 与 npm 核对）。许可已确认。限制是源码仓库不可访问，所以用已发布的 MIT 包，不标成未确认可再分发。"
   }
 ]

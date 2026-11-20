@@ -5,16 +5,19 @@
   "type": "module",
   "description": "源集：开源、可查看来源的 UI 组件集合站",
   "scripts": {
-    "predev": "node scripts/split-catalog.mjs && node scripts/generate-nsui.mjs",
+    "predev": "node scripts/split-catalog.mjs && node scripts/generate-nsui.mjs && node scripts/generate-cybr.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/split-catalog.mjs && node scripts/generate-nsui.mjs",
+    "prebuild": "node scripts/split-catalog.mjs && node scripts/generate-nsui.mjs && node scripts/generate-cybr.mjs",
     "build": "tsc -b && vite build --mode pages && vite build --mode file && node scripts/assemble-dist.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "@react-three/fiber": "9.8.2",
     "border-beam": "^1.4.1",
     "bot-avatars": "^0.2.2",
+    "clsx": "^2.1.1",
+    "dots-swarm": "file:src/vendor/dots-swarm",
     "fuse.js": "^7.1.0",
     "highlight.js": "11.11.1",
     "img-fx": "^0.5.1",
@@ -24,6 +27,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^7.9.6",
+    "tailwind-merge": "^3.7.0",
     "thinking-orbs": "^0.3.2",
     "three": "^0.181.0",
     "voice-glow": "^0.3.0"

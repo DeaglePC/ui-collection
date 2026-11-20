@@ -1,11 +1,13 @@
 node_modules
-dist
-dist-file
-dist-ssr
+/dist
+/dist-file
+/dist-ssr
 *.tsbuildinfo
 src/data/generated
 nsui-src/components
 nsui-src/mounts
+cybr-src/components
+cybr-src/styles
 
 .DS_Store
 *.local

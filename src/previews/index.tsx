@@ -8,6 +8,8 @@ const groups: Record<string, () => Promise<PreviewMapRecord>> = {
   voiceorbs: () => import("./voiceorbs").then((mod) => mod.voiceorbsPreviews),
   libraries: () => import("./libraries").then((mod) => mod.librariesPreviews),
   crucible: () => import("./crucible").then((mod) => mod.cruciblePreviews),
+  thinkingorbs: () => import("./thinkingorbs").then((mod) => mod.thinkingorbsPreviews),
+  dots: () => import("./dots").then((mod) => mod.dotsPreviews),
 };
 
 function groupOf(id: string) {

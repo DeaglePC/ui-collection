@@ -162,3 +162,33 @@
 - 收录：1 张仅链接卡片。
 - 未收录：全部源码。Animate UI 衍生部分为 Commons Clause，且未标明具体文件。
 - 依据：GitHub 许可证为 NOASSERTION，许可边界不清楚。
+
+## CYBR//UI
+- 站点：https://cybr-ui.com
+- 仓库：https://github.com/JLTDigital/cybr-ui
+- 许可：MIT
+- 许可原文：https://github.com/JLTDigital/cybr-ui/blob/main/LICENSE
+- 作者：JLTDigital and Jonathan Taft
+- 收录：38 个免费组件，以及 tokens、effects、theme-acid-terminal、theme-ice-neon、use-reduced-motion。
+- 未收录：无付费档。`@cybr/all` 只包含这些免费组件。
+- 依据：仓库 LICENSE 为 MIT，Copyright (c) 2026 JLTDigital and Jonathan Taft。
+
+## Thinking Orbs
+- 站点：https://www.thinkingorbs.com
+- 仓库：https://github.com/yogesharc/thinking-orbs
+- 许可：MIT
+- 许可原文：https://github.com/yogesharc/thinking-orbs/blob/main/LICENSE
+- 作者：Yogesh
+- 收录：React 光球源码，以及仓库中的 shapes 与 renders。
+- 未收录：Swift 包未单独做网页预览。
+- 依据：仓库 LICENSE 为 MIT，Copyright (c) 2026 Yogesh。
+
+## Dots
+- 站点：https://dotsui.dev
+- 仓库：https://github.com/hamza-al/dots-next（目前 404，未从该地址取得文件）
+- 许可：MIT（免费核心 npm 包 dots-swarm@0.1.0-alpha.4）
+- 许可原文：https://cdn.jsdelivr.net/npm/dots-swarm@0.1.0-alpha.4/LICENSE
+- 作者：hamza-al
+- 收录：已发布 dots-swarm 包中的免费 MIT 核心，含实时预览。包文件在 src/vendor/dots-swarm。
+- 未收录：@dots-swarm/pro、Pro 形状、Studio 付费功能。
+- 依据：包内 LICENSE 为 MIT，Copyright (c) 2026 hamza-al。许可已确认；公开源码仓库不可访问，因此使用 npm 上的 MIT 构建，不标为未确认可再分发。
