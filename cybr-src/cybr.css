@@ -1,0 +1,60 @@
+@import "tailwindcss" source(none);
+@source "./components";
+@source "./mounts";
+@source "./stage.tsx";
+@source "./preview.tsx";
+@import "./styles/tokens.css";
+@import "./styles/themes/acid-terminal.css";
+@import "./styles/themes/ice-neon.css";
+@import "./styles/effects.css";
+
+/*
+ * The upstream tokens reference --font-archivo-black and --font-jetbrains-mono.
+ * Those custom properties are unset unless a host project loads the webfonts,
+ * and an invalid var() would drop the whole font stack. Provide the fallbacks
+ * the token file already names.
+ */
+:root {
+  --font-archivo-black: Impact, "Arial Black", sans-serif;
+  --font-jetbrains-mono: ui-monospace, "IBM Plex Mono", monospace;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.cybr-stage {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 28px 20px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.cybr-stage-fill {
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.cybr-stage-fill > :not(button) {
+  flex: 1;
+  width: 100%;
+  min-height: 280px;
+}
+
+.cybr-fallback {
+  margin: 0;
+  padding: 24px;
+  font: 14px/1.5 ui-monospace, monospace;
+  color: var(--ink);
+}

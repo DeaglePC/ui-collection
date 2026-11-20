@@ -45,8 +45,8 @@ const previewRank = (i: Item) =>
 
 const sourceRank = (id: string) => {
   const order = [
-    "foundry44","radiant","voiceorbs","lucian","mekai","libraries","crucible","cuekit","ndekoui",
-    "uibrik","ditherui","motionprompts","scrolltide",
+    "foundry44","radiant","voiceorbs","lucian","mekai","libraries","thinkingorbs","dots","crucible","cuekit","ndekoui",
+    "cybr","uibrik","ditherui","motionprompts","scrolltide",
   ];
   const n = order.indexOf(id);
   return n === -1 ? 99 : n;

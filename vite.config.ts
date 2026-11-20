@@ -120,11 +120,13 @@ export default defineConfig(({ mode }) => {
           : {
               main: fileURLToPath(new URL("./index.html", import.meta.url)),
               nsui: fileURLToPath(new URL("./nsui-stage.html", import.meta.url)),
+              cybr: fileURLToPath(new URL("./cybr-stage.html", import.meta.url)),
             },
         output: {
           inlineDynamicImports: file,
           entryFileNames(chunk) {
             if (chunk.name === "nsui") return "assets/nsui.js";
+            if (chunk.name === "cybr") return "assets/cybr.js";
             return file ? "assets/app.file.js" : "assets/app.js";
           },
           chunkFileNames: "assets/chunks/[name]-[hash].js",

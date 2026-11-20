@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source not "../cybr-src";
 
 @theme {
   --font-sans: "Noto Sans SC", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;

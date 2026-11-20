@@ -114,15 +114,20 @@ export function PreviewFrame({
     );
   }
 
-  const nsName = item.sourceId === "nsui" ? item.id.replace(/^nsui-/, "") : "";
-  const nsLive = Boolean(nsName) && interactive && location.protocol !== "file:";
-  if (nsLive) {
-    const frameH = Math.max(h, 460);
+  const stage =
+    item.sourceId === "nsui"
+      ? { page: "nsui-stage.html", name: item.id.replace(/^nsui-/, "") }
+      : item.sourceId === "cybr" && item.id !== "cybr-use-reduced-motion"
+        ? { page: "cybr-stage.html", name: item.id.replace(/^cybr-/, "") }
+        : null;
+  const stageLive = Boolean(stage) && interactive && location.protocol !== "file:";
+  if (stage && stageLive) {
+    const frameH = Math.max(h, item.sourceId === "cybr" ? 640 : 460);
     return (
-      <div ref={ref} className={`preview-clip ${className}`} style={{ height: frameH }} data-preview-kind="nsui" data-preview-mounted="true">
+      <div ref={ref} className={`preview-clip ${className}`} style={{ height: frameH }} data-preview-kind={item.sourceId} data-preview-mounted="true">
         <iframe
           title={`${item.nameZh} 预览`}
-          src={`./nsui-stage.html?name=${encodeURIComponent(nsName)}`}
+          src={`./${stage.page}?name=${encodeURIComponent(stage.name)}`}
           sandbox="allow-scripts allow-same-origin"
           className="absolute inset-0 h-full w-full border-0 bg-[#0c0b09]"
         />
@@ -134,7 +139,9 @@ export function PreviewFrame({
     const note =
       item.sourceId === "nsui"
         ? "列表里只放海报。打开条目可看实时效果，源码可复制。"
-        : `这项提供源码${item.hasPrompt ? "和提示词" : ""}，因依赖较重或只是提示词，没有站内实时预览。`;
+        : item.sourceId === "cybr" && item.id !== "cybr-use-reduced-motion"
+          ? "列表里只放海报。打开条目可看实时效果；预览会载入 tokens 与 effects。源码可复制。"
+          : `这项提供源码${item.hasPrompt ? "和提示词" : ""}，因依赖较重或只是提示词，没有站内实时预览。`;
     return (
       <div className={`preview-clip flex flex-col ${className}`} style={{ height: Math.min(h, 240) }} data-preview-kind="code">
         <div className="preview-poster is-static" style={{ ["--poster-h" as string]: String(posterHue(item.id)) }}>
