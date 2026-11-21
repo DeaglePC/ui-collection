@@ -1,0 +1,8 @@
+@import "tailwindcss" source(none);
+@source "./registry";
+@source "./mounts";
+@import "./theme.css";
+
+html, body, #root { margin: 0; min-height: 100%; background: var(--eased-bg, #14120f); color: var(--eased-text, #f4efe6); }
+.stage { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 28px 20px; box-sizing: border-box; }
+.stage-error { margin: 0; padding: 24px; font: 14px/1.5 ui-sans-serif, sans-serif; }
