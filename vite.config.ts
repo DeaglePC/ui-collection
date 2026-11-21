@@ -121,12 +121,18 @@ export default defineConfig(({ mode }) => {
               main: fileURLToPath(new URL("./index.html", import.meta.url)),
               nsui: fileURLToPath(new URL("./nsui-stage.html", import.meta.url)),
               cybr: fileURLToPath(new URL("./cybr-stage.html", import.meta.url)),
+              furin: fileURLToPath(new URL("./furin-stage.html", import.meta.url)),
+              affect: fileURLToPath(new URL("./affect-stage.html", import.meta.url)),
+              eased: fileURLToPath(new URL("./eased-stage.html", import.meta.url)),
+              keyframery: fileURLToPath(new URL("./keyframery-stage.html", import.meta.url)),
+              asciicn: fileURLToPath(new URL("./asciicn-stage.html", import.meta.url)),
             },
         output: {
           inlineDynamicImports: file,
           entryFileNames(chunk) {
-            if (chunk.name === "nsui") return "assets/nsui.js";
-            if (chunk.name === "cybr") return "assets/cybr.js";
+            if (chunk.name === "nsui" || chunk.name === "cybr" || chunk.name === "furin" || chunk.name === "affect" || chunk.name === "eased" || chunk.name === "keyframery" || chunk.name === "asciicn") {
+              return `assets/${chunk.name}.js`;
+            }
             return file ? "assets/app.file.js" : "assets/app.js";
           },
           chunkFileNames: "assets/chunks/[name]-[hash].js",

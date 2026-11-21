@@ -226,5 +226,65 @@
     "included": "已发布 npm 包 dots-swarm@0.1.0-alpha.4 的 MIT 构建，含粒子形变、单点和导航。完整文件在 src/vendor/dots-swarm。",
     "excluded": "@dots-swarm/pro、Pro 形状、Studio 付费功能和 $149 付费墙后的内容。公开 GitHub 仓库目前 404，没有从那里取文件。",
     "why": "npm 包内 LICENSE 为 MIT，Copyright (c) 2026 hamza-al（经 jsDelivr 与 npm 核对）。许可已确认。限制是源码仓库不可访问，所以用已发布的 MIT 包，不标成未确认可再分发。"
+  },
+  {
+    "id": "furin",
+    "name": "Furin",
+    "url": "https://furin.dev",
+    "repo": "https://github.com/MTVelazquez/furin",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/MTVelazquez/furin/blob/main/LICENSE",
+    "author": "Marcelo Treviño Velázquez",
+    "included": "registry.json 里的全部 92 个免费组件，每个含 tsx 和 css。",
+    "excluded": "Pro 组件不在这个免费注册表里，没有收录。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Marcelo Treviño Velázquez。"
+  },
+  {
+    "id": "affect",
+    "name": "affectUI",
+    "url": "https://www.affectui.com",
+    "repo": "https://github.com/flohoeller/affectui",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/flohoeller/affectui/blob/main/LICENSE",
+    "author": "Florian Höller (adfects)",
+    "included": "公开仓库里的免费组件、区块、动效、插画，以及 skills/affectui。带 -clean 的文件跟在同一条目里。",
+    "excluded": "Pro：Agent Graph、Agent Checkpoints、Agent Crew、Agent Tree 和其他付费代理界面、Pro 技能。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Florian Höller (adfects)。README 写明 Pro 不在这个仓库。"
+  },
+  {
+    "id": "eased",
+    "name": "Eased UI",
+    "url": "https://eased.dev",
+    "repo": "https://github.com/easedui/ui",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/easedui/ui/blob/main/LICENSE",
+    "author": "Eased",
+    "included": "公开仓库 src/registry/eased 里的免费组件、共用 primitives，和样式令牌。",
+    "excluded": "Pro / 付费部分不在这个免费仓库。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Eased。许可页 https://eased.dev/licence 。README 写明本仓库是免费 MIT 部分。"
+  },
+  {
+    "id": "keyframery",
+    "name": "Keyframery",
+    "url": "https://keyframery.com",
+    "repo": "https://github.com/keyframery/keyframery",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/keyframery/keyframery/blob/main/LICENSE",
+    "author": "Briyan Hingrajiya",
+    "included": "src/components/ui 的全部 MIT 组件，以及 primitives 和速度辅助。",
+    "excluded": "站点外壳、文档和模板页没有当组件收录。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Briyan Hingrajiya。"
+  },
+  {
+    "id": "asciicn",
+    "name": "asciicn",
+    "url": "https://asciicn.dev",
+    "repo": "https://github.com/opencoredev/asciicn",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/opencoredev/asciicn/blob/main/LICENSE",
+    "author": "Leo（LICENSE 同时保留 Shadcn Labs / startercn）",
+    "included": "lib/ascii 引擎、skills/asciicn，以及 components/asciicn 里的免费示例和绘制背景。",
+    "excluded": "没有发现 Pro 分区，站点外壳没有收录。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Leo，以及 Copyright (c) 2026 Shadcn Labs (startercn)。"
   }
 ]

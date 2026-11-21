@@ -192,3 +192,53 @@
 - 收录：已发布 dots-swarm 包中的免费 MIT 核心，含实时预览。包文件在 src/vendor/dots-swarm。
 - 未收录：@dots-swarm/pro、Pro 形状、Studio 付费功能。
 - 依据：包内 LICENSE 为 MIT，Copyright (c) 2026 hamza-al。许可已确认；公开源码仓库不可访问，因此使用 npm 上的 MIT 构建，不标为未确认可再分发。
+
+## Furin
+- 站点：https://furin.dev
+- 仓库：https://github.com/MTVelazquez/furin
+- 许可：MIT
+- 许可原文：https://github.com/MTVelazquez/furin/blob/main/LICENSE
+- 作者：Marcelo Treviño Velázquez
+- 收录：92 个免费组件的 tsx 与 css。
+- 未收录：Pro。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Marcelo Treviño Velázquez。
+
+## affectUI
+- 站点：https://www.affectui.com
+- 仓库：https://github.com/flohoeller/affectui
+- 许可：MIT
+- 许可原文：https://github.com/flohoeller/affectui/blob/main/LICENSE
+- 作者：Florian Höller (adfects)
+- 收录：公开仓库的免费组件、区块、动效、插画和 skills/affectui。
+- 未收录：Pro 代理界面和 Pro 技能。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Florian Höller (adfects)。
+
+## Eased UI
+- 站点：https://eased.dev
+- 仓库：https://github.com/easedui/ui
+- 许可：MIT
+- 许可原文：https://github.com/easedui/ui/blob/main/LICENSE
+- 作者：Eased
+- 收录：免费仓库中的组件、共用运行时和样式令牌。
+- 未收录：Pro。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Eased。许可页 https://eased.dev/licence 。
+
+## Keyframery
+- 站点：https://keyframery.com
+- 仓库：https://github.com/keyframery/keyframery
+- 许可：MIT
+- 许可原文：https://github.com/keyframery/keyframery/blob/main/LICENSE
+- 作者：Briyan Hingrajiya
+- 收录：src/components/ui 的 MIT 组件，以及 primitives。
+- 未收录：文档站和模板页。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Briyan Hingrajiya。
+
+## asciicn
+- 站点：https://asciicn.dev
+- 仓库：https://github.com/opencoredev/asciicn
+- 许可：MIT
+- 许可原文：https://github.com/opencoredev/asciicn/blob/main/LICENSE
+- 作者：Leo；LICENSE 同时保留 Shadcn Labs (startercn)
+- 收录：lib/ascii、skills/asciicn，以及 components/asciicn 的免费示例和绘制背景。
+- 未收录：没有 Pro 分区。站点外壳未收录。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Leo 与 Copyright (c) 2026 Shadcn Labs (startercn)。
