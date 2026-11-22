@@ -1,0 +1,17 @@
+import{r as m,j as r}from"./client-CsvIHAk3.js";const n=14,o=1050,te=3,M=te*o,_=260,S=420,ne=.45,R=200,re=8,H=re*o+S/2;function se(h){const i=1-h;return 1-i*i*i}function oe({height:h=44,className:i=""}){const I=m.useRef(null),C=m.useRef(null),E=m.useRef(null),L=m.useRef([]);m.useEffect(()=>{const c=I.current,a=C.current,l=E.current;if(!c||!a||!l)return;const x=window.matchMedia("(prefers-reduced-motion: reduce)").matches;let v=0,N=!1,g=!0,t=0;const j=()=>{v=c.getBoundingClientRect().width,N=v>=2},F=e=>{if(!N)return;const z=e/o,P=Math.floor(z),w=z*n,d=v*ne,k=Math.floor((w-d)/n)-1,B=Math.ceil((w+(v-d))/n)+1,K=Math.min(R,Math.max(0,B-k+1));for(let f=0;f<R;f++){const u=L.current[f];if(!u)continue;if(f>=K){u.style.display="none";continue}const G=k+f,U=d+G*n-w,T=e-G*o;let A;if(T<M)A=1;else if(T<M+_){const ee=(T-M)/_;A=1-se(ee)}else A=0;u.style.display="block",u.style.transform=`translateX(${U.toFixed(2)}px)`,u.style.setProperty("--lift",A.toFixed(4))}const Y=n*(M+_)/o,Z=Math.max(0,d-Y);a.style.width=`${Z.toFixed(2)}px`;const q=e-P*o,D=q<=S,J=d+P*n-w,Q=D?Math.sin(Math.min(1,q/S)*Math.PI):0;l.style.transform=`translateX(${J.toFixed(2)}px) scaleY(${(.25+.75*Q).toFixed(3)})`,l.style.opacity=D?"1":"0"};let y=0;const b=e=>{y||(y=e),F(e-y),g&&!document.hidden&&(t=requestAnimationFrame(b))},W=()=>{if(x){F(H);return}y=0,cancelAnimationFrame(t),t=requestAnimationFrame(b)};let s=null;const V=()=>{s&&clearTimeout(s),s=setTimeout(()=>{s=null,j(),x&&F(H)},120)},X=new ResizeObserver(V);X.observe(c);const O=new IntersectionObserver(e=>{g=e[0]?.isIntersecting??!0,g&&!document.hidden&&!x&&(cancelAnimationFrame(t),t=requestAnimationFrame(b))},{threshold:0});O.observe(c);const $=()=>{cancelAnimationFrame(t),!document.hidden&&g&&!x&&(t=requestAnimationFrame(b))};return document.addEventListener("visibilitychange",$),j(),W(),()=>{cancelAnimationFrame(t),s&&clearTimeout(s),X.disconnect(),O.disconnect(),document.removeEventListener("visibilitychange",$)}},[]);const p=Math.max(10,h*.5);return r.jsxs("div",{ref:I,role:"separator","aria-orientation":"horizontal",className:`ns-wcc relative w-full overflow-hidden ${i}`,style:{height:h,perspective:260},children:[r.jsx("style",{children:`
+        .ns-wcc-flap {
+          position: absolute;
+          top: 50%;
+          width: ${n}px;
+          height: ${p}px;
+          margin-top: ${-p/2}px;
+          transform-style: preserve-3d;
+          transform-origin: right center;
+          border-right: 1px solid var(--border);
+          background-color: color-mix(in srgb, var(--background), var(--foreground) calc(var(--lift, 0) * 5%));
+          box-shadow: 0 calc(var(--lift, 0) * 2px) calc(var(--lift, 0) * 6px)
+            color-mix(in srgb, var(--foreground) calc(var(--lift, 0) * 24%), transparent);
+          transform: translateX(0) perspective(260px) rotateX(calc(var(--lift, 0) * -32deg));
+          will-change: transform;
+        }
+      `}),r.jsx("div",{className:"ns-wcc-seam absolute left-0 top-1/2 -translate-y-1/2 bg-foreground",ref:C,style:{height:1,width:0}}),Array.from({length:R}).map((c,a)=>r.jsx("div",{ref:l=>{L.current[a]=l},className:"ns-wcc-flap",style:{display:"none"}},a)),r.jsx("div",{ref:E,"aria-hidden":"true",className:"absolute left-0 top-1/2 bg-foreground",style:{width:1,height:p*.7,marginTop:-(p*.35),opacity:0}})]})}function ce(){return r.jsx("div",{className:"ns-stage",children:r.jsx(oe,{})})}export{ce as default};

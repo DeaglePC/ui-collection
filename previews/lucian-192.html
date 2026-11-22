@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Channel Mixer · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "3채널 오디오 믹서", "category": "작업·시스템", "summary": "목소리·음악·공간음 세 채널의 소리 크기를 맞추는 믹서입니다. 페이더로 레벨을 바꾸고 채널 이름을 눌러 음소거하며, 실제 소리는 나지 않습니다.", "hint": "채널 이름을 눌러 음소거하거나 페이더를 움직여 보세요", "shape": "square", "fluid": true, "hue": "#53877a", "hue2": "#7B61FF", "tags": ["channel-mixer", "new-century"]} -->
+<!-- @demo [["wait", 500], ["tap", ".u192 .mute[data-i=\"0\"]", 0], ["wait", 1200], ["tap", ".u192 .mute[data-i=\"2\"]", 0], ["wait", 1400], ["tap", ".u192 .mute[data-i=\"0\"]", 0], ["wait", 400], ["tap", ".u192 .mute[data-i=\"2\"]", 0], ["wait", 1000]] -->
+<!-- @en {"title": "Three-channel mixer", "summary": "A mixer for balancing voice, music and ambience. Move a fader to set its level or press a channel name to mute it; no actual sound plays.", "hint": "Press a channel name to mute it, or move a fader","map":[
+  ["음소거", "mute"],
+  ["볼륨", "volume"]
+]} -->
+<style>
+.u192 {width:100%;max-width:370px;font-size:14px;line-height:1.45;position:relative;--a:#cd5339;--soft:color-mix(in srgb,var(--a) 12%,var(--ux-surface));font-variant-numeric:tabular-nums}
+.u192 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);border-radius:9px;padding:9px 12px;min-height:38px;transition:background .2s,transform .3s,color .2s;color:var(--ux-ink)}
+.u192 button:active{transform:translateY(1px)}.u192 button:disabled{opacity:.4;cursor:default}.u192 button.primary{background:var(--ux-ink);color:var(--ux-page);border-color:transparent}
+.u192 .muted{color:var(--ux-ink-2);font-size:12px}.u192 .eyebrow{font:600 10px/1.2 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ux-ink-2)}
+.u192 .row{display:flex;align-items:center;justify-content:space-between;gap:8px}.u192 .actions{display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.u192 input,.u192 select{max-width:100%;min-width:0;background:var(--ux-surface);color:var(--ux-ink);border:1px solid var(--ux-line-2);border-radius:7px;padding:8px;font:inherit}
+.u192 output{font-variant-numeric:tabular-nums}.u192 :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.u192 *,.u192 *::before,.u192 *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.u192 .console{background:var(--ux-surface);border:1px solid var(--ux-line-2);border-radius:18px;padding:21px;box-shadow:0 8px 0 var(--ux-surface-3)}.u192 .channels{display:flex;gap:13px;justify-content:space-between;margin-top:20px}.u192 .channel{flex:1;min-width:0;text-align:center;border-right:1px solid var(--ux-line);padding-right:9px}.u192 .channel:last-child{border:0;padding:0}.u192 .channel b{font:11px ui-monospace;color:var(--ux-ink-2)}.u192 .fader{height:145px;display:flex;justify-content:center;gap:13px;margin:12px 0}.u192 input[type=range]{writing-mode:vertical-lr;direction:rtl;width:23px;height:145px;padding:0;border:0;accent-color:#53877a;cursor:ns-resize;background:none}.u192 .level{height:145px;width:8px;position:relative;background:var(--ux-surface-3);border-radius:2px;overflow:hidden}.u192 .level i{position:absolute;left:0;right:0;bottom:0;height:var(--level);background:repeating-linear-gradient(0deg,#79a183 0 5px,var(--ux-surface) 5px 7px);transition:height .35s}.u192 .channel output{display:block;font:17px ui-monospace;margin:5px 0}.u192 .mute{font-size:10px;width:100%;padding:5px;min-height:30px}.u192 .mute[aria-pressed=true]{background:#b66448;color:white;border-color:transparent}.u192 .reset{font-size:10px;padding:2px 7px;min-height:25px;border:0;background:none}
+
+/* Focused composition */
+.u192{max-width:320px}.u192 {max-width:280px}.u192 .console{padding:22px 20px 18px;border-radius:15px}.u192 .channels{margin:0;gap:15px}.u192 .channel .mute{background:none;border:0;padding:0 2px;font:10px ui-monospace;min-height:25px;margin:0 0 14px;letter-spacing:1px}.u192 .channel .mute[aria-pressed=true]{color:light-dark(#a64732,#ef967b);text-decoration:line-through;background:none}.u192 .fader{height:139px}.u192 .channel output{font-size:11px;margin-top:12px}</style>
+<div class="ux u192" data-state="initial"><div class="console"><div class="channels"><div class="channel"><button class="mute" data-i="0" aria-pressed="false" aria-label="VOICE 음소거">VOICE</button><div class="fader"><div class="level"><i></i></div><input type="range" min="0" max="100" value="72" data-i="0" aria-label="VOICE 볼륨"></div><output>72%</output></div><div class="channel"><button class="mute" data-i="1" aria-pressed="false" aria-label="MUSIC 음소거">MUSIC</button><div class="fader"><div class="level"><i></i></div><input type="range" min="0" max="100" value="45" data-i="1" aria-label="MUSIC 볼륨"></div><output>45%</output></div><div class="channel"><button class="mute" data-i="2" aria-pressed="false" aria-label="AIR 음소거">AIR</button><div class="fader"><div class="level"><i></i></div><input type="range" min="0" max="100" value="28" data-i="2" aria-label="AIR 볼륨"></div><output>28%</output></div></div></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;const state=s=>root.dataset.state=s;const pulse=(el,frames,duration=450)=>{if(!reduced)el.animate(frames,{duration,easing:'cubic-bezier(.2,.8,.2,1)'});};let muted=[false,false,false];function render(){qa('.channel').forEach((c,i)=>{const val=+c.querySelector('input').value;c.querySelector('i').style.setProperty('--level',(muted[i]?0:val)+'%');c.querySelector('output').textContent=muted[i]?'—':val+'%';c.querySelector('button').setAttribute('aria-pressed',muted[i])});state('mix-'+qa('input').map(i=>i.value).join('-')+'-'+muted.join('-'))}qa('input').forEach(i=>i.oninput=render);qa('.mute').forEach(b=>b.onclick=()=>{let i=+b.dataset.i;muted[i]=!muted[i];render()});render();})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

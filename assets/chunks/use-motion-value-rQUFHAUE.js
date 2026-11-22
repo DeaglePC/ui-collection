@@ -1,0 +1,1 @@
+import{r as t}from"./client-CsvIHAk3.js";import{u as a,M as r}from"./use-presence-By35vGyC.js";import{m as u}from"./single-value-BSiVqTjy.js";function m(o){const e=a(()=>u(o)),{isStatic:s}=t.useContext(r);if(s){const[,n]=t.useState(o);t.useEffect(()=>e.on("change",n),[])}return e}export{m as u};

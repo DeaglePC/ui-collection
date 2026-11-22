@@ -1,0 +1,1 @@
+import{i}from"./attrs-xOPmhcy0.js";var a="\0select-all",o=t=>t.startsWith(a);function e(t,r){return r.startsWith("\0")?`${t}-${r.slice(1).replace(/[^\w-]/g,"-")}`:`${t}-option-${i(r)}`}export{o as i,e as o};

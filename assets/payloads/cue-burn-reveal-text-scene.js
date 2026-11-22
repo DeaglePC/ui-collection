@@ -1,0 +1,1 @@
+window.__YJ=window.__YJ||{};window.__YJ["cue-burn-reveal-text-scene"]={"files":[],"prompt":"Panel 1  →  Great design isn't just what a thing looks like — it's how it stays with you.\nPanel 2  →  Every pixel earns its place. Every second is deliberate. Every detail is a choice.\nPanel 3  →  Ship it anyway. Then go looking for the one waiting behind that."};

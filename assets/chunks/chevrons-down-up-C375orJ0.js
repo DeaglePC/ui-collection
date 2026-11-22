@@ -1,0 +1,1 @@
+import{c as e}from"./createLucideIcon-DvSjb9Rn.js";const o={name:"chevrons-down-up",size:24,node:[["path",{d:"m7 20 5-5 5 5",key:"13a0gw"}],["path",{d:"m7 4 5 5 5-5",key:"1kwcof"}]]};o.node;const a=e(o);export{a as C};

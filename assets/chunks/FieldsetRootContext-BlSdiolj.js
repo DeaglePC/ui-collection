@@ -1,0 +1,1 @@
+import{f as r}from"./useRenderElement-DXidANZi.js";import{r as o}from"./client-CsvIHAk3.js";const s=o.createContext(void 0);function f(e=!1){const t=o.useContext(s);if(!t&&!e)throw new Error(r(86));return t}export{f as u};

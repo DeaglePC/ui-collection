@@ -1,0 +1,1 @@
+import{B as o}from"./utils-VNNtGTnX.js";const S=["ink","orange","green","pink","purple","blue","red","grey"],n=e=>({glyphs:e,levels:e.map((t,r)=>r/Math.max(1,e.length-1))}),a=[0,2,34,42,106,107,235,251,255].map(e=>String.fromCodePoint(o+e));n([..." .:-=+*#"]),n(a);export{S};

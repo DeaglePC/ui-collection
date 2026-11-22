@@ -1,0 +1,1 @@
+import{a as n,u as r}from"./useRenderElement-DXidANZi.js";function u(e){const t=n(s,e).current;return t.next=e,r(t.effect),t}function s(e){const t={current:e,next:e,effect:()=>{t.current=t.next}};return t}export{u};

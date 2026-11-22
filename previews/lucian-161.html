@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cohort Retention · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "주차별로 남는 고객 격자", "category": "분석·데이터", "summary": "가입한 주마다 고객이 몇 주 뒤까지 남았는지 칸의 진하기로 보여 주는 코호트 표입니다. 칸을 누르면 그 가입 주와 경과 주의 잔존율이 강조되고, 다시 누르면 선택이 풀립니다.", "hint": "표의 칸을 하나 눌러 보세요", "shape": "square", "fluid": true, "hue": "#198B68", "hue2": "#FF6B8B", "tags": ["cohort-retention", "analytics"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u161 .cohort button[data-row=\"0\"][data-col=\"4\"]", 0], ["wait", 1500], ["tap", ".u161 .cohort button[data-row=\"2\"][data-col=\"2\"]", 0], ["wait", 1500], ["tap", ".u161 .cohort button[data-row=\"2\"][data-col=\"2\"]", 0], ["wait", 1000]] -->
+<!-- @en {"title": "Weekly retention cohorts", "summary": "A cohort table that shades each cell by how many customers from a signup week were still around weeks later. Press a cell to highlight that retention, and press again to clear it.", "hint": "Press one of the cells","map":[
+  ["가입 주차별 잔존율", "Retention by signup week"],
+  ["가입 주별 잔존율", "Retention by signup week"],
+  ["\">${i}주</span>", "\">W${i}</span>"],
+  ["${labels[j]} 가입, ${i}주 뒤 ${r[i]}% 잔존", "Joined ${labels[j]}, ${r[i]}% retained after ${i} weeks"],
+  ["${labels[r]} 가입 · ${c}주 뒤", "Joined ${labels[r]} · week ${c}"]
+]} -->
+<style>.u161{width:100%;max-width:390px;padding:16px;position:relative;font-size:13px;line-height:1.45}.u161 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:44px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}.u161 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}.u161 button:active{transform:scale(.97)}.u161 small{color:var(--ux-ink-2);font-size:12px}.u161 .status{margin-top:10px;color:var(--ux-ink-2);font-size:12px;line-height:1.5}.u161 .status b{color:var(--ux-ink)}.u161 .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.u161 svg{display:block;width:100%;overflow:visible}.u161 svg text{font-family:inherit;fill:var(--ux-ink-2);font-size:11px}.u161 .gridline{stroke:var(--ux-line-2);fill:none}.u161 input[type="range"]{width:100%;height:44px;accent-color:var(--ux-accent);margin:0}.u161 .inline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.u161{border-radius:12px 12px 30px 12px}.u161 .cohort{display:grid;grid-template-columns:42px repeat(5,1fr);gap:5px;margin-top:20px}.u161 .cohort .label{align-self:center;color:var(--ux-ink-2);font-size:10px}.u161 .cohort .week{text-align:center;min-height:20px;font-size:10px;color:var(--ux-ink-2)}.u161 .cohort button{padding:0;min-height:36px;border:0;border-radius:4px;background:color-mix(in srgb,#24816F calc(var(--v)*1%),var(--ux-surface-3));color:var(--ux-ink);font-size:11px;transition:transform .35s}.u161 .cohort button.high{color:white}.u161 .cohort button[aria-pressed="true"]{outline:2px solid var(--ux-ink);outline-offset:1px;transform:translateY(-2px)}.u161 .status{padding:12px 0;border-top:1px solid var(--ux-line-2);margin-top:20px}.u161{min-height:0;box-shadow:none}.u161 .status{background:transparent;border:0;padding:0;min-height:0;height:auto}.u161 .inline{margin-bottom:8px}.u161{border-radius:0;background:transparent}.u161 .cohort{margin-top:0;grid-template-columns:42px repeat(5,1fr)}.u161 .cohort .label,.u161 .cohort .week{font-size:12px}.u161 .cohort button{min-height:44px;font-size:12px;background:color-mix(in srgb,var(--ux-mint) calc(var(--v)*.35%),var(--ux-surface));color:var(--ux-ink)}.u161 .cohort button.high{color:var(--ux-ink)}.u161 .status{text-align:center;margin-top:12px}</style>
+<div class="ux u161"><div class="cohort" role="group" aria-label="가입 주차별 잔존율"></div><div class="status" aria-live="polite"></div></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];const data=[[100,78,64,58,52],[100,82,71,63],[100,85,76],[100,88]],labels=['9/7','9/14','9/21','9/28'];q('.cohort').innerHTML='<span></span>'+[0,1,2,3,4].map(i=>`<span class="week">${i}주</span>`).join('')+data.map((r,j)=>`<span class="label">${labels[j]}</span>`+Array.from({length:5},(_,i)=>r[i]===undefined?'<span></span>':`<button class="${r[i]>=85?'high':''}" data-row="${j}" data-col="${i}" style="--v:${r[i]}" aria-label="${labels[j]} 가입, ${i}주 뒤 ${r[i]}% 잔존">${r[i]}%</button>`).join('')).join('');function choose(r,c){qa('.cohort button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.row===r&&+b.dataset.col===c));q('.status').innerHTML=r<0?'가입 주별 잔존율':`${labels[r]} 가입 · ${c}주 뒤 <b>${data[r][c]}%</b>`;root.dataset.state=r+':'+c}q('.cohort').onclick=e=>{const b=e.target.closest('button');if(b){if(root.dataset.state===b.dataset.row+':'+b.dataset.col)choose(-1,-1);else choose(+b.dataset.row,+b.dataset.col)}};choose(-1,-1);})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

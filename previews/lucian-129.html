@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Fold · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "접히는 코드 가지", "category": "문서·데이터 편집", "summary": "함수 단위로 코드를 접고 펼치는 편집기입니다. 접으면 본문 줄이 숨고 줄 번호도 그에 맞춰 건너뜁니다.", "hint": "줄 번호 옆 화살표를 눌러 함수를 접어 보세요", "shape": "square", "fluid": true, "hue": "#B48B29", "hue2": "#22C3A6", "tags": ["code-fold", "editing", "interactive"]} -->
+<!-- @demo [["wait", 600], ["tap", ".u129 [data-fold=\"a\"]", 0], ["wait", 1000], ["tap", ".u129 [data-fold=\"b\"]", 0], ["wait", 1300], ["tap", ".u129 [data-fold=\"a\"]", 0], ["wait", 500], ["tap", ".u129 [data-fold=\"b\"]", 0], ["wait", 900]] -->
+<!-- @en {"title": "Foldable code blocks", "summary": "An editor that folds and unfolds code one function at a time. Folding hides the body lines, and the line numbers skip ahead to match.", "hint": "Press the arrow beside a line number to fold a function","map":[
+  ["grow 함수 접기", "Fold grow function"],
+  ["water 함수 접기", "Fold water function"],
+  ["충분히 촉촉함", "moist enough"],
+  ["open+'개 함수 펼침'", "open+' of 2 functions open'"]
+]} -->
+<style>
+.u129{width:min(100%,400px);color:var(--ux-ink);font-size:13px;line-height:1.5} .u129 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);border-radius:8px;padding:7px 11px;min-height:36px;transition:background .2s,transform .2s;} .u129 button:active{transform:translateY(1px)} .u129 input,.u129 textarea,.u129 select{border:1px solid var(--ux-line-2);border-radius:7px;background:var(--ux-surface);padding:7px 9px;min-width:0;max-width:100%;font-size:13px} .u129 textarea{resize:vertical} .u129 .muted{color:var(--ux-ink-2)} .u129 .reset{border:0;background:transparent;font-size:11px;padding:4px 7px;min-height:30px;color:var(--ux-ink-2)} .u129 .row{display:flex;align-items:center;gap:8px} .u129 .row>*{min-width:0} .u129 .spacer{flex:1} .u129 .primary{background:var(--ux-accent);color:var(--ux-accent-ink);border-color:transparent} .u129 [data-state]{font-size:11px;color:var(--ux-ink-2)} .u129 label{font-size:12px} @media(prefers-reduced-motion:reduce){.u129 *{transition:none!important;animation:none!important}}
+.u129{background:var(--ux-surface-2);border-radius:10px;overflow:hidden;border:1px solid var(--ux-line-2)}.u129 header{padding:12px 14px;background:var(--ux-surface-3);font:12px monospace;display:flex;justify-content:space-between}.u129 .editor{padding:10px 0;font:12px/1.65 monospace}.u129 .line{display:grid;grid-template-columns:28px 30px 1fr;align-items:center;min-height:28px;padding-right:10px;white-space:pre-wrap}.u129 .line span{color:var(--ux-ink-2);text-align:right;padding-right:6px}.u129 .fold{padding:0;width:25px;min-height:27px;border:0;background:transparent;color:var(--ux-accent);font-size:15px}.u129 .nested{border-left:1px solid var(--ux-line-2);margin-left:48px;padding:5px 10px;color:var(--ux-mint);font:12px/1.9 monospace;overflow-wrap:anywhere}.u129 .elision{color:var(--ux-accent);font-size:11px;background:var(--ux-accent-soft);padding:2px 6px;border-radius:4px}.u129 footer{padding:8px 13px;display:flex;border-top:1px solid var(--ux-line)}
+.u129{width:min(100%,370px);border-radius:5px;border:0;background:transparent;box-shadow:none}.u129 .editor{padding:18px 0}.u129 .line{min-height:24px;font-size:13px;grid-template-columns:20px 44px 1fr}.u129 .nested{margin-left:64px;padding:5px 10px;font-size:13px}.u129 .fold{width:44px;min-height:44px;padding:0}.u129 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)} .u129{width:min(100%,370px);border-radius:5px;border:0;background:transparent;box-shadow:none}.u129 .editor{padding:18px 0}.u129 .line{min-height:24px;font-size:13px;grid-template-columns:20px 44px 1fr}.u129 .nested{margin-left:64px;padding:5px 10px;font-size:13px}.u129 .fold{width:44px;min-height:44px;padding:0}.u129 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)} </style>
+<div class="ux u129"><div class="editor"><div class="line"><span>1</span><button class="fold" data-fold="a" aria-expanded="true" aria-label="grow 함수 접기">⌄</button><code>function grow(seed) {</code></div><div class="nested" data-block="a">const light = 8;<br>return seed + light;</div><div class="line"><span>4</span><i></i><code>}</code></div><div class="line"><span>5</span><i></i><code>&nbsp;</code></div><div class="line"><span>6</span><button class="fold" data-fold="b" aria-expanded="true" aria-label="water 함수 접기">⌄</button><code>function water() {</code></div><div class="nested" data-block="b">return '충분히 촉촉함';</div><div class="line"><span>8</span><i></i><code>}</code></div></div><span class="sr" data-state aria-live="polite"></span></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const $=s=>root.querySelector(s),$$=s=>[...root.querySelectorAll(s)],esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function update(){let open=0;$$('[data-fold]').forEach(b=>{let yes=b.getAttribute('aria-expanded')==='true';open+=yes?1:0;b.textContent=yes?'⌄':'›';let block=$('[data-block="'+b.dataset.fold+'"]');block.hidden=!yes;let parent=b.parentElement;parent.querySelector('.elision')?.remove();if(!yes){let e=document.createElement('em');e.className='elision';e.textContent='…';parent.querySelector('code').append(e)}});$('[data-state]').textContent=open+'개 함수 펼침'}$$('[data-fold]').forEach(b=>b.onclick=()=>{b.setAttribute('aria-expanded',String(b.getAttribute('aria-expanded')!=='true'));update()});update();const motion=(node,frames,opts={})=>{if(node?.animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches)node.animate(frames,{duration:250,easing:'cubic-bezier(.2,.8,.2,1)',...opts})};root.addEventListener('click',e=>{if(e.target.closest('[data-fold]')){$$('.nested:not([hidden])').forEach(x=>motion(x,[{transform:'scaleY(.88)',transformOrigin:'top'},{transform:'scaleY(1)',transformOrigin:'top'}]))}});})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

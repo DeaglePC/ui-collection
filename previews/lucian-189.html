@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Release Promotion · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title": "환경 승격 게이트", "category": "작업·시스템", "summary": "개발·스테이징·운영 환경을 차례로 거치는 배포 승격 게이트입니다. 버튼을 누르면 검사를 통과한 뒤 다음 환경으로 넘어가고, 마지막에는 처음으로 되돌릴 수 있습니다.", "hint": "‘스테이징으로’ 버튼을 차례로 눌러 보세요", "shape": "square", "fluid": true, "hue": "#7867a8", "hue2": "#7B61FF", "tags": ["release-promotion", "new-century"]} -->
+<!-- @demo [["wait", 500], ["tap", ".u189 .promote", 0], ["wait", 1700], ["tap", ".u189 .promote", 0], ["wait", 1900], ["tap", ".u189 .promote", 0], ["wait", 1100]] -->
+<!-- @en {"title": "Release promotion gate", "summary": "A promotion gate that moves a release through dev, staging and production. Each press runs a check, then advances to the next environment; at the end you can start over.", "hint": "Press the promote button step by step","map":[
+  ["스테이징으로 →", "To staging →"],
+  ["운영으로 →", "To production →"],
+  ["✓ 완료 · 다시", "✓ Done · Reset"],
+  ["검사 중…", "Checking…"]
+]} -->
+<style>
+.u189 {width:100%;max-width:370px;font-size:14px;line-height:1.45;position:relative;--a:#cd5339;--soft:color-mix(in srgb,var(--a) 12%,var(--ux-surface));font-variant-numeric:tabular-nums}
+.u189 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);border-radius:9px;padding:9px 12px;min-height:38px;transition:background .2s,transform .3s,color .2s;color:var(--ux-ink)}
+.u189 button:active{transform:translateY(1px)}.u189 button:disabled{opacity:.4;cursor:default}.u189 button.primary{background:var(--ux-ink);color:var(--ux-page);border-color:transparent}
+.u189 .muted{color:var(--ux-ink-2);font-size:12px}.u189 .eyebrow{font:600 10px/1.2 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ux-ink-2)}
+.u189 .row{display:flex;align-items:center;justify-content:space-between;gap:8px}.u189 .actions{display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.u189 input,.u189 select{max-width:100%;min-width:0;background:var(--ux-surface);color:var(--ux-ink);border:1px solid var(--ux-line-2);border-radius:7px;padding:8px;font:inherit}
+.u189 output{font-variant-numeric:tabular-nums}.u189 :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.u189 *,.u189 *::before,.u189 *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.u189 .environments{display:flex;gap:12px;margin:23px 0 17px;position:relative}.u189 .environments::before{content:'';position:absolute;top:47px;left:15%;right:15%;height:2px;background:var(--ux-line-2)}.u189 .env{width:33.33%;text-align:center;position:relative}.u189 .portal{height:96px;border:1px solid var(--ux-line-2);border-radius:12px;display:grid;place-items:center;background:var(--ux-surface);font:21px ui-monospace;transition:all .5s;box-shadow:0 8px 15px -14px var(--ux-ink)}.u189 .env.on .portal{border:2px solid var(--ux-accent);background:color-mix(in srgb,var(--ux-accent) 12%,var(--ux-surface));transform:translateY(-5px)}.u189 .env b{font:10px ui-monospace;display:block;margin-top:12px}.u189 .gate{padding:14px;border:1px dashed var(--ux-line-2);border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}.u189 .gate span{font-size:12px}.u189 .gate button{font-size:11px;padding:5px 8px;min-height:31px}.u189 .actions button{font-size:12px;flex:1}.u189 .status{font-size:12px;color:var(--ux-ink-2);margin-top:13px;min-height:36px}
+
+/* Focused composition */
+.u189{max-width:320px}.u189 .environments{gap:20px;margin:0 0 25px}.u189 .environments::before{top:38px;background:var(--ux-line-2)}.u189 .portal{height:76px;font-size:16px;border-radius:16px;box-shadow:none;background:var(--ux-page)}.u189 .env{flex:1;width:auto}.u189 .env.on .portal{transform:translateY(-4px);border-width:1.5px;background:color-mix(in srgb,var(--ux-accent) 10%,var(--ux-surface))}.u189 .promote{display:block;margin:auto;min-height:35px;font-size:12px;border:0;background:none}</style>
+<div class="ux u189" data-state="initial"><div class="environments"><div class="env on"><div class="portal">DEV</div></div><div class="env"><div class="portal">STG</div></div><div class="env"><div class="portal">PRD</div></div></div><button class="promote">스테이징으로 →</button></div>
+<script>
+(()=>{const root=document.currentScript.previousElementSibling;const q=s=>root.querySelector(s),qa=s=>[...root.querySelectorAll(s)];const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;const state=s=>root.dataset.state=s;const pulse=(el,frames,duration=450)=>{if(!reduced)el.animate(frames,{duration,easing:'cubic-bezier(.2,.8,.2,1)'});};let env=0,timer;function render(){qa('.env').forEach((e,i)=>e.classList.toggle('on',i===env));q('.promote').textContent=['스테이징으로 →','운영으로 →','✓ 완료 · 다시'][env];q('.promote').disabled=false;state('environment-'+env)}q('.promote').onclick=()=>{if(env===2){env=0;render();return}q('.promote').disabled=true;q('.promote').textContent='검사 중…';state('checking-'+env);timer=setTimeout(()=>{env++;render()},550)};})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Fill · Foundry44</title>
+<!-- Foundry44 · Word Fill · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/word-fill/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+.fill{font:500 26px/1.55 ui-serif,Georgia,serif;max-width:18em}
+</style>
+</head>
+<body>
+<div style="height:80px"></div><p data-f44="word-fill" class="fill">A paragraph starts faint and each word takes full colour in reading order as the page scrolls. The effect follows the reader, not a timer.</p><div style="height:240px"></div>
+<script>
+/*!
+ * Foundry44 · Word Fill — https://foundry44.dev/components/word-fill
+ * A paragraph starts faint and each word takes full colour in reading order as the page scrolls.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="word-fill" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-dim="0.2"
+ *   data-f44-start="0.85"
+ *   data-f44-end="0.45"
+ *   data-f44-smoothing="0.25"
+ * Manual: const instance = Foundry44.wordFill(element, { dim: 0.2, start: 0.85, end: 0.45, smoothing: 0.25 });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — word-fill
+   * A paragraph starts faint. As the page scrolls, its words take on full
+   * colour one after the other, in reading order, like a finger following the
+   * text. Scrolling back up fades them again.
+   *
+   * Each word is wrapped in a <span> whose opacity follows the scroll; inline
+   * markup (links, <em>) is kept and the text stays selectable and indexable.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const wordFillDefaults = {
+    dim: 0.2,
+    start: 0.85,
+    end: 0.45,
+    smoothing: 0.25,
+  };
+  // A word fades in over this many words of progress, so the fill reads as a soft wave, not a hard edge.
+  const FADE_WORDS = 3;
+  // Below this progress difference (in words) the fill is at rest and the loop stops.
+  const REST = 0.01;
+  function wordFill(el, options = {}) {
+    var _a;
+    let opts = { ...wordFillDefaults, ...options };
+    const noop = { update() {}, destroy() {} };
+    if (typeof window === "undefined") return noop;
+    // The resting text is the full text, so reduced motion simply never dims it.
+    if (
+      (_a = window.matchMedia) === null || _a === void 0
+        ? void 0
+        : _a.call(window, "(prefers-reduced-motion: reduce)").matches
+    )
+      return noop;
+    // Each original text node and the nodes that replaced it, so destroy() can put it back.
+    const replaced = [];
+    const words = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) textNodes.push(node);
+    for (const original of textNodes) {
+      if (!original.data.trim()) continue;
+      const parts = [];
+      // Whitespace stays plain text, so line breaking and copy-paste are unchanged.
+      for (const piece of original.data.split(/(\s+)/)) {
+        if (!piece) continue;
+        if (/^\s+$/.test(piece)) {
+          parts.push(document.createTextNode(piece));
+          continue;
+        }
+        const word = document.createElement("span");
+        word.textContent = piece;
+        words.push(word);
+        parts.push(word);
+      }
+      original.replaceWith(...parts);
+      replaced.push({ original, parts });
+    }
+    let current = 0;
+    let target = 0;
+    let frame = 0;
+    let observer = null;
+    // Progress in words: 0 when the top reaches `start`, the word count when the bottom reaches `end`.
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      const viewport = window.innerHeight || 1;
+      const from = opts.start * viewport - rect.top;
+      const span = rect.height + (opts.start - opts.end) * viewport;
+      const progress = span > 0 ? from / span : from >= 0 ? 1 : 0;
+      target = Math.min(Math.max(progress, 0), 1) * (words.length + FADE_WORDS);
+    };
+    const render = () => {
+      const dim = Math.min(Math.max(opts.dim, 0), 1);
+      words.forEach((word, index) => {
+        const fill = Math.min(Math.max((current - index) / FADE_WORDS, 0), 1);
+        const opacity = (dim + (1 - dim) * fill).toFixed(3);
+        // Only touch words whose value changed: most of a long paragraph is static on any given frame.
+        if (word.style.opacity !== opacity) word.style.opacity = opacity;
+      });
+    };
+    const tick = () => {
+      const amount = Math.min(Math.max(opts.smoothing, 0.01), 1);
+      current += (target - current) * amount;
+      if (Math.abs(target - current) < REST) {
+        current = target;
+        render();
+        frame = 0;
+        return;
+      }
+      render();
+      frame = requestAnimationFrame(tick);
+    };
+    const onScroll = () => {
+      measure();
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+    const listen = () => {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+      onScroll();
+    };
+    const unlisten = () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+    // Start at the right fill, so a page loaded mid-scroll doesn't show the words sweeping in.
+    measure();
+    current = target;
+    render();
+    if (typeof IntersectionObserver === "undefined") {
+      listen();
+    } else {
+      // Scroll work only while the text is on screen.
+      observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) listen();
+          else unlisten();
+        }
+      });
+      observer.observe(el);
+    }
+    return {
+      update(next) {
+        opts = { ...opts, ...next };
+        measure();
+        current = target;
+        render();
+      },
+      destroy() {
+        var _a, _b;
+        observer === null || observer === void 0 ? void 0 : observer.disconnect();
+        unlisten();
+        for (const { original, parts } of replaced) {
+          const [first, ...rest] = parts;
+          (_a = first === null || first === void 0 ? void 0 : first.parentNode) === null || _a === void 0
+            ? void 0
+            : _a.replaceChild(original, first);
+          for (const part of rest) (_b = part.parentNode) === null || _b === void 0 ? void 0 : _b.removeChild(part);
+        }
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="word-fill"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["dim", "data-f44-dim"],
+        ["start", "data-f44-start"],
+        ["end", "data-f44-end"],
+        ["smoothing", "data-f44-smoothing"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = wordFill(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.wordFill = wordFill;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+<script src="./_fit.js"></script>
+</body>
+</html>

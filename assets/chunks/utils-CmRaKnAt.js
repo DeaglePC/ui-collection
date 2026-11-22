@@ -1,0 +1,1 @@
+import{c as t,e as a}from"./bundle-mjs-BGKYBunL.js";const s=a({extend:{theme:{text:["display-xl","display-lg","display-md","micro","caption"],shadow:["hard","hard-hover"],tracking:["label","button"],ease:["step-2","step-3","step-12"]}}});function n(...e){return s(t(e))}export{n as c};

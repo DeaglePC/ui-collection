@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Loop · Foundry44</title>
+<!-- Foundry44 · Word Loop · Copyright (c) 2026 Foundry44 · MIT License
+     https://foundry44.dev/components/word-loop/ -->
+<style>
+
+html,body{margin:0;min-height:100%;background:#0e0d0b;color:#f0ebe3;}
+body{display:grid;place-items:center;padding:36px 20px;font-family:ui-sans-serif,system-ui,sans-serif;}
+
+.sent{font:500 36px/1.3 ui-serif,Georgia,serif}
+</style>
+</head>
+<body>
+<p class="sent">Build with <span data-f44="word-loop" data-f44-words="care,craft,patience,intent">care</span>.</p>
+<script>
+/*!
+ * Foundry44 · Word Loop — https://foundry44.dev/components/word-loop
+ * One word in a sentence cycles through alternatives with a vertical swap.
+ * Copyright (c) 2026 Foundry44 · MIT License (SPDX-License-Identifier: MIT)
+ *
+ * Usage: load this file, then add data-f44="word-loop" to any element.
+ * Optional attributes (defaults shown):
+ *   data-f44-words="[]"
+ *   data-f44-interval="2500"
+ *   data-f44-duration="600"
+ * Manual: const instance = Foundry44.wordLoop(element, { words: [], interval: 2500, duration: 600 });
+ *         instance.destroy();
+ * Re-scan the page after adding elements dynamically: Foundry44.init();
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+(function () {
+  "use strict";
+
+  /**
+   * Foundry44 — word-loop
+   * One word in a sentence cycles through a list of alternatives. The current
+   * word slides up and out behind an invisible edge while the next one rises
+   * from below. The element keeps the width of the longest word, so the rest of
+   * the sentence never shifts. The loop pauses while the element is offscreen.
+   *
+   * Self-contained: no imports, so this file can be copied as-is.
+   */
+  const wordLoopDefaults = {
+    words: [],
+    interval: 2500,
+    duration: 600,
+  };
+  const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+  // Clips the top and bottom just outside the line, so descenders survive a tight line-height;
+  // the sides are extended so italic overhangs are never cut.
+  const MASK_CLIP = "inset(-0.08em -0.25em)";
+  // Well past 100%: with a tight line-height, descenders and ascenders overflow the line box,
+  // and a hidden word must clear the mask with them.
+  const BELOW = "translateY(130%)";
+  const ABOVE = "translateY(-130%)";
+  const toList = (words) =>
+    (typeof words === "string" ? words.split(",") : words).map((word) => word.trim()).filter(Boolean);
+  function wordLoop(el, options = {}) {
+    var _a, _b;
+    let opts = { ...wordLoopDefaults, ...options };
+    if (typeof window === "undefined") return { update() {}, destroy() {} };
+    // Reduced motion keeps the rotation but drops the movement: words crossfade in place.
+    const reduced =
+      ((_a = window.matchMedia) === null || _a === void 0
+        ? void 0
+        : _a.call(window, "(prefers-reduced-motion: reduce)").matches) === true;
+    const property = reduced ? "opacity" : "transform";
+    const enterValue = reduced ? "0" : BELOW;
+    const exitValue = reduced ? "0" : ABOVE;
+    const shownValue = reduced ? "1" : "none";
+    const originalStyle = el.getAttribute("style");
+    // The original nodes are put back as-is on destroy() (frameworks keep references to them).
+    const originalNodes = Array.from(el.childNodes);
+    const textWords = toList((_b = el.textContent) !== null && _b !== void 0 ? _b : "");
+    const currentList = () => {
+      const list = toList(opts.words);
+      return list.length ? list : textWords;
+    };
+    let spans = [];
+    let listKey = "";
+    let index = 0;
+    let timer = 0;
+    let visible = false;
+    let observer = null;
+    // Every word sits in the same grid cell, so the element takes the width of the
+    // longest one and swapping never reflows the sentence around it.
+    el.style.display = "inline-grid";
+    el.style.justifyItems = "start";
+    el.style.clipPath = MASK_CLIP;
+    const build = () => {
+      const list = currentList();
+      listKey = list.join("\n");
+      index = 0;
+      el.replaceChildren();
+      // Screen readers get the whole list once instead of hearing every swap.
+      const label = document.createElement("span");
+      label.textContent = list.join(", ");
+      label.style.cssText =
+        "position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap";
+      el.appendChild(label);
+      spans = list.map((word, i) => {
+        const span = document.createElement("span");
+        span.textContent = word;
+        span.setAttribute("aria-hidden", "true");
+        span.style.gridArea = "1 / 1";
+        span.style.whiteSpace = "nowrap";
+        span.style.setProperty(property, i === 0 ? shownValue : enterValue);
+        el.appendChild(span);
+        return span;
+      });
+    };
+    const swap = () => {
+      const from = spans[index];
+      index = (index + 1) % spans.length;
+      const to = spans[index];
+      if (!from || !to) return;
+      const transition = `${property} ${opts.duration}ms ${EASE_OUT}`;
+      from.style.transition = transition;
+      from.style.setProperty(property, exitValue);
+      // Jump the incoming word below the edge first, so it always rises from the bottom.
+      to.style.transition = "none";
+      to.style.setProperty(property, enterValue);
+      void to.offsetHeight;
+      to.style.transition = transition;
+      to.style.setProperty(property, shownValue);
+      schedule();
+    };
+    const schedule = () => {
+      window.clearTimeout(timer);
+      timer = 0;
+      if (visible && spans.length > 1) timer = window.setTimeout(swap, opts.interval);
+    };
+    const setVisible = (next) => {
+      visible = next;
+      schedule();
+    };
+    build();
+    if (typeof IntersectionObserver === "undefined") {
+      setVisible(true);
+    } else {
+      observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) setVisible(entry.isIntersecting);
+      });
+      observer.observe(el);
+    }
+    return {
+      update(next) {
+        const previous = opts;
+        opts = { ...opts, ...next };
+        // React passes a new array on every render: rebuild only when the words really change.
+        if (currentList().join("\n") !== listKey) {
+          build();
+          schedule();
+        } else if (opts.interval !== previous.interval) {
+          schedule();
+        }
+        // duration is read at each swap.
+      },
+      destroy() {
+        window.clearTimeout(timer);
+        observer === null || observer === void 0 ? void 0 : observer.disconnect();
+        observer = null;
+        el.replaceChildren(...originalNodes);
+        if (originalStyle === null) el.removeAttribute("style");
+        else el.setAttribute("style", originalStyle);
+        spans = [];
+      },
+    };
+  }
+
+  function parse(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    var n = Number(value);
+    return value !== "" && !isNaN(n) ? n : value;
+  }
+
+  function init() {
+    document.querySelectorAll('[data-f44="word-loop"]').forEach(function (el) {
+      if (el.__f44) return;
+      var options = {};
+      [
+        ["words", "data-f44-words"],
+        ["interval", "data-f44-interval"],
+        ["duration", "data-f44-duration"],
+      ].forEach(function (pair) {
+        var value = el.getAttribute(pair[1]);
+        if (value !== null) options[pair[0]] = parse(value);
+      });
+      el.__f44 = wordLoop(el, options);
+    });
+  }
+
+  var Foundry44 = (window.Foundry44 = window.Foundry44 || {});
+  Foundry44.wordLoop = wordLoop;
+  Foundry44._inits = Foundry44._inits || [];
+  Foundry44._inits.push(init);
+  Foundry44.init = function () {
+    Foundry44._inits.forEach(function (fn) {
+      fn();
+    });
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+</script>
+<script src="./_fit.js"></script>
+</body>
+</html>

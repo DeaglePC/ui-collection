@@ -1,0 +1,1 @@
+import{j as t}from"./client-CsvIHAk3.js";import{A as o}from"./ascii-box-l5BPTb6V.js";import"./utils-VNNtGTnX.js";import"./bundle-mjs-BGKYBunL.js";import"./style-BdtxH3Yj.js";function e(){return t.jsx("div",{className:"stage",children:t.jsx(o,{})})}export{e as default};

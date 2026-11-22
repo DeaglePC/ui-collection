@@ -1,0 +1,1 @@
+var s='input, textarea, select, [contenteditable]:not([contenteditable="false"])';function n(e,{el:o}){const t=e.target.closest(s);t&&!t.contains(o??null)||e.preventDefault()}var a={pointerdown:n,mousedown:n};export{n as h,a as p};

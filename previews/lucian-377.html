@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone screens that follow the text · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"글을 따라 바뀌는 휴대폰 화면","category":"스크롤 모션","summary":"왼쪽 휴대폰은 제자리에 붙어 있고, 오른쪽 설명을 스크롤하면 읽고 있는 기능에 맞춰 휴대폰 화면이 아래에서 밀려 올라오며 바뀝니다. 화면이 바뀌는 순간 휴대폰이 살짝 기울었다 돌아오고, 옆의 단계 막대가 지금 몇 번째 기능인지 보여 줍니다.","hint":"오른쪽 글을 위아래로 스크롤해 보세요","shape":"tall","tags":["scroll","sticky","product","features","mockup"]} -->
+<!-- @demo [["wait",800],["scroll",".u377-sc",0,260,1300],["wait",700],["scroll",".u377-sc",0,260,1300],["wait",700],["scroll",".u377-sc",0,"end",1300],["wait",900],["scroll",".u377-sc",0,"top",1700],["wait",400]] -->
+<!-- @en {"title":"Phone screens that follow the text","summary":"The phone on the left stays pinned, and as you scroll the descriptions on the right, its screen slides up from below to match the feature you are reading. At each change the phone tilts slightly and settles, and the step bar beside it shows which feature you are on.","hint":"Scroll the text on the right up and down","map":[
+  ["var FEAT = [['한눈에 보는 오늘', '일정과 날씨, 할 일을 첫 화면에 모아 둡니다.'], ['손쉬운 정리', '끌어다 놓기만 하면 목록이 정리됩니다.'], ['함께 쓰는 메모', '가족과 같은 메모를 실시간으로 고칩니다.'], ['조용한 알림', '꼭 필요한 순간에만 살짝 알려 줍니다.']];", "var FEAT = [['Today at a glance', 'Plans, weather and to-dos gathered on the first screen.'], ['Easy sorting', 'Just drag and drop to put your lists in order.'], ['Shared notes', 'Edit the same note with family in real time.'], ['Quiet alerts', 'A gentle nudge only when it truly matters.']];"],
+  ["aria-label=\"기능 설명, 스크롤해서 읽기\"", "aria-label=\"Feature details, scroll to read\""]
+]} -->
+<style>
+.u377{position:relative;width:300px;height:500px;border-radius:30px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden}
+.u377-ph{position:absolute;left:16px;top:50%;width:118px;height:236px;margin-top:-118px;border-radius:24px;background:#0B0C12;padding:6px;box-shadow:0 20px 30px -16px var(--ux-shadow-strong);transition:transform .5s var(--ux-spring)}
+.u377-ph.tilt{transform:rotate(-4deg) scale(.97)}
+.u377-scr{position:relative;width:100%;height:100%;border-radius:19px;overflow:hidden;background:#F1F3F5}
+.u377-s{position:absolute;inset:0;padding:22px 9px 9px;transform:translateY(100%);transition:transform .55s cubic-bezier(.3,.9,.3,1)}
+.u377-s.on{transform:none}
+.u377-s.up{transform:translateY(-30%);opacity:.4;transition:transform .55s cubic-bezier(.3,.9,.3,1),opacity .55s}
+.u377-s i{display:block;border-radius:7px;margin-bottom:6px}
+.u377-st{position:absolute;left:142px;top:50%;width:3px;height:120px;margin-top:-60px;border-radius:3px;background:var(--ux-line)}
+.u377-st i{position:absolute;left:0;top:0;width:3px;height:25%;border-radius:3px;background:var(--ux-accent);transition:transform .45s var(--ux-spring)}
+.u377-sc{position:absolute;left:152px;right:0;top:0;bottom:0;overflow-y:auto;padding:0 16px 0 8px;scrollbar-width:none;outline:none}
+.u377-sc::-webkit-scrollbar{display:none}
+.u377-f{height:300px;display:flex;flex-direction:column;justify-content:center;opacity:.3;transition:opacity .4s}
+.u377-f:first-child{height:400px;padding-top:100px}
+.u377-f:last-child{height:420px;padding-bottom:120px}
+.u377-f.on{opacity:1}
+.u377-f small{font:800 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ux-accent)}
+.u377-f b{display:block;margin-top:6px;font-size:18px;line-height:1.2;font-weight:850;letter-spacing:-.03em}
+.u377-f p{margin:6px 0 0;font-size:13px;line-height:1.55;color:var(--ux-ink-2)}
+</style>
+<div class="ux u377">
+  <div class="u377-ph" aria-hidden="true"><div class="u377-scr"></div></div>
+  <span class="u377-st" aria-hidden="true"><i></i></span>
+  <div class="u377-sc" tabindex="0" aria-label="기능 설명, 스크롤해서 읽기"></div>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var sc = root.querySelector('.u377-sc'), scr = root.querySelector('.u377-scr'), ph = root.querySelector('.u377-ph'), bar = root.querySelector('.u377-st i');
+  var FEAT = [['한눈에 보는 오늘', '일정과 날씨, 할 일을 첫 화면에 모아 둡니다.'], ['손쉬운 정리', '끌어다 놓기만 하면 목록이 정리됩니다.'], ['함께 쓰는 메모', '가족과 같은 메모를 실시간으로 고칩니다.'], ['조용한 알림', '꼭 필요한 순간에만 살짝 알려 줍니다.']];
+  // 기능마다 휴대폰 화면을 도형으로 그립니다
+  var SCREENS = [
+    '<i style="height:46px;background:linear-gradient(135deg,#74C0FC,#4DABF7)"></i><i style="height:26px;background:#fff"></i><i style="height:26px;background:#fff"></i><i style="height:60px;background:#FFE066"></i>',
+    '<i style="height:24px;background:#fff;width:90%"></i><i style="height:24px;background:#B2F2BB;transform:translateX(8px) rotate(-3deg)"></i><i style="height:24px;background:#fff"></i><i style="height:24px;background:#fff;width:80%"></i><i style="height:24px;background:#fff"></i>',
+    '<i style="height:100px;background:#FFF3BF"></i><i style="height:14px;width:60%;background:#D0BFFF"></i><i style="height:14px;width:40%;background:#99E9F2"></i>',
+    '<i style="height:120px;background:transparent"></i><i style="height:34px;border-radius:12px;background:#fff;box-shadow:0 4px 10px rgba(0,0,0,.1)"></i>'
+  ];
+  var BGS = ['#E7F5FF', '#EBFBEE', '#FFF9DB', '#F3F0FF'];
+  var screens = SCREENS.map(function (h, i) { var s = document.createElement('div'); s.className = 'u377-s'; s.style.background = BGS[i]; s.innerHTML = h; scr.appendChild(s); return s; });
+  var feats = FEAT.map(function (f, i) {
+    var el = document.createElement('section');
+    el.className = 'u377-f';
+    el.innerHTML = '<small>0' + (i + 1) + '</small><b></b><p></p>';
+    el.querySelector('b').textContent = f[0];
+    el.querySelector('p').textContent = f[1];
+    sc.appendChild(el);
+    return el;
+  });
+  var cur = -1, raf = 0;
+  function show(i) {
+    if (i === cur) return;
+    var prev = cur;
+    cur = i;
+    screens.forEach(function (s, k) { s.classList.toggle('on', k === i); s.classList.toggle('up', k < i); });
+    feats.forEach(function (f, k) { f.classList.toggle('on', k === i); });
+    bar.style.transform = 'translateY(' + (i * 100) + '%)';
+    if (prev >= 0) { ph.classList.add('tilt'); setTimeout(function () { ph.classList.remove('tilt'); }, 260); }
+  }
+  // 화면 가운데에 가장 가까운 설명을 지금 기능으로 봅니다
+  function draw() {
+    raf = 0;
+    var mid = sc.scrollTop + sc.clientHeight / 2, best = 0, bd = 1e9;
+    feats.forEach(function (f, k) {
+      var c = f.offsetTop + f.offsetHeight / 2 + (k === 0 ? 50 : 0) - (k === feats.length - 1 ? 60 : 0), d = Math.abs(c - mid);
+      if (d < bd) { bd = d; best = k; }
+    });
+    show(best);
+  }
+  sc.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(draw); }, { passive: true });
+  draw();
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detail side panel from a list row · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"줄을 누르면 열리는 상세 옆 패널","category":"앱 화면","summary":"고객 목록에서 한 줄을 누르면 오른쪽에서 상세 패널이 미끄러져 나오고, 누른 줄은 강조된 채 남습니다. 패널 위쪽 화살표나 J·K 키로 이전·다음 고객으로 넘어가면 내용이 넘어간 방향으로 위아래로 갈아 끼워지고 목록의 강조도 따라 움직입니다. 바깥을 누르거나 Esc를 누르면 패널이 다시 들어갑니다.","hint":"목록의 줄을 누른 뒤 패널의 화살표로 다음 고객으로 넘어가 보세요","shape":"square","tags":["side-panel","master-detail","drawer","crm","list"]} -->
+<!-- @demo [["wait",800],["tap",".u273-rw",1,{"after":1300}],["tap",".u273-nx",0,{"after":1000}],["tap",".u273-nx",0,{"after":1000}],["tap",".u273-pv",0,{"after":1000}],["tap",".u273-x",0,{"after":900}]] -->
+<!-- @en {"title":"Detail side panel from a list row","summary":"Press a row in a customer list and a detail panel slides out from the right while the row stays highlighted. Move to the previous or next customer with the arrows at the top of the panel or the J and K keys, and the content swaps up or down in the direction you went as the list highlight follows. Press outside or Esc and the panel tucks back in.","hint":"Press a row in the list, then use the panel arrows to go to the next customer","map":[
+  [">고객<", ">Customers<"],
+  ["var C = [['김서연', '스튜디오 모먼트', '프로', '₩1,284,000', 3], ['이준호', '플랜트랩', '팀', '₩3,920,000', 12], ['박하은', '오늘의 꽃집', '무료', '₩0', 0], ['최민준', '런웨이 커피', '프로', '₩642,000', 2], ['정유나', '노트북 클럽', '팀', '₩2,160,000', 7]]", "var C = [['Seoyeon Kim', 'Studio Moment', 'Pro', '$1,284', 3], ['Junho Lee', 'Plant Lab', 'Team', '$3,920', 12], ['Haeun Park', 'Daily Florist', 'Free', '$0', 0], ['Minjun Choi', 'Runway Coffee', 'Pro', '$642', 2], ['Yuna Jung', 'Notebook Club', 'Team', '$2,160', 7]]"],
+  ["'누적 결제'", "'Lifetime value'"],
+  ["'팀원'", "'Seats'"],
+  ["'최근 활동'", "'Recent activity'"],
+  ["var ACT = ['요금제를 올렸어요', '팀원 2명을 초대했어요', '결제 수단을 바꿨어요']", "var ACT = ['Upgraded their plan', 'Invited 2 teammates', 'Changed payment method']"],
+  ["'명'", "''"],
+  ["aria-label=\"이전 고객\"", "aria-label=\"Previous customer\""],
+  ["aria-label=\"다음 고객\"", "aria-label=\"Next customer\""],
+  ["aria-label=\"패널 닫기\"", "aria-label=\"Close panel\""],
+  ["' / '", "' of '"]
+]} -->
+<style>
+.u273{position:relative;width:340px;height:340px;border-radius:30px;overflow:hidden;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);color:var(--ux-ink)}
+.u273-hd{position:absolute;left:18px;top:18px;font-size:16px;font-weight:900;letter-spacing:-.03em}
+.u273-ls{position:absolute;left:10px;right:10px;top:52px;bottom:10px;margin:0;padding:0;list-style:none}
+.u273-rw{display:flex;align-items:center;gap:10px;width:100%;height:52px;padding:0 10px;border:0;border-radius:13px;background:none;color:var(--ux-ink);font:inherit;text-align:left;cursor:pointer;transition:background .2s,box-shadow .2s}
+.u273-rw:hover,.u273-rw.g-hov{background:var(--ux-surface-2)}
+.u273-rw.is-on{background:color-mix(in srgb,var(--ux-accent) 10%,transparent);box-shadow:inset 3px 0 0 var(--ux-accent)}
+.u273-rw:focus-visible{outline:2px solid var(--ux-accent);outline-offset:-2px}
+.u273-av{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:850}
+.u273-rw div{flex:1;min-width:0}
+.u273-rw b{display:block;font-size:12px;font-weight:850}
+.u273-rw small{display:block;font-size:10px;font-weight:650;color:var(--ux-ink-3)}
+.u273-rw em{flex:none;padding:2px 7px;border-radius:999px;background:var(--ux-surface-2);font-style:normal;font-size:9.5px;font-weight:850;color:var(--ux-ink-2)}
+.u273-ov{position:absolute;inset:0;background:rgba(10,10,20,.12);opacity:0;pointer-events:none;transition:opacity .3s}
+.u273.is-open .u273-ov{opacity:1;pointer-events:auto}
+.u273-pn{position:absolute;top:8px;right:8px;bottom:8px;width:208px;display:flex;flex-direction:column;border-radius:22px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),-16px 0 40px -18px rgba(0,0,0,.35);transform:translateX(calc(100% + 16px));transition:transform .45s cubic-bezier(.3,1.1,.4,1);overflow:hidden}
+.u273.is-open .u273-pn{transform:none}
+.u273-tb{display:flex;align-items:center;gap:3px;padding:10px 10px 6px}
+.u273-tb button{width:28px;height:28px;border:0;border-radius:8px;background:var(--ux-surface-2);color:var(--ux-ink-2);display:grid;place-items:center;cursor:pointer}
+.u273-tb button:disabled{opacity:.35;cursor:default}
+.u273-tb svg{width:11px;height:11px}
+.u273-tb span{margin-right:auto;margin-left:6px;font-size:10px;font-weight:800;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.u273-bd{position:relative;flex:1;overflow:hidden}
+.u273-pg{position:absolute;inset:0;padding:6px 14px 14px;transition:transform .4s cubic-bezier(.3,1.1,.4,1),opacity .3s}
+.u273-pg.is-in{transition:none}
+.u273-pg .u273-av{width:44px;height:44px;font-size:16px}
+.u273-pg h4{margin:10px 0 0;font-size:15px;font-weight:900}
+.u273-pg>small{display:block;margin-top:1px;font-size:10.5px;font-weight:650;color:var(--ux-ink-3)}
+.u273-kv{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.u273-kv div{padding:8px 9px;border-radius:10px;background:var(--ux-surface-2)}
+.u273-kv small{display:block;font-size:9px;font-weight:800;color:var(--ux-ink-3)}
+.u273-kv b{display:block;margin-top:2px;font-size:12px;font-weight:900;font-variant-numeric:tabular-nums}
+.u273-pg h5{margin:14px 0 6px;font-size:10px;font-weight:850;color:var(--ux-ink-3)}
+.u273-ac{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:10.5px;font-weight:700;color:var(--ux-ink-2)}
+.u273-ac::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--ux-accent)}
+.u273 button:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.u273-pn,.u273-pg,.u273-ov{transition:none}}
+</style>
+<div class="ux u273">
+  <div class="u273-hd">고객</div>
+  <ul class="u273-ls"></ul>
+  <div class="u273-ov" aria-hidden="true"></div>
+  <aside class="u273-pn" aria-hidden="true">
+    <div class="u273-tb"><button type="button" class="u273-pv" aria-label="이전 고객"><svg viewBox="0 0 11 11" aria-hidden="true"><path d="M2 7l3.5-3.5L9 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="u273-nx" aria-label="다음 고객"><svg viewBox="0 0 11 11" aria-hidden="true"><path d="M2 4l3.5 3.5L9 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="u273-ix"></span><button type="button" class="u273-x" aria-label="패널 닫기"><svg viewBox="0 0 11 11" aria-hidden="true"><path d="M2.5 2.5l6 6M8.5 2.5l-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+    <div class="u273-bd" aria-live="polite"></div>
+  </aside>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var ls = root.querySelector('.u273-ls'), pn = root.querySelector('.u273-pn'), bd = root.querySelector('.u273-bd'), ix = root.querySelector('.u273-ix'), pv = root.querySelector('.u273-pv'), nx = root.querySelector('.u273-nx'), x = root.querySelector('.u273-x'), ov = root.querySelector('.u273-ov');
+  var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // [이름, 회사, 요금제, 누적 결제, 팀원 수]
+  var C = [['김서연', '스튜디오 모먼트', '프로', '₩1,284,000', 3], ['이준호', '플랜트랩', '팀', '₩3,920,000', 12], ['박하은', '오늘의 꽃집', '무료', '₩0', 0], ['최민준', '런웨이 커피', '프로', '₩642,000', 2], ['정유나', '노트북 클럽', '팀', '₩2,160,000', 7]];
+  var COL = ['#EC4899', '#0EA5E9', '#10B981', '#F59E0B', '#8B5CF6'];
+  var ACT = ['요금제를 올렸어요', '팀원 2명을 초대했어요', '결제 수단을 바꿨어요'];
+  var R = C.map(function (c, i) {
+    var li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.className = 'u273-rw';
+    b.innerHTML = '<span class="u273-av" style="background:' + COL[i] + '"></span><div><b></b><small></small></div><em></em>';
+    b.querySelector('.u273-av').textContent = c[0].charAt(0); b.querySelector('b').textContent = c[0]; b.querySelector('small').textContent = c[1]; b.querySelector('em').textContent = c[2];
+    b.addEventListener('click', function () { show(i, 0); });
+    li.appendChild(b); ls.appendChild(li); return b;
+  });
+  var cur = -1;
+  function page(i) {
+    var c = C[i], d = document.createElement('div'); d.className = 'u273-pg';
+    d.innerHTML = '<span class="u273-av" style="background:' + COL[i] + '"></span><h4></h4><small></small><div class="u273-kv"><div><small></small><b></b></div><div><small></small><b></b></div></div><h5></h5>';
+    d.querySelector('.u273-av').textContent = c[0].charAt(0); d.querySelector('h4').textContent = c[0]; d.querySelector('small').textContent = c[1] + ' · ' + c[2];
+    var kv = d.querySelectorAll('.u273-kv div'); kv[0].querySelector('small').textContent = '누적 결제'; kv[0].querySelector('b').textContent = c[3]; kv[1].querySelector('small').textContent = '팀원'; kv[1].querySelector('b').textContent = c[4] + '명';
+    d.querySelector('h5').textContent = '최근 활동';
+    ACT.forEach(function (a, k) { if ((i + k) % 3 === 2) return; var p = document.createElement('div'); p.className = 'u273-ac'; p.textContent = a; d.appendChild(p); });
+    return d;
+  }
+  // 다음은 아래에서, 이전은 위에서 들어오게 갈아 끼웁니다
+  function show(i, dir) {
+    var open = root.classList.contains('is-open');
+    if (i === cur && open) return;
+    var old = bd.firstChild, nw = page(i);
+    if (old && open && dir && !rm) {
+      nw.classList.add('is-in'); nw.style.transform = 'translateY(' + (dir * 40) + 'px)'; nw.style.opacity = '0'; bd.appendChild(nw); void nw.offsetWidth;
+      nw.classList.remove('is-in'); nw.style.transform = ''; nw.style.opacity = ''; old.style.transform = 'translateY(' + (-dir * 40) + 'px)'; old.style.opacity = '0';
+      setTimeout(function () { old.remove(); }, 420);
+    } else { bd.innerHTML = ''; bd.appendChild(nw); }
+    cur = i;
+    R.forEach(function (b, k) { b.classList.toggle('is-on', k === i); b.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+    ix.textContent = (i + 1) + ' / ' + C.length; pv.disabled = i === 0; nx.disabled = i === C.length - 1;
+    root.classList.add('is-open'); pn.setAttribute('aria-hidden', 'false');
+  }
+  function close() { root.classList.remove('is-open'); pn.setAttribute('aria-hidden', 'true'); if (cur >= 0) R[cur].focus({ preventScroll: true }); }
+  pv.addEventListener('click', function () { if (cur > 0) show(cur - 1, -1); });
+  nx.addEventListener('click', function () { if (cur < C.length - 1) show(cur + 1, 1); });
+  x.addEventListener('click', close); ov.addEventListener('click', close);
+  root.addEventListener('keydown', function (e) {
+    if (!root.classList.contains('is-open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'j' || e.key === 'J') nx.click();
+    if (e.key === 'k' || e.key === 'K') pv.click();
+  });
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

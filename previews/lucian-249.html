@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live search result preview · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"쓰는 대로 보이는 검색 결과 미리보기","category":"빌더 도구","summary":"페이지 설정에서 제목과 설명을 쓰면 아래 검색 결과 미리보기가 한 글자씩 바로 따라 바뀌고, 칸 아래 막대가 권장 길이만큼 차오릅니다. 제목이 너무 길어지면 막대가 빨갛게 넘치고 미리보기 제목 끝이 말줄임표로 잘립니다. 위의 링크 공유 탭을 누르면 메신저에 붙여 넣었을 때 보일 카드 모양으로 넘어갑니다.","hint":"제목 칸에 글을 더 써 보고, 링크 공유 탭으로 바꿔 보세요","shape":"square","tags":["seo","meta-tags","og-preview","search-snippet","builder"]} -->
+<!-- @demo [["wait",900],["tap",".u249-ti",0,{"after":200}],["type",".u249-ti",0,{"ko":" — 디자이너를 위한 노코드 웹사이트 빌더","en":" — the no-code website builder made for designers"},55],["wait",1000],["tap",".u249-tb",1,{"after":1600}],["tap",".u249-tb",0,{"after":600}],["reset"]] -->
+<!-- @en {"title":"Live search result preview","summary":"Type a title and description in page settings and the search result preview below follows each keystroke, while the bar under each field fills toward the recommended length. Make the title too long and its bar overflows in red as the preview title is cut off with an ellipsis. Press the Link share tab above to switch to the card you'd see when pasting the link into a messenger.","hint":"Add more text to the title, then switch to the Link share tab","map":[
+  [">제목<", ">Title<"],
+  [">설명<", ">Description<"],
+  ["value=\"Lumen 사이트 빌더\"", "value=\"Lumen site builder\""],
+  [">코드 없이 10분 만에 브랜드 사이트를 만들고, 도메인 연결과 SEO까지 한 번에 끝내세요.<", ">Build a brand site in 10 minutes without code, and finish domains and SEO in one go.<"],
+  ["var TABS = ['검색 결과', '링크 공유']", "var TABS = ['Search result', 'Link share']"],
+  ["aria-label=\"페이지 제목\"", "aria-label=\"Page title\""],
+  ["aria-label=\"페이지 설명\"", "aria-label=\"Page description\""],
+  ["aria-label=\"미리보기 종류\"", "aria-label=\"Preview type\""],
+  ["'자'", "''"]
+]} -->
+<style>
+.u249{position:relative;width:340px;height:340px;border-radius:30px;overflow:hidden;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);color:var(--ux-ink)}
+.u249-fm{position:absolute;left:16px;right:16px;top:14px}
+.u249-lb{display:flex;justify-content:space-between;margin-top:8px;font-size:10px;font-weight:850;color:var(--ux-ink-2)}
+.u249-lb:first-child{margin-top:0}
+.u249-lb span{font-weight:800;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.u249-lb span.is-over{color:#E11D48}
+.u249-ti,.u249-ds{display:block;width:100%;margin-top:4px;padding:0 10px;border:0;border-radius:9px;background:var(--ux-surface-2);box-shadow:inset 0 0 0 1.5px var(--ux-line);color:var(--ux-ink);font:inherit;font-size:11px;font-weight:700;outline:none;box-sizing:border-box}
+.u249-ti{height:32px}
+.u249-ds{height:44px;padding:6px 10px;line-height:1.4;resize:none;font-weight:600}
+.u249-ti:focus,.u249-ds:focus{box-shadow:inset 0 0 0 2px var(--ux-accent)}
+.u249-br{height:3px;margin-top:4px;border-radius:2px;background:var(--ux-surface-3);overflow:hidden}
+.u249-br i{display:block;height:100%;border-radius:2px;background:#10B981;transition:width .2s,background .2s}
+.u249-br i.is-mid{background:#F59E0B}
+.u249-br i.is-over{background:#E11D48}
+.u249-tl{position:absolute;left:16px;top:160px;display:flex;gap:4px}
+.u249-tb{height:26px;padding:0 10px;border:0;border-radius:8px;background:none;color:var(--ux-ink-3);font:inherit;font-size:10.5px;font-weight:850;cursor:pointer}
+.u249-tb[aria-selected="true"]{background:var(--ux-surface-2);color:var(--ux-ink)}
+.u249-pv{position:absolute;left:12px;right:12px;top:190px;bottom:12px}
+.u249-gs,.u249-og{position:absolute;inset:0;border-radius:16px;transition:opacity .3s,transform .4s cubic-bezier(.3,1.3,.5,1)}
+.u249-gs{padding:12px 14px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.08);color:#202124;font-family:Arial,system-ui,sans-serif}
+.u249-gs header{display:flex;align-items:center;gap:8px}
+.u249-gs header i{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#FBBF24,#F472B6);box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.u249-gs header b{display:block;font-size:11px;font-weight:600;color:#202124}
+.u249-gs header small{display:block;font-size:10px;color:#4d5156}
+.u249-gs h4{margin:8px 0 0;font-size:14.5px;line-height:1.3;font-weight:400;color:#1a0dab;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.u249-gs p{margin:4px 0 0;font-size:11px;line-height:1.45;color:#4d5156;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.u249-og{display:flex;overflow:hidden;background:var(--ux-surface-2);box-shadow:inset 0 0 0 1px var(--ux-line);opacity:0;transform:translateY(10px);pointer-events:none}
+.u249.is-og .u249-gs{opacity:0;transform:translateY(-10px);pointer-events:none}
+.u249.is-og .u249-og{opacity:1;transform:none}
+.u249-og i{flex:none;width:118px;background:linear-gradient(135deg,#6366F1,#EC4899);position:relative}
+.u249-og i::after{content:"Lumen";position:absolute;left:12px;bottom:10px;color:#fff;font-size:15px;font-weight:900;font-style:normal}
+.u249-og div{flex:1;min-width:0;padding:12px}
+.u249-og b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.35;font-weight:850}
+.u249-og p{margin:5px 0 0;font-size:10px;line-height:1.4;font-weight:600;color:var(--ux-ink-3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.u249-og small{display:block;margin-top:6px;font-size:9.5px;font-weight:800;color:var(--ux-ink-3)}
+.u249 button:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){.u249-gs,.u249-og,.u249-br i{transition:none}}
+</style>
+<div class="ux u249">
+  <div class="u249-fm">
+    <div class="u249-lb">제목<span class="u249-tc"></span></div><input class="u249-ti" value="Lumen 사이트 빌더" aria-label="페이지 제목" autocomplete="off"><div class="u249-br"><i class="u249-tbr"></i></div>
+    <div class="u249-lb">설명<span class="u249-dc"></span></div><textarea class="u249-ds" aria-label="페이지 설명">코드 없이 10분 만에 브랜드 사이트를 만들고, 도메인 연결과 SEO까지 한 번에 끝내세요.</textarea><div class="u249-br"><i class="u249-dbr"></i></div>
+  </div>
+  <div class="u249-tl" role="tablist" aria-label="미리보기 종류"></div>
+  <div class="u249-pv"><div class="u249-gs" role="tabpanel"><header><i aria-hidden="true"></i><div><b>Lumen</b><small>https://lumen.app › builder</small></div></header><h4></h4><p></p></div><div class="u249-og" role="tabpanel"><i aria-hidden="true"></i><div><b></b><p></p><small>lumen.app</small></div></div></div>
+</div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var ti = root.querySelector('.u249-ti'), ds = root.querySelector('.u249-ds'), tc = root.querySelector('.u249-tc'), dc = root.querySelector('.u249-dc'), tbr = root.querySelector('.u249-tbr'), dbr = root.querySelector('.u249-dbr'), tl = root.querySelector('.u249-tl');
+  var gh = root.querySelector('.u249-gs h4'), gp = root.querySelector('.u249-gs p'), ob = root.querySelector('.u249-og b'), op = root.querySelector('.u249-og p');
+  var TABS = ['검색 결과', '링크 공유'], TMAX = 60, DMAX = 155;
+  // 한글은 영문보다 넓어서 한 글자를 두 칸으로 셉니다
+  function w(s) { var n = 0; for (var i = 0; i < s.length; i++) { var c = s.charCodeAt(i); n += c >= 0x3131 && c <= 0xD79D ? 1.8 : 1; } return Math.round(n); }
+  function bar(el, cnt, n, max) { var p = n / max; el.style.width = Math.min(100, p * 100) + '%'; el.classList.toggle('is-mid', p > .85 && p <= 1); el.classList.toggle('is-over', p > 1); cnt.textContent = n + ' / ' + max + '자'; cnt.classList.toggle('is-over', p > 1); }
+  function sync() {
+    var t = ti.value, d = ds.value, tn = w(t), dn = w(d);
+    bar(tbr, tc, tn, TMAX); bar(dbr, dc, dn, DMAX);
+    gh.textContent = t; gp.textContent = d; ob.textContent = t; op.textContent = d;
+  }
+  var T = TABS.map(function (n, i) { var b = document.createElement('button'); b.type = 'button'; b.className = 'u249-tb'; b.setAttribute('role', 'tab'); b.textContent = n; b.addEventListener('click', function () { tab(i); }); tl.appendChild(b); return b; });
+  function tab(i) { root.classList.toggle('is-og', i === 1); T.forEach(function (b, k) { b.setAttribute('aria-selected', k === i); b.tabIndex = k === i ? 0 : -1; }); }
+  ti.addEventListener('input', sync); ds.addEventListener('input', sync);
+  sync(); tab(0);
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

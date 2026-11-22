@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photo stack that fans out · Lucian</title>
+<!-- Lucian UX/UI Prompt · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/ -->
+<style>
+/* lucianLabs UI 요소 — 공통 테마 토큰 (라이트 / 다크)
+   라이트 기본값 → 시스템이 다크면 다크 → data-theme으로 명시하면 그 값을 우선합니다.
+   요소 CSS는 --ux-* 토큰만 참조하므로, 프로젝트 테마 변수에 이 값을 매핑하면 됩니다. */
+:root{
+  color-scheme:light;
+  --ux-page:#F4F2EE;
+  --ux-surface:#FFFFFF;
+  --ux-surface-2:#F5F3EF;
+  --ux-surface-3:#EAE7E1;
+  --ux-ink:#16151B;
+  --ux-ink-2:#57535F;
+  --ux-ink-3:#8E8A97;
+  --ux-line:rgba(22,21,27,.09);
+  --ux-line-2:rgba(22,21,27,.17);
+  --ux-accent:#6A57F2;
+  --ux-accent-2:#2F8FE0;
+  --ux-accent-soft:rgba(106,87,242,.12);
+  --ux-accent-ink:#FFFFFF;
+  --ux-mint:#119C72;
+  --ux-warn:#D6731E;
+  --ux-danger:#D93A55;
+  --ux-glass:rgba(255,255,255,.58);
+  --ux-glass-line:rgba(255,255,255,.85);
+  --ux-shadow:rgba(40,30,80,.14);
+  --ux-shadow-strong:rgba(40,30,80,.3);
+  --ux-grad:linear-gradient(120deg,#7B61FF,#3D8BFF 55%,#1FB89A);
+  --ux-ease:cubic-bezier(.2,.8,.2,1);
+  --ux-spring:cubic-bezier(.34,1.45,.64,1);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ux-page:#07080D;
+    --ux-surface:#13141C;
+    --ux-surface-2:#1A1B25;
+    --ux-surface-3:#252632;
+    --ux-ink:#F4F0E8;
+    --ux-ink-2:rgba(244,240,232,.68);
+    --ux-ink-3:rgba(244,240,232,.42);
+    --ux-line:rgba(255,255,255,.08);
+    --ux-line-2:rgba(255,255,255,.16);
+    --ux-accent:#B7A4FF;
+    --ux-accent-2:#7DB4FF;
+    --ux-accent-soft:rgba(183,164,255,.15);
+    --ux-accent-ink:#0B0C12;
+    --ux-mint:#7EE8C0;
+    --ux-warn:#FFB26B;
+    --ux-danger:#FF7D8C;
+    --ux-glass:rgba(255,255,255,.07);
+    --ux-glass-line:rgba(255,255,255,.18);
+    --ux-shadow:rgba(0,0,0,.45);
+    --ux-shadow-strong:rgba(0,0,0,.72);
+    --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ux-page:#07080D;
+  --ux-surface:#13141C;
+  --ux-surface-2:#1A1B25;
+  --ux-surface-3:#252632;
+  --ux-ink:#F4F0E8;
+  --ux-ink-2:rgba(244,240,232,.68);
+  --ux-ink-3:rgba(244,240,232,.42);
+  --ux-line:rgba(255,255,255,.08);
+  --ux-line-2:rgba(255,255,255,.16);
+  --ux-accent:#B7A4FF;
+  --ux-accent-2:#7DB4FF;
+  --ux-accent-soft:rgba(183,164,255,.15);
+  --ux-accent-ink:#0B0C12;
+  --ux-mint:#7EE8C0;
+  --ux-warn:#FFB26B;
+  --ux-danger:#FF7D8C;
+  --ux-glass:rgba(255,255,255,.07);
+  --ux-glass-line:rgba(255,255,255,.18);
+  --ux-shadow:rgba(0,0,0,.45);
+  --ux-shadow-strong:rgba(0,0,0,.72);
+  --ux-grad:linear-gradient(120deg,#B7A4FF,#7DB4FF 55%,#A5F2D3);
+}
+/* 요소 공통 베이스 — 루트에 .ux 클래스를 붙입니다 */
+.ux,.ux *,.ux *::before,.ux *::after{box-sizing:border-box}
+.ux{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+  color:var(--ux-ink);-webkit-font-smoothing:antialiased;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  word-break:keep-all;overflow-wrap:break-word;
+}
+/* :where()로 명시도를 0으로 둬서, 요소 클래스가 버튼·입력의 색과 글꼴을 덮어쓸 수 있게 합니다 */
+:where(.ux) :is(button,input,textarea,select){font:inherit;color:inherit}
+:where(.ux) button{cursor:pointer}
+.ux :focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.ux [hidden]{display:none!important}
+/* 모션 줄이기: 전환은 즉시 끝나고, 무한 반복은 한 번으로 줄여 최종 상태가 보이게 합니다 */
+@media (prefers-reduced-motion:reduce){
+  .ux,.ux *,.ux *::before,.ux *::after{
+    animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important;
+  }
+}
+
+html,body{margin:0;min-height:100%;background:var(--ux-page);}
+body{display:grid;place-items:center;padding:28px 16px;}
+</style>
+</head>
+<body class="ux">
+<!-- @meta {"title":"부채처럼 펼쳐지는 사진 더미","category":"섹션·콘텐츠","summary":"겹쳐 쌓인 폴라로이드 사진에 커서를 올리면 살짝 부채처럼 벌어지고, 누르면 사진들이 날아가 반듯한 격자로 펼쳐집니다. 격자에서 사진 하나를 누르면 그 사진이 맨 위에 오도록 다시 더미로 모이며, 각 사진은 조금씩 다른 각도로 내려앉습니다.","hint":"사진 더미에 커서를 올렸다가 눌러서 펼치고, 펼친 사진 하나를 눌러 다시 모아 보세요","shape":"square","tags":["stack","fan","photos","layout","morph"]} -->
+<!-- @demo [["wait",800],["hover",".u369-p",5,{"after":1200}],["tap",".u369-p",5,{"after":1600}],["tap",".u369-p",2,{"after":1600}],["hover",".u369-p",2,{"after":900}],["tap",".u369-p",2,{"after":1500}],["tap",".u369-p",4,{"after":1400}],["leave",400]] -->
+<!-- @en {"title":"Photo stack that fans out","summary":"Hover the stack of polaroids and it fans out slightly; tap it and the photos fly out into a neat grid. Tap one photo in the grid and the photos gather back into a stack with that one on top, each landing at a slightly different angle.","hint":"Hover the stack, tap it to spread it out, then tap a photo to gather them again","map":[
+  ["var CAP = ['바다', '골목', '노을', '숲길', '눈', '꽃'];", "var CAP = ['Sea', 'Alley', 'Sunset', 'Forest path', 'Snow', 'Flowers'];"],
+  ["'사진 더미, 눌러서 펼치기'", "'Photo stack, tap to spread'"],
+  ["', 눌러서 맨 위로 모으기'", "', tap to gather with this on top'"]
+]} -->
+<style>
+.u369{position:relative;width:340px;height:330px;border-radius:28px;background:var(--ux-surface-2);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden}
+.u369-p{position:absolute;left:50%;top:50%;width:96px;height:112px;margin:-56px 0 0 -48px;border:0;padding:7px 7px 24px;border-radius:6px;background:#fff;box-shadow:0 10px 20px -10px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.05);transition:transform .7s cubic-bezier(.3,1.2,.4,1);transition-delay:var(--dl,0ms)}
+.u369-p i{display:block;width:100%;height:100%;border-radius:2px;background:var(--bg)}
+.u369-p span{position:absolute;left:0;right:0;bottom:5px;text-align:center;font:600 10.5px/1 ui-rounded,-apple-system,sans-serif;color:#555}
+.u369-p:focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+</style>
+<div class="ux u369"></div>
+<script>
+(function () {
+  var root = document.currentScript.previousElementSibling;
+  var CAP = ['바다', '골목', '노을', '숲길', '눈', '꽃'];
+  var BG = ['linear-gradient(#74C0FC,#1C7ED6)', 'linear-gradient(135deg,#FFD8A8,#E8590C)', 'linear-gradient(#FFD43B,#F76707 55%,#5F3DC4)', 'linear-gradient(#B2F2BB,#2F9E44)', 'linear-gradient(#F1F3F5,#ADB5BD)', 'radial-gradient(circle at 40% 40%,#FFDEEB,#E64980)'];
+  // 순서(order)의 마지막이 맨 위 사진입니다
+  var order = [0, 1, 2, 3, 4, 5], spread = false, hover = false;
+  var tilt = CAP.map(function () { return (Math.random() - 0.5) * 16; });
+  var ps = CAP.map(function (c, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'u369-p';
+    b.innerHTML = '<i style="--bg:' + BG[i] + '"></i><span></span>';
+    b.querySelector('span').textContent = c;
+    b.addEventListener('click', function () { tap(i); });
+    b.addEventListener('pointerenter', function () { hover = true; if (!spread) place(); });
+    b.addEventListener('pointerleave', function () { hover = false; if (!spread) place(); });
+    root.appendChild(b);
+    return b;
+  });
+  function place() {
+    order.forEach(function (i, z) {
+      var b = ps[i], t;
+      b.style.zIndex = spread ? 1 : z + 1;
+      if (spread) {
+        var col = z % 3, row = Math.floor(z / 3);
+        t = 'translate(' + ((col - 1) * 104) + 'px,' + ((row - 0.5) * 124) + 'px) rotate(0deg)';
+        b.style.setProperty('--dl', (z * 40) + 'ms');
+        b.setAttribute('aria-label', CAP[i] + ', 눌러서 맨 위로 모으기');
+      } else {
+        var k = z - (order.length - 1);
+        t = hover ? 'translate(' + (k * 16) + 'px,' + (k * -3) + 'px) rotate(' + (k * 7 + 2) + 'deg)' : 'translate(' + (k * 1.5) + 'px,' + (k * -1.5) + 'px) rotate(' + tilt[i] + 'deg)';
+        b.style.setProperty('--dl', ((order.length - 1 - z) * 30) + 'ms');
+        b.setAttribute('aria-label', '사진 더미, 눌러서 펼치기');
+        b.tabIndex = z === order.length - 1 ? 0 : -1;
+      }
+      if (spread) b.tabIndex = 0;
+      b.style.transform = t;
+    });
+  }
+  function tap(i) {
+    if (!spread) { spread = true; hover = false; place(); return; }
+    // 누른 사진을 맨 위로 보내고 다시 더미로 모읍니다
+    order = order.filter(function (x) { return x !== i; }).concat(i);
+    tilt = tilt.map(function () { return (Math.random() - 0.5) * 16; });
+    tilt[i] = (Math.random() - 0.5) * 6;
+    spread = false; place();
+    ps[i].focus({ preventScroll: true });
+  }
+  place();
+})();
+</script>
+
+<script src="./_fit.js"></script>
+</body>
+</html>

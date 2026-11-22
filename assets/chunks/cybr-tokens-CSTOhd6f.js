@@ -1,0 +1,84 @@
+const n=[{path:"styles/cybr-tokens.css",language:"css",content:`/* CYBR//UI · CYBR//UI tokens · MIT · Copyright (c) 2026 JLTDigital and Jonathan Taft · https://cybr-ui.com/r/tokens.json · https://github.com/JLTDigital/cybr-ui */
+/*
+ * Opt-in design tokens. Import after \`@import "tailwindcss"\`. Hex values live only
+ * here and in the preset files, so a palette change is one edit.
+ *
+ * Default preset (locked). WCAG 2.x contrast: ink/bg 14.63, label/bg 7.43,
+ * signal/bg 4.64 (text), signal/surface 3.46 (large/UI only), ground-deep on
+ * signal 5.31, dim/bg 3.29 (large/secondary only). --line is decoration only.
+ *
+ * Alternate presets override only the colour tokens under [data-theme="<id>"].
+ * Import them after this file; equal specificity means source order decides.
+ */
+
+:root {
+  --bg: #212529;
+  --surface: #343a40;
+  --line: #495057;
+  --dim: #6c757d;
+  --signal: #ff4c29;
+  --ink: #f8f9fa;
+  --label: #adb5bd;
+  --ground-deep: #16191c;
+  --ground-void: #0e1012;
+  /* Second accent; used for the glitch split and code highlighting. */
+  --neon-2: #00e5ff;
+
+  --border-hair: 1px;
+  --border-base: 2px;
+  --border-heavy: 3px;
+  --border-max: 4px;
+
+  --offset-hard: 6px;
+  --offset-hard-hover: 3px;
+  --offset-hard-pressed: 0px;
+
+  --focus-width: 3px;
+  --focus-offset: 6px;
+
+  --duration-snap: 90ms;
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-dim: var(--dim);
+  --color-signal: var(--signal);
+  --color-ink: var(--ink);
+  --color-label: var(--label);
+  --color-ground-deep: var(--ground-deep);
+  --color-ground-void: var(--ground-void);
+  --color-neon-2: var(--neon-2);
+
+  --font-display: var(--font-archivo-black), Impact, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --text-display-xl: clamp(4rem, 10vw, 8.25rem);
+  --text-display-xl--line-height: 0.85;
+  --text-display-xl--letter-spacing: -0.02em;
+  --text-display-lg: clamp(2.5rem, 6vw, 5rem);
+  --text-display-lg--line-height: 0.9;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-md: clamp(1.75rem, 3.5vw, 3rem);
+  --text-display-md--line-height: 0.95;
+  --text-display-md--letter-spacing: -0.02em;
+  --text-micro: 0.625rem;
+  --text-micro--line-height: 1.4;
+  --text-caption: 0.6875rem;
+  --text-caption--line-height: 1.4;
+
+  --tracking-label: 0.14em;
+  --tracking-button: 0.12em;
+
+  --shadow-hard: var(--offset-hard) var(--offset-hard) 0 0 var(--ink);
+  --shadow-hard-hover: var(--offset-hard-hover) var(--offset-hard-hover) 0 0 var(--ink);
+
+  --ease-step-2: steps(2);
+  --ease-step-3: steps(3);
+  --ease-step-12: steps(12);
+}
+`}],e="",t={files:n,prompt:e};export{t as default,n as files,e as prompt};

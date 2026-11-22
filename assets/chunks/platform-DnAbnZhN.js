@@ -1,0 +1,1 @@
+import{r}from"./client-CsvIHAk3.js";const e=()=>()=>{},a=()=>/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent);function o(){return r.useSyncExternalStore(e,a,()=>!0)}function s(t){return t?"⌘":"Ctrl"}export{s as m,o as u};

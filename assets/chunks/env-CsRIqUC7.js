@@ -1,0 +1,1 @@
+var n=typeof window<"u"&&typeof document<"u";function o(){return n&&(/iP(hone|ad|od)/.test(navigator.platform)||navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)}function e(t){return!!t&&n&&getComputedStyle(t).direction==="rtl"}export{e as a,o as b,n as i};

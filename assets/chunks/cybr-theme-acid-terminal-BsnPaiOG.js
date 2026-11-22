@@ -1,0 +1,23 @@
+const n=[{path:"styles/cybr-theme-acid-terminal.css",language:"css",content:`/* CYBR//UI · CYBR//UI Acid Terminal theme · MIT · Copyright (c) 2026 JLTDigital and Jonathan Taft · https://cybr-ui.com/r/theme-acid-terminal.json · https://github.com/JLTDigital/cybr-ui */
+/*
+ * Acid Terminal preset. Import after the tokens file, then set
+ * data-theme="acid-terminal" on <html> or any element to scope it to that subtree.
+ *
+ * WCAG 2.x contrast: ink/bg 16.95, label/bg 8.69, signal/bg 16.05 (text),
+ * signal/surface 13.87 (large/UI only), ground-deep on signal 16.77,
+ * dim/bg 3.56 (large/secondary only). --line is decoration only.
+ */
+
+[data-theme="acid-terminal"] {
+  --bg: #0d110d;
+  --surface: #1a211a;
+  --line: #2f3a2f;
+  --dim: #5f6f5f;
+  --signal: #c6ff00;
+  --ink: #e9f5e9;
+  --label: #9fb59f;
+  --ground-deep: #070a07;
+  --ground-void: #030503;
+  --neon-2: #ff4c29;
+}
+`}],e="",t={files:n,prompt:e};export{t as default,n as files,e as prompt};

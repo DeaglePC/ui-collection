@@ -1,0 +1,1 @@
+import{j as s}from"./client-CsvIHAk3.js";import{F as t,a as x,b as F}from"./field-C9EZQxQE.js";function v({label:o,description:a,error:i,invalid:e,children:l,...n}){const d=i!=null&&i!==!1&&i!=="";return s.jsxs(t,{...n,invalid:e??(d||void 0),children:[o!==void 0&&s.jsx(x,{children:o}),l,s.jsx(F,{description:a,error:d?i:void 0})]})}export{v as F};

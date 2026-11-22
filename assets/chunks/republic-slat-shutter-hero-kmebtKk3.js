@@ -1,0 +1,207 @@
+const e=[{path:"components/slat-shutter-hero.tsx",language:"tsx",content:`/**
+ * Republic UI · slat-shutter-hero
+ * MIT License · Copyright (c) 2026 Republic Marketing
+ * https://www.republicmarketing.co.uk/ui/slat-shutter-hero
+ * https://github.com/rm-sjent/republic-ui
+ */
+"use client"
+
+import * as React from "react"
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValueEvent,
+  useReducedMotion,
+  cubicBezier,
+  AnimatePresence,
+  type MotionValue,
+} from "motion/react"
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+const ease = cubicBezier(0.42, 0, 0, 1)
+
+export interface SlatShutterHeroProps {
+  /** Image shown first, cut into vertical slats */
+  coverSrc: string
+  /** Image revealed behind the slats */
+  revealSrc: string
+  /** Two-line headline shown over the cover image */
+  coverTitle: [string, string]
+  /** Two-line headline shown once the slats have opened */
+  revealTitle: [string, string]
+  /** Small line above the headline */
+  kicker?: string
+  /** Caption shown bottom right once revealed */
+  caption?: string
+  /** Number of slats (4 to 12 works best) */
+  slats?: number
+  /** Scroll length of the section, in viewport heights */
+  length?: number
+  className?: string
+}
+
+function Slat({
+  index,
+  count,
+  progress,
+  src,
+}: {
+  index: number
+  count: number
+  progress: MotionValue<number>
+  src: string
+}) {
+  // open from the centre outwards
+  const mid = (count - 1) / 2
+  const order = Math.abs(index - mid) / Math.max(mid, 1)
+  const start = 0.12 + order * 0.16
+  const end = start + 0.42
+  const dir = index % 2 === 0 ? -1 : 1
+  const y = useTransform(progress, [start, end], ["0%", \`\${dir * 104}%\`], { ease })
+  const scaleX = useTransform(progress, [start, end], [1, 0.82], { ease })
+
+  return (
+    <motion.div
+      aria-hidden
+      className="relative h-full overflow-hidden will-change-transform"
+      style={{ y, scaleX, width: \`\${100 / count}%\` }}
+    >
+      <div
+        className="absolute inset-y-0 bg-cover bg-center"
+        style={{
+          backgroundImage: \`url(\${src})\`,
+          width: \`\${count * 100}%\`,
+          left: \`\${-index * 100}%\`,
+        }}
+      />
+    </motion.div>
+  )
+}
+
+function Headline({ lines, tone }: { lines: [string, string]; tone: "cover" | "reveal" }) {
+  return (
+    <motion.h1
+      key={tone}
+      className="text-[clamp(40px,5.6vw,84px)] font-normal leading-[1.02] tracking-[-0.035em] text-white"
+      initial="hidden"
+      animate="show"
+      exit="exit"
+    >
+      {lines.map((line, i) => (
+        <span key={i} className="block overflow-hidden pb-[0.08em] md:whitespace-nowrap">
+          <motion.span
+            className="block"
+            variants={{
+              hidden: { y: "110%" },
+              show: { y: "0%", transition: { duration: 0.9, ease: [0.42, 0, 0, 1], delay: 0.08 * i } },
+              exit: { y: "-110%", transition: { duration: 0.45, ease: [0.42, 0, 1, 1], delay: 0.05 * i } },
+            }}
+          >
+            {line}
+          </motion.span>
+        </span>
+      ))}
+    </motion.h1>
+  )
+}
+
+export function SlatShutterHero({
+  coverSrc,
+  revealSrc,
+  coverTitle,
+  revealTitle,
+  kicker,
+  caption,
+  slats = 8,
+  length = 3,
+  className,
+}: SlatShutterHeroProps) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] })
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 })
+  const [revealed, setRevealed] = React.useState(false)
+
+  useMotionValueEvent(scrollYProgress, "change", (v) => setRevealed(v > 0.42))
+
+  const revealScale = useTransform(progress, [0.1, 0.85], [1.18, 1], { ease })
+  const shade = useTransform(progress, [0, 0.5], [0.45, 0.2])
+  const capOpacity = useTransform(progress, [0.7, 0.85], [0, 1])
+
+  if (reduce) {
+    return (
+      <section className={cn("relative h-svh w-full overflow-hidden bg-black", className)}>
+        <img src={revealSrc} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-x-0 bottom-0 p-6 md:p-12">
+          {kicker && <p className="mb-4 text-[15px] text-white/80">{kicker}</p>}
+          <h1 className="text-[clamp(40px,5.6vw,84px)] font-normal leading-[1.02] tracking-[-0.035em] text-white">
+            {revealTitle[0]}
+            <br />
+            {revealTitle[1]}
+          </h1>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section
+      ref={ref}
+      className={cn("relative w-full bg-black", className)}
+      style={{ height: \`\${length * 100}svh\` }}
+    >
+      <div className="sticky top-0 h-svh w-full overflow-hidden">
+        {/* revealed image */}
+        <motion.img
+          src={revealSrc}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ scale: revealScale }}
+        />
+
+        {/* slats */}
+        <div className="absolute inset-0 flex">
+          {Array.from({ length: slats }).map((_, i) => (
+            <Slat key={i} index={i} count={slats} progress={progress} src={coverSrc} />
+          ))}
+        </div>
+
+        <motion.div className="pointer-events-none absolute inset-0 bg-black" style={{ opacity: shade }} />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/65 via-black/25 to-transparent" />
+
+        {/* copy */}
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-8 p-6 md:px-12 md:pb-12">
+          <div className="min-w-0">
+            {kicker && <p className="mb-4 text-[15px] text-white/80">{kicker}</p>}
+            <AnimatePresence mode="wait" initial={false}>
+              {revealed ? (
+                <Headline key="r" lines={revealTitle} tone="reveal" />
+              ) : (
+                <Headline key="c" lines={coverTitle} tone="cover" />
+              )}
+            </AnimatePresence>
+          </div>
+          {caption && (
+            <motion.p
+              className="hidden max-w-[28ch] text-right text-[15px] leading-snug text-white/85 md:block"
+              style={{ opacity: capOpacity }}
+            >
+              {caption}
+            </motion.p>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export default SlatShutterHero
+`}],n="",t={files:e,prompt:n};export{t as default,e as files,n as prompt};

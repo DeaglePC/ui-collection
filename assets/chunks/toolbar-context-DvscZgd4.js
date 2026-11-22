@@ -1,0 +1,1 @@
+import{r as o}from"./client-CsvIHAk3.js";import{h as r}from"./use-primitive-CvQjzVYS.js";var a=o.createContext(null),n=o.createContext(!1);function p(){const t=o.useContext(a),e=o.useContext(n);return t?r(t,()=>t.api.internal.scopeIn(e)):void 0}export{a as T,p as u};

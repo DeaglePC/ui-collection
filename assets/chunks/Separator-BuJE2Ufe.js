@@ -1,0 +1,1 @@
+import{r as a}from"./client-CsvIHAk3.js";import{d as n}from"./useRenderElement-DXidANZi.js";const u=a.forwardRef(function(e,t){const{className:i,render:m,orientation:r="horizontal",style:p,...o}=e;return n("div",e,{state:{orientation:r},ref:t,props:[{role:"separator","aria-orientation":r},o]})});export{u as S};

@@ -1,0 +1,1 @@
+import{j as o}from"./client-CsvIHAk3.js";function s({fill:i,priority:e,...t}){return o.jsx("img",{...t,alt:t.alt||"",style:i?{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover"}:void 0})}export{s as I};

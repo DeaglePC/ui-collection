@@ -1,0 +1,1 @@
+import{u as a}from"./use-transform-Cx_Z3EmJ.js";import{a as i}from"./single-value-BSiVqTjy.js";function f(u,...n){const r=u.length;function l(){let e="";for(let t=0;t<r;t++){e+=u[t];const o=n[t];o&&(e+=i(o)?o.get():o)}return e}return a(n.filter(i),l)}export{f as u};

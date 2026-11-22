@@ -1,0 +1,61 @@
+const n=[{path:"transition-panel.tsx",language:"tsx",content:`'use client';
+import {
+  AnimatePresence,
+  Transition,
+  Variant,
+  motion,
+  MotionConfig,
+  MotionProps,
+} from 'motion/react';
+import { cn } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/registry/ndeko/hooks/use-prefers-reduced-motion';
+
+export type TransitionPanelProps = {
+  children: React.ReactNode[];
+  className?: string;
+  transition?: Transition;
+  activeIndex: number;
+  variants?: { enter: Variant; center: Variant; exit: Variant };
+} & MotionProps;
+
+function ReducedMotionConfig({ children }: { children: React.ReactNode }) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  if (!prefersReducedMotion) {
+    return children;
+  }
+  return <MotionConfig reducedMotion='always'>{children}</MotionConfig>;
+}
+
+export function TransitionPanel({
+  children,
+  className,
+  transition,
+  variants,
+  activeIndex,
+  ...motionProps
+}: TransitionPanelProps) {
+  return (
+    <ReducedMotionConfig>
+      <div className={cn('relative', className)}>
+        <AnimatePresence
+          initial={false}
+          mode='popLayout'
+          custom={motionProps.custom}
+        >
+          <motion.div
+            key={activeIndex}
+            variants={variants}
+            transition={transition}
+            initial='enter'
+            animate='center'
+            exit='exit'
+            {...motionProps}
+          >
+            {children[activeIndex]}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </ReducedMotionConfig>
+  );
+}
+`}],e="",i={files:n,prompt:e};export{i as default,n as files,e as prompt};

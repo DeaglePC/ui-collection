@@ -1,0 +1,20 @@
+import{r as c,j as s}from"./client-CsvIHAk3.js";const A=150,E=550,O="cubic-bezier(0.16, 1, 0.3, 1)",p=[{weight:650,tracking:0,mix:0},{weight:500,tracking:.014,mix:.35},{weight:400,tracking:.026,mix:.7},{weight:300,tracking:.04,mix:1}],C=60,v=60*C,P=24*v;function k(n,u){const t=Math.max(0,(u-n)/1e3);if(t<45)return{label:"just now",step:0};if(t<v)return{label:`${Math.max(1,Math.round(t/C))}m`,step:1};if(t<P)return{label:`${Math.round(t/v)}h`,step:2};const a=new Date(n),m=new Date(u);return{label:a.toLocaleDateString("en-US",a.getFullYear()===m.getFullYear()?{month:"short",day:"numeric"}:{month:"short",day:"numeric",year:"numeric"}),step:3}}function W(n){return n<45?1e3:n<v?15e3:n<P?5*6e4:60*6e4}function h(n){return new Date(n).toISOString().replace("T"," ").replace(/\.\d{3}Z$/,"Z")}function Y({date:n,className:u=""}){const t=n instanceof Date?n.getTime():new Date(n).getTime(),a=!Number.isNaN(t),m=c.useRef(null),y=c.useRef(null),S=c.useRef(null),w=c.useRef(!1),b=c.useRef(!1);if(c.useLayoutEffect(()=>{if(!a)return;const e=m.current,l=y.current,d=S.current;if(!e||!l||!d)return;const f=window.matchMedia("(prefers-reduced-motion: reduce)");let g=f.matches,L=0,R="";e.dateTime=new Date(t).toISOString(),e.setAttribute("aria-description",h(t)),d.textContent=h(t);const $=()=>{const r=Date.now(),{label:i,step:H}=k(t,r),x=p[H]??p[p.length-1];i!==R&&(R=i,l.textContent=i,e.setAttribute("aria-label",i)),e.style.setProperty("--ds-wght",String(x.weight)),e.style.letterSpacing=`${x.tracking}em`,e.style.color=`color-mix(in srgb, var(--foreground), var(--ns-muted) ${Math.round(x.mix*100)}%)`;const U=Math.max(0,(r-t)/1e3);L=window.setTimeout($,W(U))},o=()=>{const r=w.current||b.current,i=g?0:A;l.style.transitionDuration=`${i}ms`,d.style.transitionDuration=`${i}ms`,l.style.opacity=r?"0":"1",d.style.opacity=r?"1":"0",l.style.pointerEvents=r?"none":"auto",d.style.pointerEvents=r?"auto":"none"},M=()=>{g=f.matches,e.style.transitionDuration=g?"0ms":`${E}ms`,o()};e.style.transitionDuration=g?"0ms":`${E}ms`,f.addEventListener("change",M);const j=()=>{w.current=!0,o()},T=()=>{w.current=!1,o()},N=()=>{b.current=!0,o()},I=()=>{b.current=!1,o()};return e.addEventListener("pointerenter",j),e.addEventListener("pointerleave",T),e.addEventListener("focus",N),e.addEventListener("blur",I),$(),o(),()=>{window.clearTimeout(L),f.removeEventListener("change",M),e.removeEventListener("pointerenter",j),e.removeEventListener("pointerleave",T),e.removeEventListener("focus",N),e.removeEventListener("blur",I)}},[t,a]),!a)return s.jsx("time",{className:`font-sans text-ns-muted ${u}`,"aria-label":"invalid date",children:"Invalid date"});const F=new Date(t).toISOString(),D=k(t,t).label;return s.jsxs("time",{ref:m,dateTime:F,tabIndex:0,"data-time-ago-drift":!0,"aria-label":D,"aria-description":h(t),suppressHydrationWarning:!0,className:`ns-time-ago-drift inline-grid cursor-default rounded-sm font-sans align-baseline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ns-accent ${u}`,style:{"--ds-wght":p[0].weight},children:[s.jsx("span",{ref:y,"aria-hidden":!0,suppressHydrationWarning:!0,className:"ns-time-ago-drift-layer ns-time-ago-drift-relative tabular-nums",children:D}),s.jsx("span",{ref:S,"aria-hidden":!0,suppressHydrationWarning:!0,"data-drift-face":"exact",className:"ns-time-ago-drift-layer pointer-events-none font-mono tabular-nums opacity-0",children:h(t)}),s.jsx("style",{children:_})]})}const _=`
+.ns-time-ago-drift{
+  position: relative;
+  font-variation-settings: 'wght' var(--ds-wght, 650);
+  font-weight: var(--ds-wght, 650);
+  transition-property: font-variation-settings, letter-spacing, color;
+  transition-duration: ${E}ms;
+  transition-timing-function: ${O};
+}
+.ns-time-ago-drift-layer{
+  grid-area: 1 / 1;
+  transition-property: opacity;
+  transition-duration: ${A}ms;
+  transition-timing-function: ${O};
+}
+@media (prefers-reduced-motion: reduce){
+  .ns-time-ago-drift{ transition-duration: 0ms !important; }
+  .ns-time-ago-drift-layer{ transition-duration: 0ms !important; }
+}
+`;function z(){return s.jsx("div",{className:"ns-stage",children:s.jsx(Y,{date:new Date})})}export{z as default};

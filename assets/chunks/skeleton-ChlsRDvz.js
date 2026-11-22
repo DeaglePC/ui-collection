@@ -1,0 +1,1 @@
+import{j as t}from"./client-CsvIHAk3.js";import{S as r}from"./skeleton-prIEfwJ9.js";import"./use-primitive-CvQjzVYS.js";import"./keyframery-BNl8F_vt.js";import"./utils-B4bHUTaG.js";import"./bundle-mjs-BGKYBunL.js";function p(){return t.jsx("div",{className:"stage",children:t.jsx(r,{children:"预览"})})}export{p as default};
