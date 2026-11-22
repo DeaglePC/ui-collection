@@ -7,11 +7,6 @@ export interface CodeFile {
   content: string;
 }
 
-export interface ItemFileRef {
-  path: string;
-  language: string;
-}
-
 export interface Item {
   id: string;
   name: string;
@@ -33,7 +28,7 @@ export interface Item {
   iframeSrc: string;
   reactPreview: string;
   iframeHeight: number;
-  files: ItemFileRef[];
+  fileCount: number;
   hasPrompt: boolean;
   install: string;
   notice: string;

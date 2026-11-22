@@ -19,10 +19,7 @@ for (const item of items) {
   meta.push({
     ...rest,
     hasPrompt: Boolean(String(prompt).trim()),
-    files: files.map((file) => ({
-      path: file.path,
-      language: file.language || "",
-    })),
+    fileCount: files.length,
   });
   const payload = { files, prompt: prompt || "" };
   const json = JSON.stringify(payload);

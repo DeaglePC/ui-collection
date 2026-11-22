@@ -38,7 +38,7 @@ export default function ItemPage() {
 
   const files = source?.files ?? [];
   const prompt = source?.prompt ?? "";
-  const waiting = source === null && (item.files.length > 0 || item.hasPrompt);
+  const waiting = source === null && (item.fileCount > 0 || item.hasPrompt);
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 pb-24" data-testid="item-detail">
@@ -124,7 +124,7 @@ export default function ItemPage() {
             </div>
           ) : null}
 
-          {item.files.length ? (
+          {item.fileCount ? (
             <div>
               <h2 className="text-sm text-[var(--color-mute)] mb-2">源码</h2>
               {waiting || !files.length ? (

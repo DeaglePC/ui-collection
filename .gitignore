@@ -8,6 +8,26 @@ nsui-src/components
 nsui-src/mounts
 cybr-src/components
 cybr-src/styles
+furin-src/components
+furin-src/mounts
+affect-src/components
+affect-src/mounts
+eased-src/registry
+eased-src/mounts
+eased-src/theme.css
+keyframery-src/components
+keyframery-src/lib
+keyframery-src/mounts
+asciicn-src/components
+asciicn-src/lib
+asciicn-src/mounts
+republic-src/components
+republic-src/mounts
+republic-src/src
+arc-src/registry
+arc-src/lib
+arc-src/mounts
+arc-src/foundation.css
 
 .DS_Store
 *.local

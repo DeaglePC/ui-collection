@@ -192,3 +192,82 @@
 - 收录：已发布 dots-swarm 包中的免费 MIT 核心，含实时预览。包文件在 src/vendor/dots-swarm。
 - 未收录：@dots-swarm/pro、Pro 形状、Studio 付费功能。
 - 依据：包内 LICENSE 为 MIT，Copyright (c) 2026 hamza-al。许可已确认；公开源码仓库不可访问，因此使用 npm 上的 MIT 构建，不标为未确认可再分发。
+
+## Furin
+- 站点：https://furin.dev
+- 仓库：https://github.com/MTVelazquez/furin
+- 许可：MIT
+- 许可原文：https://github.com/MTVelazquez/furin/blob/main/LICENSE
+- 作者：Marcelo Treviño Velázquez
+- 收录：92 个免费组件的 tsx 与 css。
+- 未收录：Pro。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Marcelo Treviño Velázquez。
+
+## affectUI
+- 站点：https://www.affectui.com
+- 仓库：https://github.com/flohoeller/affectui
+- 许可：MIT
+- 许可原文：https://github.com/flohoeller/affectui/blob/main/LICENSE
+- 作者：Florian Höller (adfects)
+- 收录：公开仓库的免费组件、区块、动效、插画和 skills/affectui。
+- 未收录：Pro 代理界面和 Pro 技能。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Florian Höller (adfects)。
+
+## Eased UI
+- 站点：https://eased.dev
+- 仓库：https://github.com/easedui/ui
+- 许可：MIT
+- 许可原文：https://github.com/easedui/ui/blob/main/LICENSE
+- 作者：Eased
+- 收录：免费仓库中的组件、共用运行时和样式令牌。
+- 未收录：Pro。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Eased。许可页 https://eased.dev/licence 。
+
+## Keyframery
+- 站点：https://keyframery.com
+- 仓库：https://github.com/keyframery/keyframery
+- 许可：MIT
+- 许可原文：https://github.com/keyframery/keyframery/blob/main/LICENSE
+- 作者：Briyan Hingrajiya
+- 收录：src/components/ui 的 MIT 组件，以及 primitives。
+- 未收录：文档站和模板页。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Briyan Hingrajiya。
+
+## asciicn
+- 站点：https://asciicn.dev
+- 仓库：https://github.com/opencoredev/asciicn
+- 许可：MIT
+- 许可原文：https://github.com/opencoredev/asciicn/blob/main/LICENSE
+- 作者：Leo；LICENSE 同时保留 Shadcn Labs (startercn)
+- 收录：lib/ascii、skills/asciicn，以及 components/asciicn 的免费示例和绘制背景。
+- 未收录：没有 Pro 分区。站点外壳未收录。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Leo 与 Copyright (c) 2026 Shadcn Labs (startercn)。
+
+## Clayzo
+- 站点：https://www.clayzo.com/
+- 文档：https://docs.clayzo.com/
+- 作者：Clayzo Labs
+- 许可：未确认可再分发
+- 收录：1 张仅链接卡片。
+- 未收录：引擎和包源码。自己的网站和应用可以免费使用，但为别人生成输出需要另谈许可；预览、渲染、打包和导出还要登录。
+- 依据：许可不是标准开源，只放链接。
+
+## Republic UI
+- 站点：https://www.republicmarketing.co.uk/ui/
+- 仓库：https://github.com/rm-sjent/republic-ui
+- 许可：MIT
+- 许可原文：https://github.com/rm-sjent/republic-ui/blob/main/LICENSE
+- 作者：Republic Marketing
+- 收录：13 个组件和 public/img 演示照片。
+- 未收录：站点外壳。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Republic Marketing。
+
+## Arc UI
+- 站点：https://uiarc.dev/
+- 仓库：https://github.com/kuratlielia/arc-library
+- 许可：MIT（仅免费项）
+- 许可原文：https://github.com/kuratlielia/arc-library/blob/main/LICENSE
+- 作者：Elia Kuratli
+- 收录：catalog.json 中 tier=free 的组件和区块，以及 foundation 和免费技能。
+- 未收录：Pro 组件、Pro 区块、模板和 Pro 技能。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Elia Kuratli。

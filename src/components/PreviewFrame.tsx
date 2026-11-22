@@ -114,15 +114,15 @@ export function PreviewFrame({
     );
   }
 
+  const liveSources = new Set(["nsui", "cybr", "furin", "affect", "eased", "keyframery", "asciicn", "republic", "arc"]);
+  const stageName = item.id.startsWith(`${item.sourceId}-`) ? item.id.slice(item.sourceId.length + 1) : "";
   const stage =
-    item.sourceId === "nsui"
-      ? { page: "nsui-stage.html", name: item.id.replace(/^nsui-/, "") }
-      : item.sourceId === "cybr" && item.id !== "cybr-use-reduced-motion"
-        ? { page: "cybr-stage.html", name: item.id.replace(/^cybr-/, "") }
-        : null;
+    liveSources.has(item.sourceId) && stageName && !item.tags.includes("仅源码") && item.id !== "cybr-use-reduced-motion"
+      ? { page: `${item.sourceId}-stage.html`, name: stageName }
+      : null;
   const stageLive = Boolean(stage) && interactive && location.protocol !== "file:";
   if (stage && stageLive) {
-    const frameH = Math.max(h, item.sourceId === "cybr" ? 640 : 460);
+    const frameH = Math.max(h, item.category === "背景/Shader" || item.sourceId === "cybr" ? 640 : 520);
     return (
       <div ref={ref} className={`preview-clip ${className}`} style={{ height: frameH }} data-preview-kind={item.sourceId} data-preview-mounted="true">
         <iframe
@@ -136,12 +136,11 @@ export function PreviewFrame({
   }
 
   if (item.preview === "code") {
-    const note =
-      item.sourceId === "nsui"
+    const note = item.tags.includes("仅源码")
+      ? `这项提供源码${item.hasPrompt ? "和提示词" : ""}，打开后可以复制。`
+      : liveSources.has(item.sourceId)
         ? "列表里只放海报。打开条目可看实时效果，源码可复制。"
-        : item.sourceId === "cybr" && item.id !== "cybr-use-reduced-motion"
-          ? "列表里只放海报。打开条目可看实时效果；预览会载入 tokens 与 effects。源码可复制。"
-          : `这项提供源码${item.hasPrompt ? "和提示词" : ""}，因依赖较重或只是提示词，没有站内实时预览。`;
+        : `这项提供源码${item.hasPrompt ? "和提示词" : ""}，因依赖较重或只是提示词，没有站内实时预览。`;
     return (
       <div className={`preview-clip flex flex-col ${className}`} style={{ height: Math.min(h, 240) }} data-preview-kind="code">
         <div className="preview-poster is-static" style={{ ["--poster-h" as string]: String(posterHue(item.id)) }}>
