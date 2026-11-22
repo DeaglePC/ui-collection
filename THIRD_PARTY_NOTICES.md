@@ -242,3 +242,32 @@
 - 收录：lib/ascii、skills/asciicn，以及 components/asciicn 的免费示例和绘制背景。
 - 未收录：没有 Pro 分区。站点外壳未收录。
 - 依据：LICENSE 为 MIT，Copyright (c) 2026 Leo 与 Copyright (c) 2026 Shadcn Labs (startercn)。
+
+## Clayzo
+- 站点：https://www.clayzo.com/
+- 文档：https://docs.clayzo.com/
+- 作者：Clayzo Labs
+- 许可：未确认可再分发
+- 收录：1 张仅链接卡片。
+- 未收录：引擎和包源码。自己的网站和应用可以免费使用，但为别人生成输出需要另谈许可；预览、渲染、打包和导出还要登录。
+- 依据：许可不是标准开源，只放链接。
+
+## Republic UI
+- 站点：https://www.republicmarketing.co.uk/ui/
+- 仓库：https://github.com/rm-sjent/republic-ui
+- 许可：MIT
+- 许可原文：https://github.com/rm-sjent/republic-ui/blob/main/LICENSE
+- 作者：Republic Marketing
+- 收录：13 个组件和 public/img 演示照片。
+- 未收录：站点外壳。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Republic Marketing。
+
+## Arc UI
+- 站点：https://uiarc.dev/
+- 仓库：https://github.com/kuratlielia/arc-library
+- 许可：MIT（仅免费项）
+- 许可原文：https://github.com/kuratlielia/arc-library/blob/main/LICENSE
+- 作者：Elia Kuratli
+- 收录：catalog.json 中 tier=free 的组件和区块，以及 foundation 和免费技能。
+- 未收录：Pro 组件、Pro 区块、模板和 Pro 技能。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Elia Kuratli。

@@ -5,6 +5,8 @@
 @source not "../eased-src";
 @source not "../keyframery-src";
 @source not "../asciicn-src";
+@source not "../republic-src";
+@source not "../arc-src";
 
 @theme {
   --font-sans: "Noto Sans SC", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;

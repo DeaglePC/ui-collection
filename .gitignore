@@ -21,6 +21,13 @@ keyframery-src/mounts
 asciicn-src/components
 asciicn-src/lib
 asciicn-src/mounts
+republic-src/components
+republic-src/mounts
+republic-src/src
+arc-src/registry
+arc-src/lib
+arc-src/mounts
+arc-src/foundation.css
 
 .DS_Store
 *.local
