@@ -322,5 +322,17 @@
     "included": "catalog.json 里 tier=free 的组件和区块，加上 foundation 和免费技能。",
     "excluded": "Pro 组件、Pro 区块、模板和 Pro 技能。",
     "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Elia Kuratli。免费和 Pro 的分界以 https://uiarc.dev/r/catalog.json 的 tier 为准。"
+  },
+  {
+    "id": "peel",
+    "name": "Peel UI",
+    "url": "https://peel-ui.vercel.app/",
+    "repo": "https://github.com/Killersumit/peel-ui",
+    "license": "MIT",
+    "licenseUrl": "https://github.com/Killersumit/peel-ui/blob/main/LICENSE",
+    "author": "Sumit Singh (@killersumit)",
+    "included": "注册表 https://peel-ui.vercel.app/r/registry.json 里的全部 30 个免费组件，含 note-button 的完整文件集、组件用到的 lib/utils.ts，以及 slide-to-confirm 用到的 src/index.css（bevel-machined）。官方 demos 用来提供可运行的示例数据。",
+    "excluded": "没有 Pro 档。文档站外壳、赞助页和法律页没有当组件收录。README 里的「22」已过时，以注册表的 30 项为准。",
+    "why": "仓库 LICENSE 为 MIT，Copyright (c) 2026 Sumit Singh (@killersumit)。组件从公开注册表 https://peel-ui.vercel.app/r/{name}.json 取得，源码目录是 src/registry/primitives/。"
   }
 ]

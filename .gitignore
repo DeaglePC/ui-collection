@@ -28,6 +28,11 @@ arc-src/registry
 arc-src/lib
 arc-src/mounts
 arc-src/foundation.css
+peel-src/components
+peel-src/lib
+peel-src/mounts
+peel-src/demos
+peel-src/src
 
 .DS_Store
 *.local

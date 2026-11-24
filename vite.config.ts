@@ -128,11 +128,12 @@ export default defineConfig(({ mode }) => {
               asciicn: fileURLToPath(new URL("./asciicn-stage.html", import.meta.url)),
               republic: fileURLToPath(new URL("./republic-stage.html", import.meta.url)),
               arc: fileURLToPath(new URL("./arc-stage.html", import.meta.url)),
+              peel: fileURLToPath(new URL("./peel-stage.html", import.meta.url)),
             },
         output: {
           inlineDynamicImports: file,
           entryFileNames(chunk) {
-            if (chunk.name === "nsui" || chunk.name === "cybr" || chunk.name === "furin" || chunk.name === "affect" || chunk.name === "eased" || chunk.name === "keyframery" || chunk.name === "asciicn" || chunk.name === "republic" || chunk.name === "arc") {
+            if (chunk.name === "nsui" || chunk.name === "cybr" || chunk.name === "furin" || chunk.name === "affect" || chunk.name === "eased" || chunk.name === "keyframery" || chunk.name === "asciicn" || chunk.name === "republic" || chunk.name === "arc" || chunk.name === "peel") {
               return `assets/${chunk.name}.js`;
             }
             return file ? "assets/app.file.js" : "assets/app.js";

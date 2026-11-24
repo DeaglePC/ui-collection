@@ -114,7 +114,7 @@ export function PreviewFrame({
     );
   }
 
-  const liveSources = new Set(["nsui", "cybr", "furin", "affect", "eased", "keyframery", "asciicn", "republic", "arc"]);
+  const liveSources = new Set(["nsui", "cybr", "furin", "affect", "eased", "keyframery", "asciicn", "republic", "arc", "peel"]);
   const stageName = item.id.startsWith(`${item.sourceId}-`) ? item.id.slice(item.sourceId.length + 1) : "";
   const stage =
     liveSources.has(item.sourceId) && stageName && !item.tags.includes("仅源码") && item.id !== "cybr-use-reduced-motion"
