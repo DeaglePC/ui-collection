@@ -1,0 +1,10 @@
+@import "tailwindcss" source(none);
+@source "./components";
+@source "./lib";
+@source "./demos";
+@source "./mounts";
+@import "./surface.css";
+html, body, #root { margin: 0; min-height: 100%; background: #08090a; color: #f5f5f7; }
+.stage { min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 28px 20px; box-sizing: border-box; }
+.stage > * { max-width: 100%; }
+.stage-error { margin: 0; padding: 24px; font: 14px/1.5 ui-sans-serif, sans-serif; color: #f5f5f7; }

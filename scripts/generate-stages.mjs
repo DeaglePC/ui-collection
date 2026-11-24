@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const items = JSON.parse(readFileSync(join(root, "src/data/items.json"), "utf8"));
 
-const SOURCES = ["furin", "affect", "eased", "keyframery", "asciicn", "republic", "arc"];
+const SOURCES = ["furin", "affect", "eased", "keyframery", "asciicn", "republic", "arc", "peel"];
 
 function posix(path) {
   return path.split("\\").join("/");
@@ -33,6 +33,23 @@ function rewriteAt(content, fromFile, sourceId) {
     content = content.replace(/from\s+(["'])(?:\.\.\/)+lib\/([^"']+)\1/g, (all, quote, spec) => {
       return `from ${quote}${relImport(fromFile, `lib/${spec}`)}${quote}`;
     });
+  }
+  if (sourceId === "peel") {
+    const peelTarget = (spec) => {
+      if (spec.startsWith("lib/")) return relImport(fromFile, spec);
+      if (spec.startsWith("registry/primitives/")) {
+        return relImport(fromFile, `components/ui/${spec.slice("registry/primitives/".length)}`);
+      }
+      if (spec.startsWith("components/ui/")) return relImport(fromFile, spec);
+      return null;
+    };
+    return content.replace(
+      /(from\s+|export\s+\*\s+from\s+|export\s+\{[^}]+\}\s+from\s+)(["'])@\/([^"']+)\2/g,
+      (all, lead, quote, spec) => {
+        const next = peelTarget(spec);
+        return next ? `${lead}${quote}${next}${quote}` : all;
+      },
+    );
   }
   if (sourceId !== "keyframery" && sourceId !== "asciicn" && sourceId !== "arc") return content;
   return content.replace(
@@ -103,6 +120,19 @@ function demoProps(slug, source) {
 }
 
 function stageCss(id) {
+  if (id === "peel") {
+    return `@import "tailwindcss" source(none);
+@source "./components";
+@source "./lib";
+@source "./demos";
+@source "./mounts";
+@import "./surface.css";
+html, body, #root { margin: 0; min-height: 100%; background: #08090a; color: #f5f5f7; }
+.stage { min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 28px 20px; box-sizing: border-box; }
+.stage > * { max-width: 100%; }
+.stage-error { margin: 0; padding: 24px; font: 14px/1.5 ui-sans-serif, sans-serif; color: #f5f5f7; }
+`;
+  }
   if (id === "republic") {
     return `@import "tailwindcss" source(none);
 @source "./components";
@@ -824,8 +854,41 @@ export default function Mount() {
 `;
 }
 
+const PEEL_WIDE = new Set([
+  "layout-scrub", "release-notes", "moire-field", "moire-intro", "skill-pile",
+  "interactive-file-tree", "cookie-consent", "notification-inbox", "next-up",
+  "roadmap-vote", "skeleton-handoff", "invite-field", "tactile-3d-bar",
+  "voice-pill", "waitlist-join", "detent-tabs", "note-button",
+]);
+
+function peelMount(item, file) {
+  const slug = item.id.slice(item.sourceId.length + 1);
+  const demo = (item.files || []).find((candidate) => /^demos\/.+\.tsx$/.test(candidate.path));
+  const chosen = demo || file;
+  const prefer = !demo && slug === "save-state-pill" ? "SaveStatePillDemo" : demo ? `${pascal(slug)}Demo` : pascal(slug);
+  const component = exportName(chosen.content, prefer);
+  const importPath = relImport(`mounts/${slug}.tsx`, chosen.path.replace(/\.tsx$/, ""));
+  if (!component) {
+    return `export default function Mount() {
+  return <p className="stage-error" data-peel="error">「${slug}」没有可渲染的组件导出。</p>;
+}
+`;
+  }
+  const wide = PEEL_WIDE.has(slug) ? ' style={{ width: "min(960px, 100%)" }}' : "";
+  return `import { ${component} } from "${importPath}";
+export default function Mount() {
+  return (
+    <div className="stage"${wide}>
+      <${component} />
+    </div>
+  );
+}
+`;
+}
+
 function mountSource(item, file) {
   const slug = item.id.slice(item.sourceId.length + 1);
+  if (item.sourceId === "peel") return peelMount(item, file);
   const special = specialMount(item.sourceId, slug);
   if (special) return special;
   const demo = item.sourceId === "eased"
@@ -876,6 +939,8 @@ for (const id of SOURCES) {
   rmSync(join(dir, "mounts"), { recursive: true, force: true });
   rmSync(join(dir, "registry"), { recursive: true, force: true });
   rmSync(join(dir, "lib"), { recursive: true, force: true });
+  rmSync(join(dir, "demos"), { recursive: true, force: true });
+  if (id === "peel") rmSync(join(dir, "src"), { recursive: true, force: true });
   mkdirSync(join(dir, "mounts"), { recursive: true });
   writeFileSync(join(dir, "stage.css"), stageCss(id));
   writeFileSync(join(dir, "stage.tsx"), stageTsx(id));

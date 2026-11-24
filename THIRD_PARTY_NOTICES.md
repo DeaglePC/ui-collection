@@ -271,3 +271,14 @@
 - 收录：catalog.json 中 tier=free 的组件和区块，以及 foundation 和免费技能。
 - 未收录：Pro 组件、Pro 区块、模板和 Pro 技能。
 - 依据：LICENSE 为 MIT，Copyright (c) 2026 Elia Kuratli。
+
+## Peel UI
+- 站点：https://peel-ui.vercel.app/
+- 目录：https://peel-ui.vercel.app/components
+- 仓库：https://github.com/Killersumit/peel-ui
+- 许可：MIT
+- 许可原文：https://github.com/Killersumit/peel-ui/blob/main/LICENSE
+- 作者：Sumit Singh (@killersumit)
+- 收录：注册表全部 30 个免费组件（https://peel-ui.vercel.app/r/registry.json），含 note-button 的完整文件、lib/utils.ts，以及 src/index.css 里的 bevel-machined。每条记录原页面、仓库和安装命令。
+- 未收录：没有 Pro 档。文档站外壳没有收录。README 写的「22 interactive primitives」已过时，没有按那个数字少收。
+- 依据：LICENSE 为 MIT，Copyright (c) 2026 Sumit Singh (@killersumit)。源码在 src/registry/primitives/。
